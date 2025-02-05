@@ -207,6 +207,8 @@ class StorageMenu:
         add_window.title("Cadastrar produto")
         add_window.geometry("300x500")
         add_window.resizable(False, False)
+        add_window.grab_set()
+        add_window.focus_force()
         
         # Create a main frame with orange background
         main_frame = ctk.CTkFrame(
@@ -419,6 +421,8 @@ class StorageMenu:
             edit_window.title("Editar produto")
             edit_window.geometry("300x500")
             edit_window.resizable(False, False)
+            edit_window.grab_set()
+            edit_window.focus_force()
 
             # Create a main frame with orange background
             main_frame = ctk.CTkFrame(
@@ -555,7 +559,7 @@ class StorageMenu:
 def main():
     root = ctk.CTk()
     root.title("FlyThru - Storage")
-    root.geometry("1080x720")
+    root.geometry("{0}x{1}+0+0".format(root.winfo_screenwidth(), root.winfo_screenheight()))
 
     app = StorageMenu(root)
     root.mainloop()

@@ -13,7 +13,7 @@ class LoginScreen:
         # Initialize main window
         self.root = ctk.CTk()
         self.root.title("FlyThru - Login")
-        self.root.geometry("1080x720")
+        self.root.geometry(self.root.geometry("{0}x{1}+0+0".format(self.root.winfo_screenwidth(), self.root.winfo_screenheight())))
         
         # Initialize fonts and colors AFTER root creation
         self.fonts, self.colors = dc.init_fonts(self.root)
