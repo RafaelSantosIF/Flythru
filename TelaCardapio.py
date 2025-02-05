@@ -313,13 +313,26 @@ class Cartemenu:
             items_frame.pack(fill="both", expand=True, padx=20)
 
             def update_order_total():
-                total = sum(float(item["price"].replace("R$ ", "").replace(",", ".")) for item in self.order_items)
-                total_amount.configure(text=f"R$ {total:.2f}")
+                self.total_price = sum(float(item["price"].replace("R$ ", "")) for item in self.order_items)
+                if self.total_label:
+                    self.total_label.configure(text=f"Sub-Total R$ {self.total_price:.2f}")
 
             def remove_item(item_frame, item):
+                # Remove the frame from UI
                 item_frame.destroy()
+
+                # Remove item from the list
                 self.order_items.remove(item)
-                update_order_total()
+
+                # Update the total price by subtracting the removed item's price
+                item_price = float(item["price"].replace("R$ ", ""))
+                self.total_price -= item_price
+
+                # Update totals on both screens
+                update_total()
+
+                # Update the total amount label in the order screen
+                total_amount.configure(text=f"R$ {self.total_price:.2f}")
 
             # Display order items
             for item in self.order_items:
