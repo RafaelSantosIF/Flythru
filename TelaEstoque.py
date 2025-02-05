@@ -199,7 +199,27 @@ class StorageMenu:
         add_row_button.pack(pady=(0, 20))
         
     def menu_item_clicked(self, item):
-        print(f"Clicked menu item: {item}")
+        self.root.withdraw()
+        
+        if item == "Estoque 📦":
+            pass
+        if item ==  "Cardapio 🍔":         
+            menu_window = ctk.CTkToplevel()
+            menu_window.title("FlyThru - Estoque")
+            menu_window.geometry("{0}x{1}+0+0".format(self.root.winfo_screenwidth(), self.root.winfo_screenheight()))
+            
+            # Initialize the Cartemenu in the new window
+            from TelaCardapio import Cartemenu
+            menu_screen = Cartemenu(menu_window)
+        else:
+            pass    
+            
+        # When menu window is closed, show login window again
+        def on_menu_close():
+            menu_window.destroy()
+            self.root.deiconify()
+            
+        menu_window.protocol("WM_DELETE_WINDOW", on_menu_close)
 
     def add_stock_row(self):
         # Create a new toplevel window for adding a stock item

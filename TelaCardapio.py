@@ -418,7 +418,27 @@ class Cartemenu:
         canvas.bind_all("<MouseWheel>", lambda e: bottom_frame.lift() if canvas.yview()[1] == 1.0 else None)
 
     def menu_item_clicked(self, item):
-            print(f"Clicked menu item: {item}")
+        self.root.withdraw()
+        
+        if item == "Estoque 📦":
+            storage_window = ctk.CTkToplevel()
+            storage_window.title("FlyThru - Estoque")
+            storage_window.geometry("{0}x{1}+0+0".format(self.root.winfo_screenwidth(), self.root.winfo_screenheight()))
+            
+            # Initialize the Cartemenu in the new window
+            from TelaEstoque import StorageMenu
+            menu_screen = StorageMenu(storage_window)
+        if item == "Cardapio 🍔":
+            pass
+        else:
+            pass          
+       
+        # When menu window is closed, show login window again
+        def on_menu_close():
+            storage_window.destroy()
+            self.root.deiconify()
+            
+        storage_window.protocol("WM_DELETE_WINDOW", on_menu_close)
 
 def main():
     root = ctk.CTk()
