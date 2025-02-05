@@ -3,6 +3,7 @@ import customtkinter as ctk
 from PIL import Image
 import os
 import Dictionary as dc
+from TelaCardapio import Cartemenu
 
 class LoginScreen:
     def __init__(self):
@@ -20,10 +21,10 @@ class LoginScreen:
         
         # Get the current script's directory
         current_dir = os.path.dirname(os.path.abspath(__file__))
-        assets_dir = os.path.join(current_dir, "assets")
+        self.assets_dir = os.path.join(current_dir, "assets")  # Store assets_dir as instance variable
         
         # Load images with absolute path
-        self.load_images(assets_dir)
+        self.load_images(self.assets_dir)
         
         # Create main grid layout
         self.root.grid_rowconfigure(0, weight=1)
@@ -42,7 +43,7 @@ class LoginScreen:
             logo_path = os.path.join(assets_path, "logo.png")
             bottom_icon_path = os.path.join(assets_path, "bottom_icon.png")
             flythru_path = os.path.join(assets_path, "FLYTHRU_W.png")
-            
+            print("teste")
             # Check if files exist
             if os.path.exists(logo_path):
                 print("Logo file found!")
@@ -223,7 +224,25 @@ class LoginScreen:
     def login(self):
         username = self.username_entry.get()
         password = self.password_entry.get()
-        print(f"Login attempt with username: {username}")
+        
+        # Here we'll create and show the menu screen
+        # Hide the login window instead of destroying it
+        self.root.withdraw()
+        
+        # Create a new top-level window for the menu
+        menu_window = ctk.CTkToplevel()
+        menu_window.title("FlyThru - Menu")
+        menu_window.geometry("{0}x{1}+0+0".format(self.root.winfo_screenwidth(), self.root.winfo_screenheight()))
+        
+        # Initialize the Cartemenu in the new window
+        menu_screen = Cartemenu(menu_window)
+        
+        # When menu window is closed, show login window again
+        def on_menu_close():
+            menu_window.destroy()
+            self.root.deiconify()
+            
+        menu_window.protocol("WM_DELETE_WINDOW", on_menu_close)
         
     def run(self):
         self.root.mainloop()
