@@ -255,6 +255,8 @@ class Cartemenu:
             order_screen = ctk.CTkToplevel()
             order_screen.title("FlyThru - Comanda")
             order_screen.geometry("500x600")
+            order_screen.grab_set()
+            order_screen.focus_force()
 
             # Top bar
             top_bar = ctk.CTkFrame(order_screen, fg_color=self.colors["main_color"], height=50)
@@ -408,7 +410,7 @@ class Cartemenu:
 def main():
     root = ctk.CTk()
     root.title("FlyThru - Storage")
-    root.geometry("1080x720")
+    root.geometry("{0}x{1}+0+0".format(root.winfo_screenwidth(), root.winfo_screenheight()))
 
     app = Cartemenu(root)
     root.mainloop()
