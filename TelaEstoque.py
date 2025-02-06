@@ -1,12 +1,13 @@
 import customtkinter as ctk
 from PIL import Image
 import os
+import Dictionary as dc
 
 class StorageMenu:
     def __init__(self, root):
         self.root = root
         # Initialize fonts and colors
-        self.fonts, self.colors = self.init_fonts(root)
+        self.fonts, self.colors = dc.init_fonts(self.root)
 
         # Load images
         self.logo_image = self.load_image("round_logo.png", (70, 70))
@@ -24,41 +25,7 @@ class StorageMenu:
         #self.table_container = table_container
         self.headers = ["ID", "Produto", "Quantidade", "Categoria", "Ação"] 
 
-    def init_fonts(self, root):
-        # Initialize fonts
-        logo_font = ctk.CTkFont(family="Arial", size=30, weight="bold")
-        menu_font = ctk.CTkFont(family="Verdana", size=16, weight="bold")
-        input_font = ctk.CTkFont(family="Verdana", size=14)
-        header_font = ctk.CTkFont(family="Verdana", size=14, weight="bold")
-        button_font = ctk.CTkFont(family="Verdana", size=14, weight="bold")
-
-        # Initialize colors
-        main_color = "#FF8C00"
-        second_color = "#00FF1E"
-        second_hover_color = "#0B951B"         
-        hover_color = "#FFA500"
-        dark_bg = "#1E1E1E"  
-        menu_bg = "white"  
-        table_bg = "white"
-        link_color = "#87CEEB"
-
-        return {
-            "logo_font": logo_font,
-            "menu_font": menu_font,
-            "input_font": input_font,
-            "header_font": header_font,
-            "button_font": button_font
-        }, {
-            "main_color": main_color,
-            "second_color": second_color,
-            "second_hover_color": second_hover_color,
-            "hover_color": hover_color,
-            "dark_bg": dark_bg,
-            "menu_bg": menu_bg,
-            "table_bg": table_bg,
-            "link_color": link_color
-        }
-
+    
     def load_image(self, filename, size):
         # Get the current script's directory
         current_dir = os.path.dirname(os.path.abspath(__file__))

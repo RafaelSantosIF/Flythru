@@ -183,7 +183,7 @@ class LoginScreen:
             width=450,
             height=60,
             placeholder_text="Código Empresa",
-            font=self.fonts["input_font"]
+            font=self.fonts["input_font_login"]
         )
         self.username_entry.pack(pady=10)
         
@@ -194,7 +194,7 @@ class LoginScreen:
             height=60,
             placeholder_text="Senha",
             show="•",
-            font=self.fonts["input_font"]
+            font=self.fonts["input_font_login"]
         )
         self.password_entry.pack(pady=10)
         
@@ -204,7 +204,7 @@ class LoginScreen:
             text="entrar",
             width=200,
             height=50,
-            font=self.fonts["button_font"],
+            font=self.fonts["button_font_login"],
             fg_color=self.colors["main_color"],
             hover_color=self.colors["hover_color"],
             command=self.login
@@ -216,7 +216,7 @@ class LoginScreen:
             form_frame,
             text="Esqueceu sua senha?",
             font=self.fonts["link_font"],
-            text_color=self.colors["link_color"],
+            text_color=self.colors["link_color_login"],
             cursor="hand2"
         )
         forgot_pwd.pack(pady=0)
@@ -225,7 +225,6 @@ class LoginScreen:
         username = self.username_entry.get()
         password = self.password_entry.get()
         
-        # Here we'll create and show the menu screen
         # Hide the login window instead of destroying it
         self.root.withdraw()
         

@@ -1,11 +1,13 @@
 import customtkinter as ctk
 from PIL import Image
 import os
+import Dictionary as dc
 
 class Cartemenu:
     def __init__(self, root):
+        self.root = root
         # Initialize fonts and colors
-        self.fonts, self.colors = self.init_fonts(root)
+        self.fonts, self.colors = dc.init_fonts(self.root)
 
         # Load images
         self.logo_image = self.load_image("round_logo.png", (70, 70))
@@ -21,33 +23,7 @@ class Cartemenu:
         # Create main content area
         self.create_main_content(root)
 
-    def init_fonts(self, root):
-        # Initialize fonts
-        logo_font = ctk.CTkFont(family="Arial", size=30, weight="bold")
-        menu_font = ctk.CTkFont(family="Verdana", size=16, weight="bold")
-        input_font = ctk.CTkFont(family="Verdana", size=14)
-        button_font = ctk.CTkFont(family="Verdana", size=14, weight="bold")
-
-        # Initialize colors
-        main_color = "#FF8C00"  # Orange
-        hover_color = "#FFA500"
-        dark_bg = "#1E1E1E"  # Darker background for main content
-        menu_bg = "white"  # White background for side menu
-        link_color = "#87CEEB"
-
-        return {
-            "logo_font": logo_font,
-            "menu_font": menu_font,
-            "input_font": input_font,
-            "button_font": button_font
-        }, {
-            "main_color": main_color,
-            "hover_color": hover_color,
-            "dark_bg": dark_bg,
-            "menu_bg": menu_bg,
-            "link_color": link_color
-        }
-
+    
     def load_image(self, filename, size):
         # Get the current script's directory
         current_dir = os.path.dirname(os.path.abspath(__file__))
