@@ -192,23 +192,37 @@ class CarteMenu:
         main_content = ctk.CTkFrame(root, fg_color=self.colors["dark_bg"], width=800)
         main_content.pack(side="right", fill="both", expand=True)
 
-        canvas = ctk.CTkCanvas(main_content, bg=self.colors["dark_bg"], highlightthickness=0)
-        scrollbar = ctk.CTkScrollbar(main_content, command=canvas.yview)
+        # Create a container frame for the canvas to manage padding
+        container_frame = ctk.CTkFrame(main_content, fg_color=self.colors["dark_bg"])
+        container_frame.pack(fill="both", expand=True, padx=(20, 0), pady=(0, 1))
+        canvas = ctk.CTkCanvas(container_frame, bg=self.colors["dark_bg"], highlightthickness=0)        
         scroll_frame = ctk.CTkFrame(canvas, fg_color=self.colors["dark_bg"])
+        
+        # Configure scrolling
+        def on_mousewheel(event):
+            canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
 
+        # Bind mouse wheel to canvas
+        canvas.bind_all("<MouseWheel>", on_mousewheel)
+
+        # Configure scroll frame
         scroll_frame.bind(
             "<Configure>",
             lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
         )
 
+        # Create window in canvas
         canvas.create_window((0, 0), window=scroll_frame, anchor="nw")
-        canvas.configure(yscrollcommand=scrollbar.set)
-
+        
+        # Configure canvas to fill the space
         canvas.pack(side="left", fill="both", expand=True)
-        scrollbar.pack(side="right", fill="y")
 
         categories = {
             "Hambúrguer": [
+                ("AMERICANO", 13.99, "round_logo.png", ["Hambúrguer", "Tomate", "Queijo", "Alface", "Molho Especial"]),
+                ("AMERICANO", 13.99, "round_logo.png", ["Hambúrguer", "Tomate", "Queijo", "Alface", "Molho Especial"]),
+                ("AMERICANO", 13.99, "round_logo.png", ["Hambúrguer", "Tomate", "Queijo", "Alface", "Molho Especial"]),
+                ("AMERICANO", 13.99, "round_logo.png", ["Hambúrguer", "Tomate", "Queijo", "Alface", "Molho Especial"]),
                 ("AMERICANO", 13.99, "round_logo.png", ["Hambúrguer", "Tomate", "Queijo", "Alface", "Molho Especial"]),
                 ("AMERICANO", 13.99, "round_logo.png", ["Hambúrguer", "Tomate", "Queijo", "Alface", "Molho Especial"]),
                 ("AMERICANO", 13.99, "round_logo.png", ["Hambúrguer", "Tomate", "Queijo", "Alface", "Molho Especial"]),
@@ -217,6 +231,10 @@ class CarteMenu:
             "Batatas": [
                 ("BATATA P", 8.99, "round_logo.png", ["Batata frita", "Molho Especial"]),
                 ("BATATA M", 10.99, "round_logo.png", ["Batata frita", "Molho Especial"]),
+                ("BATATA M", 10.99, "round_logo.png", ["Batata frita", "Molho Especial"]),
+                ("BATATA M", 10.99, "round_logo.png", ["Batata frita", "Molho Especial"]),
+                ("BATATA G", 13.99, "round_logo.png", ["Batata frita", "Molho Especial"]),
+                ("BATATA G", 13.99, "round_logo.png", ["Batata frita", "Molho Especial"]),
                 ("BATATA G", 13.99, "round_logo.png", ["Batata frita", "Molho Especial"]),
                 ("EXTRA G", 17.99, "round_logo.png", ["Batata frita", "Molho Extra"])
             ],
@@ -224,6 +242,10 @@ class CarteMenu:
                 ("COCA COLA", 5.99, "round_logo.png", ["Refrigerante Gelado"]),
                 ("COCA LATA", 4.00, "round_logo.png", ["350ML"]),
                 ("GUARANÁ", 5.99, "round_logo.png", ["Refrigerante Gelado"]),
+                ("COCA COLA", 5.99, "round_logo.png", ["Refrigerante Gelado"]),
+                ("COCA COLA", 5.99, "round_logo.png", ["Refrigerante Gelado"]),
+                ("COCA COLA", 5.99, "round_logo.png", ["Refrigerante Gelado"]),
+                ("COCA COLA", 5.99, "round_logo.png", ["Refrigerante Gelado"]),
                 ("FANTA", 5.99, "round_logo.png", ["Refrigerante Gelado"])
             ]
         }
@@ -267,9 +289,11 @@ class CarteMenu:
                 )
                 add_button.pack(pady=5)
 
+         # Bottom frame
         bottom_frame = ctk.CTkFrame(main_content, fg_color="#D3D3D3", height=50)
-        bottom_frame.place(relx=0, rely=1, anchor="sw", relwidth=1.0)
-
+        bottom_frame.pack(side="bottom", fill="x")
+        bottom_frame.lift()  
+        
         self.total_label = ctk.CTkLabel(bottom_frame, text=f"Sub-Total R$ {self.total_price:.2f}",
                                       font=self.fonts["menu_font"], text_color="black")
         self.total_label.pack(side="left", padx=20)
@@ -283,7 +307,14 @@ class CarteMenu:
             text_color="white", 
             command=self.open_order_screen
         )
-        generate_order_button.pack(side="right", padx=20)
+        generate_order_button.pack(side="right", padx=20, pady=5)
 
+        # Update canvas configuration to handle window resizing
         canvas.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
-        canvas.bind_all("<MouseWheel>", lambda e: bottom_frame.lift() if canvas.yview()[1] == 1.0 else None)
+        
+        # Modify the MouseWheel binding to ensure bottom frame stays visible
+        def on_scroll(event):
+            canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+            bottom_frame.lift()
+            
+        canvas.bind_all("<MouseWheel>", on_scroll)
