@@ -13,7 +13,7 @@ class MainMenu:
 
         # Load images
         self.logo_image = self.load_image("round_logo.png", (70, 70))
-        self.close_icon = self.load_image("close_icon.png", (30, 30))
+        self.close_icon = self.load_image("close_icon.png", (40, 40))
         self.flythru_icon = self.load_image("FLYTHRU.png", (255, 31))
         
         # Variable to track current content frame
@@ -69,19 +69,19 @@ class MainMenu:
                 top_bar,
                 image=self.close_icon,
                 text="",
-                width=40,
-                height=40,
+                width=45,
+                height=45,
                 fg_color="transparent",
                 hover_color=self.colors["hover_color"],
                 command=root.destroy
             )
-            close_button.place(relx=0.95, rely=0.5, anchor="center")
+            close_button.place(relx=0.969, rely=0.5, anchor="center")
         else:
             close_button = ctk.CTkButton(
                 top_bar,
                 text="X",
-                width=40,
-                height=40,
+                width=50,
+                height=50,
                 fg_color="transparent",
                 hover_color=self.colors["hover_color"],
                 command=root.destroy
@@ -90,7 +90,7 @@ class MainMenu:
             
     def create_side_menu(self, root):
         # Side menu frame
-        side_menu = ctk.CTkFrame(root, fg_color=self.colors["menu_bg"], width=280)
+        side_menu = ctk.CTkFrame(root, fg_color=self.colors["menu_bg"], width=200)
         side_menu.pack(side="left", fill="both", expand=False)
 
         # Create a frame for padding and organization
@@ -103,7 +103,7 @@ class MainMenu:
             menu_button = ctk.CTkButton(
                 buttons_frame,
                 text=item,
-                width=240,
+                width=180,
                 height=50,
                 fg_color=self.colors["main_color"],  
                 hover_color=self.colors["hover_color"], 
