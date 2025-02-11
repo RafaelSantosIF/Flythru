@@ -16,22 +16,17 @@ class MainMenu:
         self.close_icon = self.load_image("close_icon.png", (30, 30))
         self.flythru_icon = self.load_image("FLYTHRU.png", (255, 31))
         
-        # Add variable to track current content frame
+        # Variable to track current content frame
         self.current_content = None
         self.track_tela = 4
         
-        # Create others menu instance
+        # Menu instance
         self.storage_menu = StorageMenu()
-        self.carte_menu = CarteMenu()
-        
+        self.carte_menu = CarteMenu()        
 
-        # Create top bar
-        self.create_top_bar(root)
-
-        # Create side menu
-        self.create_side_menu(root)
-
-        # Create main content area
+        # Create Menu Areas
+        self.create_top_bar(root)        
+        self.create_side_menu(root)        
         self.create_main_content(root)
         
             
@@ -102,7 +97,7 @@ class MainMenu:
         buttons_frame = ctk.CTkFrame(side_menu, fg_color="transparent")
         buttons_frame.pack(pady=20, padx=20, fill="x")
 
-        # Menu items with updated styling
+        # Menu items 
         menu_items = ["Estoque 📦", "Pedidos 📝", "Fornecedores 🚚", "Cardapio 🍔"]
         for item in menu_items:
             menu_button = ctk.CTkButton(
@@ -128,7 +123,7 @@ class MainMenu:
         self.current_content = ctk.CTkFrame(root)
         self.current_content.pack(side="right", fill="both", expand=True)
         
-        # Default to storage menu
+        # Default to Cardapio menu
         self.carte_menu.create_main_content(self, self.current_content)    
         
     def menu_item_clicked(self, item):       

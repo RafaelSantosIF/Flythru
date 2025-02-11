@@ -32,7 +32,7 @@ class StorageMenu:
         search_bar.pack(fill="x")
 
         # Table container with white background
-        self.table_container = ctk.CTkFrame(main_content, fg_color=self.colors["table_bg"])  # Store as instance variable
+        self.table_container = ctk.CTkFrame(main_content, fg_color=self.colors["table_bg"]) 
         self.table_container.pack(fill="both", expand=True, padx=20, pady=(20, 10))
 
         # Table headers
@@ -66,7 +66,7 @@ class StorageMenu:
         add_row_button.pack(pady=(0, 20))
     
     def add_stock_row(self, root):
-        # Create a new toplevel window for adding a stock item
+        # Create a window for adding a stock item
         add_window = ctk.CTkToplevel()
         add_window.title("Cadastrar produto")
         add_window.geometry("300x500")
@@ -74,7 +74,7 @@ class StorageMenu:
         add_window.grab_set()
         add_window.focus_force()
         
-        # Create a main frame with orange background
+        # Create a main frame 
         main_frame = ctk.CTkFrame(
             add_window,
             fg_color="#FF8C00",  
@@ -91,10 +91,10 @@ class StorageMenu:
         )
         title.pack(pady=(20, 30))
 
-        # Input frame with dark background
+        # Input frame 
         input_frame = ctk.CTkFrame(
             main_frame,
-            fg_color="#1E1E1E",  # Dark background
+            fg_color="#1E1E1E",  
             corner_radius=5
         )
         input_frame.pack(padx=10, fill="x")
@@ -119,7 +119,7 @@ class StorageMenu:
         )
         id_entry.pack(padx=10, pady=(0, 10), fill="x")
 
-        # Nome (Name) input
+        # Nome input
         nome_label = ctk.CTkLabel(
             input_frame,
             text="Nome:",
@@ -208,8 +208,8 @@ class StorageMenu:
             font=self.fonts["button_font"],
             width=120,
             height=35,
-            fg_color="#FF0000",  # Red color
-            hover_color="#CC0000",  # Darker red for hover
+            fg_color="#FF0000", 
+            hover_color="#CC0000",  
             command=cancel
         )
         cancel_button.place(relx=0.25, rely=0.85, anchor="center")
@@ -220,7 +220,7 @@ class StorageMenu:
             font=self.fonts["button_font"],
             width=120,
             height=35,
-            fg_color=self.colors["second_color"],  # Green color
+            fg_color=self.colors["second_color"],  
             hover_color=self.colors["second_hover_color"],
             command=save
         )
@@ -230,7 +230,7 @@ class StorageMenu:
         try:
             # Find the number of existing rows in the table
             current_rows = len([child for child in self.table_container.grid_slaves() if int(child.grid_info()["row"]) > 0])
-            new_row = current_rows + 1  # Add 1 to account for header row
+            new_row = current_rows + 1  
             
             # Add new row to the table
             values = [id_produto, produto, quant, categoria]
@@ -269,7 +269,7 @@ class StorageMenu:
     def edit_row(self, row):
         # Get the current values from the row
         current_values = []
-        for col in range(4):  # Get values from the first 4 columns (excluding action column)
+        for col in range(4):  
             cell = [
                 widget for widget in self.table_container.grid_slaves()
                 if int(widget.grid_info()["row"]) == row and int(widget.grid_info()["column"]) == col
@@ -280,7 +280,7 @@ class StorageMenu:
         if len(current_values) == 4:
             id_produto, produto, quant, categoria = current_values
             
-            # Create edit window (similar to add_stock_row but with pre-filled values)
+            # Create edit window 
             edit_window = ctk.CTkToplevel(self.root)
             edit_window.title("Editar produto")
             edit_window.geometry("300x500")
@@ -288,7 +288,7 @@ class StorageMenu:
             edit_window.grab_set()
             edit_window.focus_force()
 
-            # Create a main frame with orange background
+            # Create a main frame 
             main_frame = ctk.CTkFrame(
                 edit_window,
                 fg_color="#FF8C00",

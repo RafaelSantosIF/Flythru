@@ -44,7 +44,7 @@ class LoginScreen:
         self.root.attributes('-fullscreen', not is_fullscreen)    
         
     def load_images(self, assets_path):
-        """Load images from the assets folder"""
+        #Load images from the assets folder
         try:
             # Construct full paths using correct path joining
             logo_path = os.path.join(assets_path, "logo.png")
@@ -98,13 +98,12 @@ class LoginScreen:
         self.right_frame.grid(row=0, column=1, sticky="nsew")
         
     def setup_left_frame(self):
-        # Configure grid weights to push content to top 40%
-        # First row (0) gets more weight to center content in upper portion
-        self.left_frame.grid_rowconfigure(0, weight=3)  # More weight pushes content down from top
-        self.left_frame.grid_rowconfigure(1, weight=0)  # No weight for content rows to keep them compact
+        # Configure grid weights      
+        self.left_frame.grid_rowconfigure(0, weight=3)  
+        self.left_frame.grid_rowconfigure(1, weight=0) 
         self.left_frame.grid_rowconfigure(2, weight=1)
-        self.left_frame.grid_rowconfigure(3, weight=3)  # More weight for bottom space
-        self.left_frame.grid_rowconfigure(4, weight=1)  # Space for bottom button
+        self.left_frame.grid_rowconfigure(3, weight=3)  
+        self.left_frame.grid_rowconfigure(4, weight=1)  
         self.left_frame.grid_columnconfigure(0, weight=1)
         
         # Create a container frame for the main content to keep it together
@@ -148,9 +147,9 @@ class LoginScreen:
             font=self.fonts["welcome_font"],
             text_color="white"
         )
-        welcome_label.pack(pady=(20, 20))  # Slightly more padding after welcome text
+        welcome_label.pack(pady=(20, 20))  
         
-        # Bottom button (kept at the bottom)
+        # Bottom button 
         if self.bottom_image:
             bottom_button = ctk.CTkButton(
                 self.left_frame,

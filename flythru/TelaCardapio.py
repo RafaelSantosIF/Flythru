@@ -8,8 +8,8 @@ class CarteMenu:
         self.table_container = None
         self.total_price = 0.0
         self.total_label = None
-        self.order_items = []  # Initialize order items list
-        self.order_id = 1  # Initialize order ID counter
+        self.order_items = [] 
+        self.order_id = 1  
         
     def load_image(self, filename, size):
         current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -104,7 +104,7 @@ class CarteMenu:
         headers_frame = ctk.CTkFrame(content_frame, fg_color="transparent")
         headers_frame.pack(fill="x", padx=20, pady=10)
 
-        # Column labels with grid
+        # Column labels 
         column_widths = [50, 180, 50, 100]
         headers = ["ID", "Item", "Qnt.", "Preço"]
 
@@ -118,7 +118,7 @@ class CarteMenu:
             )
             header_label.grid(row=0, column=i, sticky="w", padx=5)
 
-        # Items frame with grid
+        # Items frame 
         items_frame = ctk.CTkFrame(content_frame, fg_color="transparent")
         items_frame.pack(fill="both", expand=True, padx=20)
 
@@ -142,7 +142,7 @@ class CarteMenu:
             )
             delete_button.grid(row=0, column=4, padx=5)
 
-        # Bottom frame for total and buttons
+        # Bottom frame 
         bottom_frame = ctk.CTkFrame(order_screen, fg_color="white", height=120)
         bottom_frame.pack(side="bottom", fill="x")
 
