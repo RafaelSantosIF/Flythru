@@ -3,7 +3,7 @@ import customtkinter as ctk
 from PIL import Image
 import os
 import Dictionary as dc
-from TelaCardapio import Cartemenu
+from MainMenu import MainMenu
 
 class LoginScreen:
     def __init__(self):
@@ -15,9 +15,12 @@ class LoginScreen:
         self.root = ctk.CTk()
         self.root.title("FlyThru - Login")
         self.root.geometry(self.root.geometry("{0}x{1}+0+0".format(self.root.winfo_screenwidth(), self.root.winfo_screenheight())))
-        
+        self.root.attributes('-fullscreen', True)    
+           
         # Initialize fonts and colors AFTER root creation
         self.fonts, self.colors = dc.init_fonts(self.root)
+        
+        self.root.bind('<Escape>', self.toggle_fullscreen)
         
         # Get the current script's directory
         current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -35,6 +38,10 @@ class LoginScreen:
         self.create_frames()
         self.setup_left_frame()
         self.setup_right_frame()
+        
+    def toggle_fullscreen(self, event=None):
+        is_fullscreen = self.root.attributes('-fullscreen')
+        self.root.attributes('-fullscreen', not is_fullscreen)    
         
     def load_images(self, assets_path):
         """Load images from the assets folder"""
@@ -232,9 +239,10 @@ class LoginScreen:
         menu_window = ctk.CTkToplevel()
         menu_window.title("FlyThru - Menu")
         menu_window.geometry("{0}x{1}+0+0".format(self.root.winfo_screenwidth(), self.root.winfo_screenheight()))
-        
+        menu_window.attributes('-fullscreen', True)
+         
         # Initialize the Cartemenu in the new window
-        menu_screen = Cartemenu(menu_window)
+        menu_screen = MainMenu(menu_window)
         
         # When menu window is closed, show login window again
         def on_menu_close():
