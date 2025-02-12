@@ -88,6 +88,7 @@ class StorageMenu:
         add_window.title("Cadastrar produto")
         add_window.geometry("300x500")
         add_window.resizable(False, False)
+        add_window.overrideredirect(True)
         add_window.grab_set()
         add_window.focus_force()
         
@@ -98,6 +99,15 @@ class StorageMenu:
             corner_radius=10
         )
         main_frame.pack(padx=10, pady=10, fill="both", expand=True)
+        
+        # Create a title bar frame for dragging
+        title_bar = ctk.CTkFrame(
+            main_frame,
+            fg_color="transparent",  
+            height=20,
+            corner_radius=0
+        )
+        title_bar.pack(fill="x", padx=2, pady=0)
 
         # Title
         title = ctk.CTkLabel(
@@ -106,7 +116,11 @@ class StorageMenu:
             font=ctk.CTkFont(family="Verdana", size=16, weight="bold"),
             text_color="white"
         )
-        title.pack(pady=(20, 30))
+        title.pack(pady=(5, 20))
+        
+        # Add dragging functionality
+        from MainMenu import WindowDragging
+        WindowDragging(add_window, title_bar)
 
         # Input frame 
         input_frame = ctk.CTkFrame(
@@ -302,6 +316,7 @@ class StorageMenu:
             edit_window.title("Editar produto")
             edit_window.geometry("300x450")
             edit_window.resizable(False, False)
+            edit_window.overrideredirect(True)
             edit_window.grab_set()
             edit_window.focus_force()
 
@@ -311,7 +326,16 @@ class StorageMenu:
                 fg_color="#FF8C00",
                 corner_radius=10
             )
-            main_frame.pack(padx=10, pady=10, fill="both", expand=True)
+            main_frame.pack(padx=10, pady=(10, 10), fill="both", expand=True)
+            
+            # Create a title bar frame for dragging
+            title_bar = ctk.CTkFrame(
+                main_frame,
+                fg_color="transparent",  
+                height=20,
+                corner_radius=0
+            )
+            title_bar.pack(fill="x", padx=2, pady=0)
 
             # Title
             title = ctk.CTkLabel(
@@ -320,7 +344,11 @@ class StorageMenu:
                 font=ctk.CTkFont(family="Verdana", size=16, weight="bold"),
                 text_color="white"
             )
-            title.pack(pady=(15, 20))
+            title.pack(pady=(5, 15))
+            
+            # Add dragging functionality
+            from MainMenu import WindowDragging
+            WindowDragging(edit_window, title_bar)
 
             # Input frame
             input_frame = ctk.CTkFrame(

@@ -65,6 +65,7 @@ class CarteMenu:
         order_screen.title("FlyThru - Comanda")
         order_screen.geometry("500x600")
         order_screen.resizable(False, False)
+        order_screen.overrideredirect(True)
         order_screen.grab_set()
         order_screen.focus_force()
 
@@ -94,7 +95,11 @@ class CarteMenu:
             font=ctk.CTkFont(family="Verdana", size=16, weight="bold"),
             text_color="white"
         )
-        order_label.pack(side="left", padx=10)
+        order_label.pack(fill="x", side="left", padx=10)
+        
+        # Add dragging functionality
+        from MainMenu import WindowDragging
+        WindowDragging(order_screen, header_frame)
 
         # Main content frame
         content_frame = ctk.CTkFrame(order_screen, fg_color="#2b2b2b")

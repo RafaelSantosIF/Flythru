@@ -157,7 +157,43 @@ class MainMenu:
                 self.track_tela = 4
             else:
                pass          
-    
+
+class WindowDragging:
+    def __init__(self, window, drag_area):
+        self.window = window
+        self.drag_area = drag_area
+        
+        # Bind mouse events to the drag area
+        self.drag_area.bind("<Button-1>", self.start_dragging)
+        self.drag_area.bind("<B1-Motion>", self.drag_window)
+        self.drag_area.bind("<ButtonRelease-1>", self.stop_dragging)
+        
+        # Initialize dragging state
+        self.x = 0
+        self.y = 0
+        self.dragging = False
+        
+    def start_dragging(self, event):
+        self.x = event.x
+        self.y = event.y
+        self.dragging = True
+        
+    def drag_window(self, event):
+        if self.dragging:
+            # Calculate new position
+            deltax = event.x - self.x
+            deltay = event.y - self.y
+            
+            # Get the new window position
+            new_x = self.window.winfo_x() + deltax
+            new_y = self.window.winfo_y() + deltay
+            
+            # Move the window
+            self.window.geometry(f"+{new_x}+{new_y}")
+        
+    def stop_dragging(self, event):
+        self.dragging = False
+            
 def main():
     root = ctk.CTk()
     root.title("FlyThru - Menu")
