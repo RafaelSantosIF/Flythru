@@ -114,7 +114,7 @@ class MainMenu:
                 width=180,
                 height=50,
                 fg_color=self.colors["main_color"] if item != "Cardapio 🍔" else self.colors["selected_color"],  
-                hover_color=self.colors["hover_color"],
+                hover_color=self.colors["hover_color"] if item != "Cardapio 🍔" else self.colors["selected_color"],
                 text_color="white",
                 font=self.fonts["menu_font"],
                 corner_radius=10,
@@ -139,9 +139,9 @@ class MainMenu:
         # Update colors of all buttons
         for item, button in self.menu_buttons.items():
             if item == selected_item:
-                button.configure(fg_color=self.colors["selected_color"])  
+                button.configure(fg_color=self.colors["selected_color"], hover_color=self.colors["selected_color"])                 
             else:
-                button.configure(fg_color=self.colors["main_color"])  
+                button.configure(fg_color=self.colors["main_color"], hover_color=self.colors["hover_color"])  
         
     def menu_item_clicked(self, item):
         # Update button colors
