@@ -290,7 +290,7 @@ class CarteMenu:
                 add_button.pack(pady=5)
 
          # Bottom frame
-        bottom_frame = ctk.CTkFrame(main_content, fg_color="#D3D3D3", height=50)
+        bottom_frame = ctk.CTkFrame(main_content, fg_color="#D3D3D3", height=50, corner_radius=0 )
         bottom_frame.pack(side="bottom", fill="x")
         bottom_frame.lift()  
         

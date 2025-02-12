@@ -99,7 +99,7 @@ class LoginScreen:
         
     def setup_left_frame(self):
         # Configure grid weights      
-        self.left_frame.grid_rowconfigure(0, weight=3)  
+        self.left_frame.grid_rowconfigure(0, weight=4)  
         self.left_frame.grid_rowconfigure(1, weight=0) 
         self.left_frame.grid_rowconfigure(2, weight=1)
         self.left_frame.grid_rowconfigure(3, weight=3)  
@@ -123,7 +123,7 @@ class LoginScreen:
                 text="[Logo]",
                 font=self.fonts["logo_font"]
             )
-        logo_label.pack(pady=(0, 10)) 
+        logo_label.pack(pady=(10, 10)) 
         
         # FLYTHRU logo
         if self.flythru_image:
@@ -138,7 +138,7 @@ class LoginScreen:
                 text="[FLYTHRU]",
                 font=self.fonts["logo_font"]
             )
-        logo_label.pack(pady=(0, 10))  
+        logo_label.pack(pady=(10, 10))  
         
         # Welcome text
         welcome_label = ctk.CTkLabel(
@@ -147,7 +147,7 @@ class LoginScreen:
             font=self.fonts["welcome_font"],
             text_color="white"
         )
-        welcome_label.pack(pady=(20, 20))  
+        welcome_label.pack(pady=(30, 20))  
         
         # Bottom button 
         if self.bottom_image:

@@ -50,7 +50,12 @@ class MainMenu:
 
     def create_top_bar(self, root):
         # Top bar frame
-        top_bar = ctk.CTkFrame(root, fg_color=self.colors["main_color"], height=80)
+        top_bar = ctk.CTkFrame(
+            root, 
+            fg_color=self.colors["main_color"], 
+            height=80,
+            corner_radius=0 
+            )
         top_bar.pack(side="top", fill="x")
 
         # Logo
@@ -90,7 +95,7 @@ class MainMenu:
             
     def create_side_menu(self, root):
         # Side menu frame
-        side_menu = ctk.CTkFrame(root, fg_color=self.colors["menu_bg"], width=200)
+        side_menu = ctk.CTkFrame(root, fg_color=self.colors["menu_bg"], width=200, corner_radius=0 )
         side_menu.pack(side="left", fill="both", expand=False)
 
         # Create a frame for padding and organization
