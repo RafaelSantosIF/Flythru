@@ -1,16 +1,33 @@
 import customtkinter as ctk
+from PIL import Image
+import os
 import Dictionary as dc
 
 class StorageMenu:
     def __init__(self):
         self.table_container = None
         
+    def load_image(self, filename, size):
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        assets_dir = os.path.join(current_dir, "assets")
+        image_path = os.path.join(assets_dir, filename)
+        if os.path.exists(image_path):
+            print(f"{filename} file found!")
+            return ctk.CTkImage(
+                light_image=Image.open(image_path),
+                dark_image=Image.open(image_path),
+                size=size
+            )
+        else:
+            print(f"{filename} file not found at: {image_path}")
+            return None    
+        
     def create_main_content(self, main_menu, root):
         # Use main_menu to access fonts and colors
         self.fonts = main_menu.fonts
         self.colors = main_menu.colors
-        self.root = root
-
+        self.root = root       
+        
         # Main content frame
         main_content = ctk.CTkFrame(root, fg_color=self.colors["dark_bg"], width=800)
         main_content.pack(side="right", fill="both", expand=True)
@@ -283,7 +300,7 @@ class StorageMenu:
             # Create edit window 
             edit_window = ctk.CTkToplevel(self.root)
             edit_window.title("Editar produto")
-            edit_window.geometry("300x500")
+            edit_window.geometry("300x450")
             edit_window.resizable(False, False)
             edit_window.grab_set()
             edit_window.focus_force()
@@ -395,27 +412,101 @@ class StorageMenu:
                 
                 edit_window.destroy()
 
-            # Buttons
+            def delete_row():
+                # Create confirmation dialog
+                confirm = ctk.CTkToplevel(edit_window)
+                confirm.title("Confirmar exclusão")
+                confirm.geometry("250x150")
+                confirm.resizable(False, False)
+                confirm.grab_set()
+                
+                # Center the confirmation window relative to the edit window
+                x = edit_window.winfo_x() + (edit_window.winfo_width() // 2) - (300 // 2)
+                y = edit_window.winfo_y() + (edit_window.winfo_height() // 2) - (150 // 2)
+                confirm.geometry(f"250x150+{x}+{y}")
+
+                # Confirmation message
+                msg = ctk.CTkLabel(
+                    confirm,
+                    text="Tem certeza que deseja excluir este item?",
+                    font=self.fonts["input_font"],
+                    wraplength=250
+                )
+                msg.pack(pady=20)
+
+                # Buttons frame
+                btn_frame = ctk.CTkFrame(confirm, fg_color="transparent")
+                btn_frame.pack(pady=10)
+
+                def confirm_delete():
+                    # Remove all widgets in the row
+                    for widget in self.table_container.grid_slaves(row=row):
+                        widget.destroy()
+                    confirm.destroy()
+                    edit_window.destroy()
+
+                # Confirmation buttons
+                ctk.CTkButton(
+                    btn_frame,
+                    text="Não",
+                    font=self.fonts["button_font"],
+                    width=100,
+                    fg_color=self.colors["second_color"],
+                    hover_color=self.colors["second_hover_color"],
+                    command=confirm.destroy
+                ).pack(side="left", padx=5)
+
+                ctk.CTkButton(
+                    btn_frame,
+                    text="Sim",
+                    font=self.fonts["button_font"],
+                    width=100,
+                    fg_color="#FF0000",
+                    hover_color="#CC0000",
+                    command=confirm_delete
+                ).pack(side="left", padx=5)
+            
+            # Buttons frame
+            buttons_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
+            buttons_frame.pack(side="bottom", pady=(5, 15), fill="x", padx=20)
+
+            trash_icon = self.load_image("trash.png", size=(24, 24))
+            
+            # Delete button 
+            delete_button = ctk.CTkButton(
+                buttons_frame,
+                text="",  
+                image=trash_icon,
+                width=40,  
+                height=35,
+                fg_color="transparent", 
+                hover_color=None,
+                command=delete_row
+            )
+            delete_button.pack(side="left", padx=5)
+            
+            # Cancel button
             cancel_button = ctk.CTkButton(
-                main_frame,
+                buttons_frame,
                 text="Cancelar",
                 font=self.fonts["button_font"],
-                width=120,
+                width=80,
                 height=35,
                 fg_color="#FF0000",
                 hover_color="#CC0000",
                 command=edit_window.destroy
             )
-            cancel_button.place(relx=0.25, rely=0.85, anchor="center")
+            cancel_button.pack(side="left", padx=5)            
 
+            # Save button
             save_button = ctk.CTkButton(
-                main_frame,
+                buttons_frame,
                 text="Salvar",
                 font=self.fonts["button_font"],
-                width=120,
+                width=80,
                 height=35,
                 fg_color=self.colors["second_color"],
                 hover_color=self.colors["second_hover_color"],
                 command=save_edit
             )
-            save_button.place(relx=0.75, rely=0.85, anchor="center")    
+            save_button.pack(side="right", padx=5)    
