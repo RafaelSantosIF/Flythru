@@ -52,6 +52,7 @@ def init_fonts(root):
         "hover_color": "#E55515",
         "second_color" : "#00FF1E",
         "second_hover_color": "#0B951B",
+        "selected_color": "gray",
         "dark_bg": "#1E1E1E",
         "link_color_login": "#4A90E2",        
         "menu_bg": "white",  

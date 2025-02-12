@@ -20,6 +20,9 @@ class MainMenu:
         self.current_content = None
         self.track_tela = 4
         
+        # Dictionary to store menu buttons
+        self.menu_buttons = {}
+        
         # Menu instance
         self.storage_menu = StorageMenu()
         self.carte_menu = CarteMenu()        
@@ -105,19 +108,20 @@ class MainMenu:
         # Menu items 
         menu_items = ["Estoque 📦", "Pedidos 📝", "Fornecedores 🚚", "Cardapio 🍔"]
         for item in menu_items:
-            menu_button = ctk.CTkButton(
+            button = ctk.CTkButton(
                 buttons_frame,
                 text=item,
                 width=180,
                 height=50,
-                fg_color=self.colors["main_color"],  
-                hover_color=self.colors["hover_color"], 
+                fg_color=self.colors["main_color"] if item != "Cardapio 🍔" else self.colors["selected_color"],  
+                hover_color=self.colors["hover_color"],
                 text_color="white",
                 font=self.fonts["menu_font"],
-                corner_radius=10,  # Rounded corners
+                corner_radius=10,
                 command=lambda x=item: self.menu_item_clicked(x)
             )
-            menu_button.pack(pady=5)
+            button.pack(pady=5)
+            self.menu_buttons[item] = button
             
     def create_main_content(self, root):
         # Destroy existing content if it exists
@@ -131,7 +135,18 @@ class MainMenu:
         # Default to Cardapio menu
         self.carte_menu.create_main_content(self, self.current_content)    
         
-    def menu_item_clicked(self, item):       
+    def update_button_colors(self, selected_item):
+        # Update colors of all buttons
+        for item, button in self.menu_buttons.items():
+            if item == selected_item:
+                button.configure(fg_color=self.colors["selected_color"])  
+            else:
+                button.configure(fg_color=self.colors["main_color"])  
+        
+    def menu_item_clicked(self, item):
+        # Update button colors
+        self.update_button_colors(item)
+        
         # Switch based on menu item
         if item == "Estoque 📦":
             if self.track_tela != 1:
@@ -140,8 +155,6 @@ class MainMenu:
                 self.current_content.pack(side="right", fill="both", expand=True) 
                 self.storage_menu.create_main_content(self, self.current_content)
                 self.track_tela = 1
-            else:
-                pass    
         elif item == "Pedidos 📝":
             # Add orders menu when implemented
             pass
@@ -154,9 +167,7 @@ class MainMenu:
                 self.current_content = ctk.CTkFrame(self.root)
                 self.current_content.pack(side="right", fill="both", expand=True) 
                 self.carte_menu.create_main_content(self, self.current_content)
-                self.track_tela = 4
-            else:
-               pass          
+                self.track_tela = 4     
 
 class WindowDragging:
     def __init__(self, window, drag_area):
