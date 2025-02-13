@@ -4,6 +4,7 @@ import os
 import Dictionary as dc
 from TelaEstoque import StorageMenu
 from TelaCardapio import CarteMenu
+from TelaPedidos import OrdersMenu
 
 class MainMenu:
     def __init__(self, root):
@@ -25,7 +26,8 @@ class MainMenu:
         
         # Menu instance
         self.storage_menu = StorageMenu()
-        self.carte_menu = CarteMenu()        
+        self.carte_menu = CarteMenu()
+        self.orders_menu = OrdersMenu()        
 
         # Create Menu Areas
         self.create_top_bar(root)        
@@ -156,8 +158,12 @@ class MainMenu:
                 self.storage_menu.create_main_content(self, self.current_content)
                 self.track_tela = 1
         elif item == "Pedidos 📝":
-            # Add orders menu when implemented
-            pass
+            if self.track_tela != 2:
+                self.current_content.destroy()
+                self.current_content = ctk.CTkFrame(self.root)
+                self.current_content.pack(side="right", fill="both", expand=True) 
+                self.orders_menu.create_main_content(self, self.current_content)
+                self.track_tela = 2
         elif item == "Fornecedores 🚚":
             # Add suppliers menu when implemented
             pass
