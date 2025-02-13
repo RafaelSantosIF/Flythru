@@ -287,7 +287,7 @@ class StorageMenu:
                 font=self.fonts["input_font"],
                 command=lambda r=new_row: self.edit_row(r)  # Pass the row number to edit_row method
             )
-            edit_button.grid(row=new_row, column=4, padx=10, pady=5, sticky="ew")  # Column 4 is the Action column
+            edit_button.grid(row=new_row, column=4, padx=2, pady=5, sticky="ew")  # Column 4 is the Action column
             
             # Configure the new row
             self.table_container.grid_rowconfigure(new_row, pad=3)
@@ -446,6 +446,7 @@ class StorageMenu:
                 confirm.title("Confirmar exclusão")
                 confirm.geometry("250x150")
                 confirm.resizable(False, False)
+                confirm.overrideredirect(True)
                 confirm.grab_set()
                 
                 # Center the confirmation window relative to the edit window
