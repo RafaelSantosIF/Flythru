@@ -279,7 +279,7 @@ class StorageMenu:
             edit_button = ctk.CTkButton(
                 self.table_container,
                 text="Editar",
-                width=60,
+                width=30,
                 height=30,
                 fg_color=self.colors["main_color"],
                 hover_color=self.colors["hover_color"],
@@ -287,7 +287,7 @@ class StorageMenu:
                 font=self.fonts["input_font"],
                 command=lambda r=new_row: self.edit_row(r)  # Pass the row number to edit_row method
             )
-            edit_button.grid(row=new_row, column=4, padx=2, pady=5, sticky="ew")  # Column 4 is the Action column
+            edit_button.grid(row=new_row, column=4, padx=2, pady=5, sticky="ns")  
             
             # Configure the new row
             self.table_container.grid_rowconfigure(new_row, pad=3)

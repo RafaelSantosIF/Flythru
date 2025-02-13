@@ -53,7 +53,7 @@ class SupplierMenu:
         self.table_container.pack(fill="both", expand=True, padx=20, pady=(20, 10))
 
         # Table headers
-        headers = ["N°", "Data", "Cliente", "Valor (R$)", "Pagamento", " ", " "]
+        headers = ["Código", "Nome", "CNPJ", "Número", "Email", " "]
         for i, header in enumerate(headers):
             header_label = ctk.CTkLabel(
                 self.table_container,
@@ -275,6 +275,14 @@ class SupplierMenu:
             current_rows = len([child for child in self.table_container.grid_slaves() if int(child.grid_info()["row"]) > 0])
             new_row = current_rows + 1  
             
+            # Configure grid columns - Add this to maintain consistent column widths
+            self.table_container.grid_columnconfigure(0, weight=1)  # N°
+            self.table_container.grid_columnconfigure(1, weight=2)  # Nome
+            self.table_container.grid_columnconfigure(2, weight=2)  # CNPJ
+            self.table_container.grid_columnconfigure(3, weight=2)  # Telefone
+            self.table_container.grid_columnconfigure(4, weight=2)  # Email
+            self.table_container.grid_columnconfigure(5, weight=1)  # Actions column
+            
             # Add new row to the table
             values = [cdg_supplier, supplier, cnpj, telefone, email]
             for col, value in enumerate(values):
@@ -285,38 +293,46 @@ class SupplierMenu:
                     fg_color="transparent",
                     text_color="black"
                 )
-                row_label.grid(row=new_row, column=col, padx=8, pady=5, sticky="ew")
+                row_label.grid(row=new_row, column=col, padx=8, pady=5, sticky="we")
+            
+            # Create a frame to hold both buttons 
+            button_frame = ctk.CTkFrame(
+                self.table_container,
+                fg_color="transparent",
+                width=50,  
+                height=35  
+            )
+            button_frame.grid(row=new_row, column=5, padx=(8, 2), pady=(5), sticky="we")
+            button_frame.grid_propagate(False)  # Prevent frame from resizing
                 
-            edit_icon = self.load_image("edit_icon.png", size=(30, 30))
-            printer = self.load_image("printer.png", size=(30, 30))
+            edit_icon = self.load_image("edit_icon.png", size=(25, 25))
+            printer = self.load_image("printer.png", size=(25, 25))
             
             edit_button = ctk.CTkButton(
-                self.table_container,
-                text=" ",
+                button_frame,
+                text="",
                 image=edit_icon,
-                width=30,
-                height=30,
+                width=35,
+                height=35,
                 fg_color="transparent",
-                hover_color="transparent",                
-                text_color="white",
-                font=self.fonts["input_font"],
+                hover_color="#E5E5E5",
+                corner_radius=5,               
                 command=lambda r=new_row: self.edit_row(r)  
             )
-            edit_button.grid(row=new_row, column=5, padx=2, pady=5, sticky="ew")
+            edit_button.pack(side="left", padx=(0, 2))
             
             print_button = ctk.CTkButton(
-                self.table_container,
-                text=" ",
+                button_frame,
+                text="",
                 image=printer,
-                width=30,
-                height=30,
+                width=35,
+                height=35,
                 fg_color="transparent",
-                hover_color="transparent",                
-                text_color="white",
-                font=self.fonts["input_font"],
+                hover_color="#E5E5E5",
+                corner_radius=5,               
                 command=None  
             )
-            print_button.grid(row=new_row, column=6, padx=2, pady=5, sticky="ew")    
+            print_button.pack(side="left", padx=(2, 0))
                 
         except Exception as e:
             print(f"Error adding row to table: {e}")
