@@ -1,11 +1,19 @@
 import customtkinter as ctk
+from tkinter import messagebox
 from PIL import Image
 import os
 import Dictionary as dc
+from api.estoque.estoque import Estoque
+
+
+
+estoque = Estoque()
 
 class StorageMenu:
     def __init__(self):
         self.table_container = None
+        self.produtos = []
+        
         
     def load_image(self, filename, size):
         current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -49,7 +57,7 @@ class StorageMenu:
         search_bar.pack(fill="x")
 
         # Table container with white background
-        self.table_container = ctk.CTkFrame(main_content, fg_color=self.colors["table_bg"]) 
+        self.table_container = ctk.CTkFrame(main_content, fg_color=self.colors["table_bg"])
         self.table_container.pack(fill="both", expand=True, padx=20, pady=(20, 10))
 
         # Table headers
@@ -81,7 +89,31 @@ class StorageMenu:
             command=lambda: self.add_stock_row(root)  # Changed to use instance method
         )
         add_row_button.pack(pady=(0, 20))
-    
+        self.load_data()
+
+    def update_table(self):
+        # Limpa as linhas existentes (mantém os headers)
+        for child in self.table_container.winfo_children():
+            child.destroy()
+
+        # Adiciona as novas linhas com os dados carregados
+        for product in self.produtos:
+            self.add_row_to_table(*product)
+
+    def load_data(self):
+        try:
+            products = estoque.listar_tudo()
+            if products:
+                self.produtos = products # Guarda os produtos carregados
+                self.update_table() # Chama a função para atualizar a tabela
+            else:
+                print("Não tem produtos.")
+                # Lidar com a tabela vazia (opcional)
+
+        except Exception as e:
+            print(f"Error loading data: {e}")
+            messagebox.showerror("Error", f"Falha ao carregar produtos: {e}")
+
     def add_stock_row(self, root):
         # Create a window for adding a stock item
         add_window = ctk.CTkToplevel()
@@ -91,7 +123,7 @@ class StorageMenu:
         add_window.overrideredirect(True)
         add_window.grab_set()
         add_window.focus_force()
-        
+
         # Create a main frame 
         main_frame = ctk.CTkFrame(
             add_window,
@@ -131,7 +163,7 @@ class StorageMenu:
         input_frame.pack(padx=10, fill="x")
 
         # ID input
-        id_label = ctk.CTkLabel(
+        '''id_label = ctk.CTkLabel(
             input_frame,
             text="ID:",
             font=self.fonts["input_font"],
@@ -148,7 +180,7 @@ class StorageMenu:
             text_color="white",
             border_color="gray"
         )
-        id_entry.pack(padx=10, pady=(0, 10), fill="x")
+        id_entry.pack(padx=10, pady=(0, 10), fill="x")'''
 
         # Nome input
         nome_label = ctk.CTkLabel(
@@ -219,18 +251,20 @@ class StorageMenu:
 
         def save():
             # Get values
-            id_produto = id_entry.get().strip()
+           # id_produto = id_entry.get().strip()
             produto = nome_entry.get().strip()
             quant = quant_entry.get().strip()
             categoria = categoria_var.get()
 
-            # Validate inputs
-            if not produto or not id_produto:
-                return  # Add error handling if needed
-
-            # Add row to the table
-            self.add_row_to_table(id_produto, produto, quant, categoria)
-            add_window.destroy()
+            
+            try:
+                estoque.save(produto, quant, categoria)  # Chama a função save do Estoque
+                self.load_data() # Recarrega os dados e atualiza a tabela
+                add_window.destroy() # Fecha a janela de cadastro após salvar
+                messagebox.showinfo("Sucesso", "Produto cadastrado com sucesso!")
+            except Exception as e:
+                messagebox.showerror("Erro", f"Erro ao cadastrar produto: {e}")
+                print(f"Erro ao salvar no banco: {e}")
 
         # Create buttons directly in the main_frame
         cancel_button = ctk.CTkButton(
@@ -264,7 +298,7 @@ class StorageMenu:
             new_row = current_rows + 1  
             
             # Add new row to the table
-            values = [id_produto, produto, quant, categoria]
+            values = [id_produto, produto,quant, categoria]
             for col, value in enumerate(values):
                 row_label = ctk.CTkLabel(
                     self.table_container,
@@ -358,7 +392,7 @@ class StorageMenu:
             )
             input_frame.pack(padx=10, fill="x")
 
-            # ID input (disabled since it's the identifier)
+            '''# ID input (disabled since it's the identifier)
             id_label = ctk.CTkLabel(input_frame, text="ID:", font=self.fonts["input_font"], text_color="white")
             id_label.pack(padx=5, pady=(5, 0), anchor="w")
             id_entry = ctk.CTkEntry(
@@ -371,7 +405,7 @@ class StorageMenu:
             )
             id_entry.insert(0, id_produto)
             id_entry.configure(state="disabled")
-            id_entry.pack(padx=5, pady=(0, 5), fill="x")
+            id_entry.pack(padx=5, pady=(0, 5), fill="x")'''
 
             # Name input
             nome_label = ctk.CTkLabel(input_frame, text="Nome:", font=self.fonts["input_font"], text_color="white")
@@ -422,23 +456,42 @@ class StorageMenu:
 
             def save_edit():
                 # Update the row in the table
-                new_values = [
-                    id_entry.get(),
-                    nome_entry.get(),
-                    quant_entry.get(),
-                    categoria_var.get()
-                ]
                 
-                # Update labels in the table
-                for col, value in enumerate(new_values):
-                    cell = [
-                        widget for widget in self.table_container.grid_slaves()
-                        if int(widget.grid_info()["row"]) == row and int(widget.grid_info()["column"]) == col
-                    ]
-                    if cell:
-                        cell[0].configure(text=str(value))
-                
-                edit_window.destroy()
+                   # id_entry.get(),
+                produto = nome_entry.get(),
+                quant = quant_entry.get(),
+                categoria = categoria_var.get()
+                try:
+                    # Converte quantidade para o tipo correto (int ou float)
+                    try:
+                        quant = int(quant_entry.get())
+                    except ValueError:
+                        quant = float(quant_entry.get())
+
+                    if estoque.update(id_produto, nome_entry.get(), quant, categoria_var.get()):
+                        # Atualiza a linha na tabela (como você já faz)
+                        new_values = [id_produto, nome_entry.get(), quant, categoria_var.get()] #inclui o id_produto
+                        for col, value in enumerate(new_values):
+                            cell = [
+                                widget for widget in self.table_container.grid_slaves()
+                                if int(widget.grid_info()["row"]) == row and int(widget.grid_info()["column"]) == col
+                            ]
+                            if cell:
+                                cell[0].configure(text=str(value))
+
+                        edit_window.destroy()
+                        self.load_data()
+                        messagebox.showinfo("Sucesso", "Produto atualizado com sucesso!")
+                    else:
+                        messagebox.showerror("Erro", "Falha ao atualizar o produto no banco de dados.")
+
+                except ValueError:
+                    messagebox.showerror("Erro", "Quantidade inválida. Deve ser um número.")
+                except Exception as e:
+                    messagebox.showerror("Erro", f"Erro ao atualizar produto: {e}")
+                    print(f"Erro na função save_edit: {e}") # Para debug
+
+
 
             def delete_row():
                 # Create confirmation dialog
@@ -469,10 +522,14 @@ class StorageMenu:
 
                 def confirm_delete():
                     # Remove all widgets in the row
-                    for widget in self.table_container.grid_slaves(row=row):
-                        widget.destroy()
-                    confirm.destroy()
-                    edit_window.destroy()
+                    if estoque.delete(id_produto):
+                        for widget in self.table_container.grid_slaves(row=row):
+                            widget.destroy()
+                        confirm.destroy()
+                        edit_window.destroy()
+                        self.load_data()
+                    else:
+                        messagebox.showerror("Erro", "Falha ao excluir o produto do banco de dados.")
 
                 # Confirmation buttons
                 ctk.CTkButton(
@@ -538,4 +595,6 @@ class StorageMenu:
                 hover_color=self.colors["second_hover_color"],
                 command=save_edit
             )
-            save_button.pack(side="right", padx=5)    
+            save_button.pack(side="right", padx=5)   
+
+
