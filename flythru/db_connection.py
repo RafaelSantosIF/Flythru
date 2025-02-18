@@ -6,7 +6,7 @@ class Database:
             self.conexao = mysql.connector.connect(
                 host="localhost",
                 user="root",
-                password="Alan3640.",
+                password="aluno",
                 database="backfood"
             )
             self.cursor = self.conexao.cursor()
