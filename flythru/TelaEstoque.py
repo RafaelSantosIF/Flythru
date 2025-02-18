@@ -94,7 +94,8 @@ class StorageMenu:
     def update_table(self):
         # Limpa as linhas existentes (mantém os headers)
         for child in self.table_container.winfo_children():
-            child.destroy()
+            if child.grid_info()["row"] > 0:  # Mantém os cabeçalhos (linha 0)
+                child.destroy()
 
         # Adiciona as novas linhas com os dados carregados
         for product in self.produtos:
@@ -293,12 +294,15 @@ class StorageMenu:
 
     def add_row_to_table(self, id_produto, produto, quant, categoria):
         try:
-            # Find the number of existing rows in the table
-            current_rows = len([child for child in self.table_container.grid_slaves() if int(child.grid_info()["row"]) > 0])
-            new_row = current_rows + 1  
-            
-            # Add new row to the table
-            values = [id_produto, produto,quant, categoria]
+            # Encontra o número de linhas de dados existentes (exclui o cabeçalho)
+            current_rows = len([
+                child for child in self.table_container.grid_slaves()
+                if int(child.grid_info()["row"]) > 0
+            ])
+
+            new_row = current_rows + 1  # Linha *após* o cabeçalho
+
+            values = [id_produto, produto, quant, categoria]
             for col, value in enumerate(values):
                 row_label = ctk.CTkLabel(
                     self.table_container,
