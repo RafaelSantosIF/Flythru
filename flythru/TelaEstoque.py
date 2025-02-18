@@ -6,7 +6,6 @@ import Dictionary as dc
 from api.estoque.estoque import Estoque
 
 
-
 estoque = Estoque()
 
 class StorageMenu:
@@ -119,7 +118,7 @@ class StorageMenu:
         # Create a window for adding a stock item
         add_window = ctk.CTkToplevel()
         add_window.title("Cadastrar produto")
-        add_window.geometry("300x500")
+        add_window.geometry("300x400")
         add_window.resizable(False, False)
         add_window.overrideredirect(True)
         add_window.grab_set()
@@ -278,7 +277,7 @@ class StorageMenu:
             hover_color="#CC0000",  
             command=cancel
         )
-        cancel_button.place(relx=0.25, rely=0.85, anchor="center")
+        cancel_button.place(relx=0.25, rely=0.90, anchor="center")
 
         save_button = ctk.CTkButton(
             main_frame,
@@ -290,7 +289,7 @@ class StorageMenu:
             hover_color=self.colors["second_hover_color"],
             command=save
         )
-        save_button.place(relx=0.75, rely=0.85, anchor="center")
+        save_button.place(relx=0.75, rely=0.90, anchor="center")
 
     def add_row_to_table(self, id_produto, produto, quant, categoria):
         try:
