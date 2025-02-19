@@ -6,7 +6,11 @@ class Database:
             self.conexao = mysql.connector.connect(
                 host="localhost",
                 user="root",
+<<<<<<< Updated upstream
                 password="ramestre",               
+=======
+                password="Alan3640.",
+>>>>>>> Stashed changes
                 database="backfood"
             )
             self.cursor = self.conexao.cursor()
