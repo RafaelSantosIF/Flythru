@@ -87,9 +87,6 @@ class StorageMenu:
             font=self.fonts["button_font"],
             command=lambda: self.add_stock_row(root)  # Changed to use instance method
         )
-        add_row_button.pack(pady=(0, 20))
-        self.load_data()
-
     def update_table(self):
         # Limpa as linhas existentes (mantém os headers)
         for child in self.table_container.winfo_children():

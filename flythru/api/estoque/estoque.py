@@ -59,3 +59,10 @@ class Estoque:
             except Exception as e:
                 print(f"Erro ao atualizar produto: {e}")
                 return False
+    
+    def baixoEstoque(self):
+        if self.db.conexao:
+            self.db.cursor.execute("SELECT codProduto, nome, quantidade, categoria FROM produto WHERE quantidade < 10")
+            return self.db.cursor.fetchall()
+        return []
+
