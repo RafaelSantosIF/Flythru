@@ -55,6 +55,8 @@ class StorageMenu:
         )
         search_bar.pack(fill="x")
 
+        
+
         # Table container with white background
         self.table_container = ctk.CTkFrame(main_content, fg_color=self.colors["table_bg"])
         self.table_container.pack(fill="both", expand=True, padx=20, pady=(20, 10))

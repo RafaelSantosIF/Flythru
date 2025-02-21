@@ -39,11 +39,11 @@ class Item_Cardapio:
             print("Erro ao excluir Item do Cardapio.")
             return False
 
-    def update(self, codCardapio, nome, preco, codProduto):
+    def update(self, codCardapio, nome, preco):
         codCardapio = int(codCardapio)
 
-        query = "UPDATE item_cardapio SET nome = %s, preco = %s, codProduto = %s WHERE codCardapio = %s"
-        params = (nome, preco, codProduto, codCardapio)
+        query = "UPDATE item_cardapio SET nome = %s, preco = %s WHERE codCardapio = %s"
+        params = (nome, preco, codCardapio)
 
         if self.db.executar_query(query, params):
             print("Item Cardapio atualizado com sucesso!")

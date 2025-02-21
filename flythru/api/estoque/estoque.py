@@ -59,3 +59,5 @@ class Estoque:
             except Exception as e:
                 print(f"Erro ao atualizar produto: {e}")
                 return False
+
+    
