@@ -205,7 +205,7 @@ class StorageMenu:
             add_window.destroy()
 
         def save():        
-            filter_applied = categoria_var.get()
+            filter_applied = filtro_var.get()
             
             try:               
                 add_window.destroy() 
