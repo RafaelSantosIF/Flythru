@@ -7,6 +7,8 @@ class SupplierMenu:
     def __init__(self):
         self.table_container = None
         
+        self.filter_icon = self.load_image("filter.png", (28, 28))
+        
     def load_image(self, filename, size):
         current_dir = os.path.dirname(os.path.abspath(__file__))
         assets_dir = os.path.join(current_dir, "assets")
@@ -33,20 +35,34 @@ class SupplierMenu:
         main_content.pack(side="right", fill="both", expand=True)
 
         # Search bar container for padding
-        search_container = ctk.CTkFrame(main_content, fg_color="transparent")
-        search_container.pack(fill="x", padx=20, pady=(20, 10))
+        search_container = ctk.CTkFrame(main_content, fg_color="transparent", height=40)
+        search_container.pack(side="top", fill="x", padx=20, pady=(15, 5))
+        search_container.pack_propagate(False)
 
         # Updated search bar
         search_bar = ctk.CTkEntry(
             search_container,
-            placeholder_text="Pesquisar Produto",
+            placeholder_text="🔎 Pesquisar Produto",
             font=self.fonts["input_font"],
             height=40,
             fg_color="white",
             text_color="black",
             placeholder_text_color="gray"
         )
-        search_bar.pack(fill="x")
+        search_bar.place(relx=0, rely=0, relwidth=1, relheight=1)
+
+        filter_button = ctk.CTkButton(
+            search_container,
+            image=self.filter_icon,
+            text="",
+            width=28,
+            height=28,
+            fg_color="white",
+            corner_radius=0,
+            hover_color=self.colors["hover_color"],
+            command=None
+        )
+        filter_button.place(relx=0.97, rely=0.5, anchor="center")
 
         # Table container with white background
         self.table_container = ctk.CTkFrame(main_content, fg_color=self.colors["table_bg"]) 
