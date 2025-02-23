@@ -13,6 +13,8 @@ class StorageMenu:
         self.table_container = None
         self.produtos = []
         
+        self.filter_icon = self.load_image("filter.png", (28, 28))
+        
         
     def load_image(self, filename, size):
         current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -40,22 +42,34 @@ class StorageMenu:
         main_content.pack(side="right", fill="both", expand=True)
 
         # Search bar container for padding
-        search_container = ctk.CTkFrame(main_content, fg_color="transparent")
-        search_container.pack(fill="x", padx=20, pady=(20, 10))
+        search_container = ctk.CTkFrame(main_content, fg_color="transparent", height=40)
+        search_container.pack(side="top", fill="x", padx=20, pady=(15, 5))
+        search_container.pack_propagate(False)
 
         # Updated search bar
         search_bar = ctk.CTkEntry(
             search_container,
-            placeholder_text="Pesquisar Produto",
+            placeholder_text="🔎 Pesquisar Produto",
             font=self.fonts["input_font"],
             height=40,
             fg_color="white",
             text_color="black",
             placeholder_text_color="gray"
         )
-        search_bar.pack(fill="x")
+        search_bar.place(relx=0, rely=0, relwidth=1, relheight=1)
 
-        
+        filter_button = ctk.CTkButton(
+            search_container,
+            image=self.filter_icon,
+            text="",
+            width=28,
+            height=28,
+            fg_color="white",
+            corner_radius=0,
+            hover_color=self.colors["hover_color"],
+            command=lambda: self.filter_table(root)
+        )
+        filter_button.place(relx=0.97, rely=0.5, anchor="center")            
 
         # Table container with white background
         self.table_container = ctk.CTkFrame(main_content, fg_color=self.colors["table_bg"])
@@ -116,6 +130,114 @@ class StorageMenu:
             print(f"Error loading data: {e}")
             messagebox.showerror("Error", f"Falha ao carregar produtos: {e}")
 
+    def filter_table(self, root):
+        add_window = ctk.CTkToplevel()
+        add_window.title("Filtrar")
+        add_window.geometry("400x250")
+        add_window.resizable(False, False)
+        add_window.overrideredirect(True)
+        add_window.grab_set()
+        add_window.focus_force()
+        
+        # Create a main frame 
+        main_frame = ctk.CTkFrame(
+            add_window,
+            fg_color="#FF8C00",  
+            corner_radius=10
+        )
+        main_frame.pack(padx=10, pady=10, fill="both", expand=True)
+        
+        # Create a title bar frame for dragging
+        title_bar = ctk.CTkFrame(
+            main_frame,
+            fg_color="transparent",  
+            height=20,
+            corner_radius=0
+        )
+        title_bar.pack(fill="x", padx=2, pady=0)
+
+        # Title
+        title = ctk.CTkLabel(
+            main_frame,
+            text="Cadastrar produto",
+            font=ctk.CTkFont(family="Verdana", size=16, weight="bold"),
+            text_color="white"
+        )
+        title.pack(pady=(5, 20))
+        
+        # Add dragging functionality
+        from MainMenu import WindowDragging
+        WindowDragging(add_window, title_bar)
+        
+        # Input frame 
+        input_frame = ctk.CTkFrame(
+            main_frame,
+            fg_color="#1E1E1E",  
+            corner_radius=5
+        )
+        input_frame.pack(padx=10, fill="x")
+        
+        filtro_label = ctk.CTkLabel(
+            input_frame,
+            text="Filtrar por:",
+            font=self.fonts["input_font"],
+            text_color="white"
+        )
+        filtro_label.pack(padx=5, pady=(5, 0), anchor="w")
+        
+        filtro = ["Baixo Estoque", "Categoria", "Quantidade", "Nome"]
+        filtro_var = ctk.StringVar(value="Baixo Estoque")
+        filtro_dropdown = ctk.CTkOptionMenu(
+            input_frame,
+            values=filtro,
+            variable=filtro_var,
+            font=self.fonts["input_font"],
+            fg_color="black",
+            button_color="#FF8C00",
+            button_hover_color="#FFA500",
+            dropdown_fg_color="black",
+            dropdown_hover_color="#333333",
+            dropdown_text_color="white"
+        )
+        filtro_dropdown.pack(padx=10, pady=(0, 20), fill="x")
+        
+        def cancel():
+            add_window.destroy()
+
+        def save():        
+            filter_applied = categoria_var.get()
+            
+            try:               
+                add_window.destroy() 
+                messagebox.showinfo("Sucesso", "Filtro aplicado com sucesso!")
+            except Exception as e:
+                messagebox.showerror("Erro", f"Erro ao filtrar: {e}")
+                print(f"Erro ao filtrar no banco: {e}")
+                
+        cancel_button = ctk.CTkButton(
+            main_frame,
+            text="Cancelar",
+            font=self.fonts["button_font"],
+            width=120,
+            height=35,
+            fg_color="#FF0000", 
+            hover_color="#CC0000",  
+            command=cancel
+        )
+        cancel_button.place(relx=0.25, rely=0.90, anchor="center")
+
+        save_button = ctk.CTkButton(
+            main_frame,
+            text="Salvar",
+            font=self.fonts["button_font"],
+            width=120,
+            height=35,
+            fg_color=self.colors["second_color"],  
+            hover_color=self.colors["second_hover_color"],
+            command=save
+        )
+        save_button.place(relx=0.75, rely=0.90, anchor="center")        
+    
     def add_stock_row(self, root):
         # Create a window for adding a stock item
         add_window = ctk.CTkToplevel()
@@ -232,7 +354,7 @@ class StorageMenu:
         )
         categoria_label.pack(padx=5, pady=(5, 0), anchor="w")
         
-        categorias = ["Carnes", "Bebidas", "Acompanhamentos", "Sobremesas", "Embalagens", "Outros"]
+        categorias = ["Acompanhamentos", "Bebidas", "Carnes", "Embalagens", "Laticíneos", "Padaria", "Sobremesas", "Verduras", "Outros"]
         categoria_var = ctk.StringVar(value="Outros")
         categoria_dropdown = ctk.CTkOptionMenu(
             input_frame,
