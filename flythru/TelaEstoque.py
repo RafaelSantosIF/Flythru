@@ -57,6 +57,19 @@ class StorageMenu:
             placeholder_text_color="gray"
         )
         search_bar.place(relx=0, rely=0, relwidth=1, relheight=1)
+    #buscar back
+        def perform_search():
+            search_term = search_bar.get().strip()
+            if search_term:
+                try:
+                    self.produtos = estoque.buscar(search_term)
+                    self.update_table()
+                except Exception as e:
+                    messagebox.showerror("Erro", f"Erro na pesquisa: {e}")
+            else:
+                self.load_data() # carrega todos os dados caso o campo de pesquisa esteja vazio.
+
+        search_bar.bind("<Return>", lambda event: perform_search())
 
         filter_button = ctk.CTkButton(
             search_container,
@@ -159,7 +172,7 @@ class StorageMenu:
         # Title
         title = ctk.CTkLabel(
             main_frame,
-            text="Cadastrar produto",
+            text="Filtros",
             font=ctk.CTkFont(family="Verdana", size=16, weight="bold"),
             text_color="white"
         )
@@ -185,7 +198,7 @@ class StorageMenu:
         )
         filtro_label.pack(padx=5, pady=(5, 0), anchor="w")
         
-        filtro = ["Baixo Estoque", "Categoria", "Quantidade", "Nome"]
+        filtro = ["Baixo Estoque", "Categoria", "Quantidade", "Nome", "Todos"]
         filtro_var = ctk.StringVar(value="Baixo Estoque")
         filtro_dropdown = ctk.CTkOptionMenu(
             input_frame,
@@ -206,10 +219,19 @@ class StorageMenu:
 
         def save():        
             filter_applied = filtro_var.get()
+            if filter_applied == "Baixo Estoque":
+                products = estoque.baixoEstoque()
+                if products:
+                    self.produtos = products
+                    self.update_table()
+            
+            elif filter_applied == "Todos":
+                self.load_data()
             
             try:               
                 add_window.destroy() 
                 messagebox.showinfo("Sucesso", "Filtro aplicado com sucesso!")
+                  # Chama a função para atualizar a tabela
             except Exception as e:
                 messagebox.showerror("Erro", f"Erro ao filtrar: {e}")
                 print(f"Erro ao filtrar no banco: {e}")

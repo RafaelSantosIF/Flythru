@@ -60,4 +60,16 @@ class Estoque:
                 print(f"Erro ao atualizar produto: {e}")
                 return False
 
-    
+    def baixoEstoque(self):
+        if self.db.conexao:
+            self.db.cursor.execute("SELECT codProduto, nome, quantidade, categoria FROM produto where quantidade < 10")
+            return self.db.cursor.fetchall()
+        return []
+
+    def buscar(self, nome_produto):
+        if self.db.conexao:
+            query = "SELECT codProduto, nome, quantidade, categoria FROM produto WHERE nome LIKE %s"
+            params = (f"%{nome_produto}%",)  # Adiciona '%' para pesquisa parcial
+            self.db.cursor.execute(query, params)
+            return self.db.cursor.fetchall()
+        return []
