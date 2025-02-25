@@ -1,12 +1,16 @@
 import customtkinter as ctk
+from tkinter import messagebox
 from PIL import Image
 import os
 import Dictionary as dc
 from api.fornecedor.fornecedor import Fornecedor
 
+fornecedor = Fornecedor()
+
 class SupplierMenu:
     def __init__(self):
         self.table_container = None
+        self.fornecedores = []
         
         self.filter_icon = self.load_image("filter.png", (28, 28))
         
@@ -98,6 +102,30 @@ class SupplierMenu:
             command=lambda: self.add_supplier_row(root)  
         )
         add_row_button.pack(pady=(0, 20))
+        self.load_data()
+        
+    def update_table(self):
+        for child in self.table_container.winfo_children():
+            if child.grid_info()["row"] > 0:
+                child.destroy()
+
+        for fornecedor in self.fornecedores:
+            self.add_row_to_table(*fornecedor)
+            
+    def load_data(self):
+        try:
+            fornece = fornecedor.listar_tudo()
+            if fornece:
+                self.fornecedores = fornece
+                self.update_table()
+            else:
+                print("Não há fornecedores cadastrados.")
+        except Exception as e:
+            print(f"Erro ao carregar dados: {e}")
+
+        except Exception as e:
+            print(f"Erro ao carregar dados: {e}")
+            messagebox.showerror("Erro", f"Falha ao carregar fornecedores: {e}")
         
     def add_supplier_row(self, root):        
         add_window = ctk.CTkToplevel()
@@ -146,7 +174,7 @@ class SupplierMenu:
         )
         input_frame.pack(padx=10, fill="x")
 
-        # Código input
+        '''# Código input
         cdg_label = ctk.CTkLabel(
             input_frame,
             text="Código:",
@@ -164,7 +192,7 @@ class SupplierMenu:
             text_color="white",
             border_color="gray"
         )
-        cdg_entry.pack(padx=10, pady=(0, 5), fill="x")
+        cdg_entry.pack(padx=10, pady=(0, 5), fill="x")'''
 
         # Nome input
         nome_label = ctk.CTkLabel(
@@ -253,7 +281,7 @@ class SupplierMenu:
             cnpj = cnpj_entry.get().strip()
 
             try:
-                Fornecedor.save(nome, telefone, email, cnpj)
+                fornecedor.save(nome, telefone, email, cnpj)
                 self.load_data()
                 add_window.destroy()
             except Exception as e:
