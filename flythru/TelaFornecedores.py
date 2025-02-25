@@ -2,6 +2,7 @@ import customtkinter as ctk
 from PIL import Image
 import os
 import Dictionary as dc
+from api.fornecedor.fornecedor import Fornecedor
 
 class SupplierMenu:
     def __init__(self):
@@ -246,20 +247,17 @@ class SupplierMenu:
             add_window.destroy()
 
         def save():
-            # Get values
-            cdg_supplier = cdg_entry.get().strip()
-            supplier = nome_entry.get().strip()
-            cnpj = cnpj_entry.get().strip()
+            nome = nome_entry.get().strip()
             telefone = telefone_entry.get().strip()
-            email = email_entry.get().strip()        
-            
-            # Validate inputs
-            if not supplier or not cdg_supplier:
-                return  # Add error handling if needed
+            email = email_entry.get().strip()
+            cnpj = cnpj_entry.get().strip()
 
-            # Add row to the table
-            self.add_row_to_table(cdg_supplier, supplier, cnpj, telefone, email)
-            add_window.destroy()
+            try:
+                Fornecedor.save(nome, telefone, email, cnpj)
+                self.load_data()
+                add_window.destroy()
+            except Exception as e:
+                print(f"Erro ao salvar no banco: {e}")
             
         cancel_button = ctk.CTkButton(
             main_frame,

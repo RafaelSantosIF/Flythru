@@ -4,9 +4,9 @@ class Fornecedor:
     def __init__(self):
         self.db = Database()
 
-    def save(self, nome, telefone, email, endereco):
-        query = "INSERT INTO fornecedor (nome, telefone, email, endereco) VALUES (%s, %s, %s, %s)"
-        params = (nome, telefone, email, endereco)
+    def save(self, nome, telefone, email, cnpj):
+        query = "INSERT INTO fornecedor (nome, telefone, email, cnpj) VALUES (%s, %s, %s, %s)"
+        params = (nome, telefone, email, cnpj)
 
         if self.db.executar_query(query, params):
             return {"message": "Fornecedor cadastrado com sucesso!"}
@@ -32,11 +32,11 @@ class Fornecedor:
             print("Erro ao excluir Fornecedor.")
             return False
 
-    def update(self, codFornecedor, nome, telefone, email, endereco):
+    def update(self, codFornecedor, nome, telefone, email, cnpj):
         codCardapio = int(codCardapio)
 
-        query = "UPDATE fornecedor SET nome = %s, telefone = %s, email = %s, endereco = %s WHERE codFornecedor = %s"
-        params = (nome, telefone, email, endereco, codFornecedor)
+        query = "UPDATE fornecedor SET nome = %s, telefone = %s, email = %s, cnpj = %s WHERE codFornecedor = %s"
+        params = (nome, telefone, email, cnpj, codFornecedor)
 
         if self.db.executar_query(query, params):
             print("Fornecedor atualizado com sucesso!")
