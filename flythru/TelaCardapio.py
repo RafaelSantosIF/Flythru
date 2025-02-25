@@ -187,6 +187,30 @@ class CarteMenu:
             command=lambda: self.clear_order(order_screen)
         )
         trash_button.pack(side="right")        
+    
+    def add_new_item(self, category):
+        """Open a dialog to add a new item to the specified category"""
+        # This is a placeholder for the functionality to add new items
+        # You would implement a form to collect item details here
+        print(f"Adding new item to category: {category}")
+        
+        # Create a new window for adding an item
+        add_window = ctk.CTkToplevel()
+        add_window.title(f"Add New {category} Item")
+        add_window.geometry("400x500")
+        add_window.resizable(False, False)
+        add_window.grab_set()
+        
+        # Form fields will go here
+        # For now, we'll just print a message
+        label = ctk.CTkLabel(
+            add_window, 
+            text=f"Add new item to {category} category",
+            font=ctk.CTkFont(family="Verdana", size=16, weight="bold")
+        )
+        label.pack(pady=20)
+        
+        # Add fields for the new item (name, price, image, ingredients)
       
     def create_main_content(self, main_menu, root):
         self.fonts = main_menu.fonts
@@ -222,6 +246,8 @@ class CarteMenu:
         # Configure canvas to fill the space
         canvas.pack(side="left", fill="both", expand=True)
 
+        plus_image = self.load_image("plus_square.png", (45, 45))
+        
         categories = {
             "Hambúrguer": [
                 ("AMERICANO", 13.99, "round_logo.png", ["Hambúrguer", "Tomate", "Queijo", "Alface", "Molho Especial"]),
@@ -229,9 +255,7 @@ class CarteMenu:
                 ("AMERICANO", 13.99, "round_logo.png", ["Hambúrguer", "Tomate", "Queijo", "Alface", "Molho Especial"]),
                 ("AMERICANO", 13.99, "round_logo.png", ["Hambúrguer", "Tomate", "Queijo", "Alface", "Molho Especial"]),
                 ("AMERICANO", 13.99, "round_logo.png", ["Hambúrguer", "Tomate", "Queijo", "Alface", "Molho Especial"]),
-                ("AMERICANO", 13.99, "round_logo.png", ["Hambúrguer", "Tomate", "Queijo", "Alface", "Molho Especial"]),
-                ("AMERICANO", 13.99, "round_logo.png", ["Hambúrguer", "Tomate", "Queijo", "Alface", "Molho Especial"]),
-                ("AMERICANO", 13.99, "round_logo.png", ["Hambúrguer", "Tomate", "Queijo", "Alface", "Molho Especial"])
+                ("AMERICANO", 13.99, "round_logo.png", ["Hambúrguer", "Tomate", "Queijo", "Alface", "Molho Especial"])               
             ],
             "Batatas": [
                 ("BATATA P", 8.99, "round_logo.png", ["Batata frita", "Molho Especial"]),
@@ -239,9 +263,7 @@ class CarteMenu:
                 ("BATATA M", 10.99, "round_logo.png", ["Batata frita", "Molho Especial"]),
                 ("BATATA M", 10.99, "round_logo.png", ["Batata frita", "Molho Especial"]),
                 ("BATATA G", 13.99, "round_logo.png", ["Batata frita", "Molho Especial"]),
-                ("BATATA G", 13.99, "round_logo.png", ["Batata frita", "Molho Especial"]),
-                ("BATATA G", 13.99, "round_logo.png", ["Batata frita", "Molho Especial"]),
-                ("EXTRA G", 17.99, "round_logo.png", ["Batata frita", "Molho Extra"])
+                ("BATATA G", 13.99, "round_logo.png", ["Batata frita", "Molho Especial"])
             ],
             "Refrigerantes": [
                 ("COCA COLA", 5.99, "round_logo.png", ["Refrigerante Gelado"]),
@@ -249,9 +271,7 @@ class CarteMenu:
                 ("GUARANÁ", 5.99, "round_logo.png", ["Refrigerante Gelado"]),
                 ("COCA COLA", 5.99, "round_logo.png", ["Refrigerante Gelado"]),
                 ("COCA COLA", 5.99, "round_logo.png", ["Refrigerante Gelado"]),
-                ("COCA COLA", 5.99, "round_logo.png", ["Refrigerante Gelado"]),
-                ("COCA COLA", 5.99, "round_logo.png", ["Refrigerante Gelado"]),
-                ("FANTA", 5.99, "round_logo.png", ["Refrigerante Gelado"])
+                ("COCA COLA", 5.99, "round_logo.png", ["Refrigerante Gelado"])
             ]
         }
 
@@ -293,8 +313,46 @@ class CarteMenu:
                     command=lambda n=name, p=price, q=quantity_var: self.add_to_order(n, p, q)
                 )
                 add_button.pack(pady=5)
+                
+            # Add the empty card with plus button at the end of each row
+            add_card = ctk.CTkFrame(row_frame, border_width=4, border_color="#2E2E2E", fg_color="transparent", corner_radius=10)
+            add_card.grid(row=0, column=len(items), padx=5, pady=5, sticky="nsew")
+            
+            # Make the card the same size as other cards
+            add_card.configure(width=140, height=280)
+            
+            # Center the plus button in the card
+            add_button_frame = ctk.CTkFrame(add_card, fg_color="transparent")
+            add_button_frame.place(relx=0.5, rely=0.5, anchor="center")
+            
+            # Add a plus button
+            if plus_image:
+                add_new_button = ctk.CTkButton(
+                    add_button_frame,
+                    image=plus_image,
+                    text="",
+                    fg_color="transparent",                    
+                    width=50,
+                    height=50,
+                    corner_radius=10,
+                    command=lambda cat=category: self.add_new_item(cat)
+                )
+            else:
+                # Fallback if image is not found
+                add_new_button = ctk.CTkButton(
+                    add_button_frame,
+                    text="+",
+                    fg_color=self.colors["main_color"],
+                    hover_color=None,
+                    width=50,
+                    height=50,
+                    corner_radius=10,
+                    font=ctk.CTkFont(family="Verdana", size=24),
+                    command=lambda cat=category: self.add_new_item(cat)
+                )
+            add_new_button.pack()    
 
-         # Bottom frame
+        # Bottom frame
         bottom_frame = ctk.CTkFrame(main_content, fg_color="#D3D3D3", height=50, corner_radius=0 )
         bottom_frame.pack(side="bottom", fill="x")
         bottom_frame.lift()  
