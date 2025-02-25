@@ -380,4 +380,269 @@ class SupplierMenu:
             print(f"Error adding row to table: {e}")
             
     def edit_row(self, row):
-        pass                               
+        # Get the current values from the row
+        current_values = []
+        for col in range(5):  # We have 5 columns of data (code, name, CNPJ, phone, email)
+            cell = [
+                widget for widget in self.table_container.grid_slaves()
+                if int(widget.grid_info()["row"]) == row and int(widget.grid_info()["column"]) == col
+            ]
+            if cell:
+                current_values.append(cell[0].cget("text"))
+        
+        if len(current_values) == 5:
+            cdg_supplier, supplier, cnpj, telefone, email = current_values
+            
+            # Create edit window 
+            edit_window = ctk.CTkToplevel(self.root)
+            edit_window.title("Editar Fornecedor")
+            edit_window.geometry("300x500")
+            edit_window.resizable(False, False)
+            edit_window.overrideredirect(True)
+            edit_window.grab_set()
+            edit_window.focus_force()
+
+            # Create a main frame 
+            main_frame = ctk.CTkFrame(
+                edit_window,
+                fg_color="#FF8C00",
+                corner_radius=10
+            )
+            main_frame.pack(padx=10, pady=(10, 10), fill="both", expand=True)
+            
+            # Create a title bar frame for dragging
+            title_bar = ctk.CTkFrame(
+                main_frame,
+                fg_color="transparent",  
+                height=20,
+                corner_radius=0
+            )
+            title_bar.pack(fill="x", padx=2, pady=0)
+
+            # Title
+            title = ctk.CTkLabel(
+                main_frame,
+                text="Editar Fornecedor",
+                font=ctk.CTkFont(family="Verdana", size=16, weight="bold"),
+                text_color="white"
+            )
+            title.pack(pady=(5, 15))
+            
+            # Add dragging functionality
+            from MainMenu import WindowDragging
+            WindowDragging(edit_window, title_bar)
+
+            # Input frame
+            input_frame = ctk.CTkFrame(
+                main_frame,
+                fg_color="#1E1E1E",
+                corner_radius=5
+            )
+            input_frame.pack(padx=10, fill="x")
+
+            # Nome input
+            nome_label = ctk.CTkLabel(
+                input_frame, 
+                text="Nome:", 
+                font=self.fonts["input_font"], 
+                text_color="white"
+            )
+            nome_label.pack(padx=5, pady=(5, 0), anchor="w")
+            nome_entry = ctk.CTkEntry(
+                input_frame,
+                font=self.fonts["input_font"],
+                height=30,
+                fg_color="black",
+                text_color="white",
+                border_color="gray"
+            )
+            nome_entry.insert(0, supplier)
+            nome_entry.pack(padx=5, pady=(0, 5), fill="x")
+
+            # CNPJ input
+            cnpj_label = ctk.CTkLabel(
+                input_frame, 
+                text="CNPJ:", 
+                font=self.fonts["input_font"], 
+                text_color="white"
+            )
+            cnpj_label.pack(padx=5, pady=(5, 0), anchor="w")
+            cnpj_entry = ctk.CTkEntry(
+                input_frame,
+                font=self.fonts["input_font"],
+                height=30,
+                fg_color="black",
+                text_color="white",
+                border_color="gray"
+            )
+            cnpj_entry.insert(0, cnpj)
+            cnpj_entry.pack(padx=5, pady=(0, 5), fill="x")
+
+            # Telefone input
+            telefone_label = ctk.CTkLabel(
+                input_frame, 
+                text="Telefone:", 
+                font=self.fonts["input_font"], 
+                text_color="white"
+            )
+            telefone_label.pack(padx=5, pady=(5, 0), anchor="w")
+            telefone_entry = ctk.CTkEntry(
+                input_frame,
+                font=self.fonts["input_font"],
+                height=30,
+                fg_color="black",
+                text_color="white",
+                border_color="gray"
+            )
+            telefone_entry.insert(0, telefone)
+            telefone_entry.pack(padx=5, pady=(0, 5), fill="x")
+
+            # Email input
+            email_label = ctk.CTkLabel(
+                input_frame, 
+                text="Email:", 
+                font=self.fonts["input_font"], 
+                text_color="white"
+            )
+            email_label.pack(padx=5, pady=(5, 0), anchor="w")
+            email_entry = ctk.CTkEntry(
+                input_frame,
+                font=self.fonts["input_font"],
+                height=30,
+                fg_color="black",
+                text_color="white",
+                border_color="gray"
+            )
+            email_entry.insert(0, email)
+            email_entry.pack(padx=5, pady=(0, 10), fill="x")
+
+            def save_edit():
+                try:
+                    new_nome = nome_entry.get().strip()
+                    new_cnpj = cnpj_entry.get().strip()
+                    new_telefone = telefone_entry.get().strip()
+                    new_email = email_entry.get().strip()
+
+                    if fornecedor.update(cdg_supplier, new_nome, new_telefone, new_email, new_cnpj):
+                        # Update the row in the table
+                        new_values = [cdg_supplier, new_nome, new_cnpj, new_telefone, new_email]
+                        for col, value in enumerate(new_values):
+                            cell = [
+                                widget for widget in self.table_container.grid_slaves()
+                                if int(widget.grid_info()["row"]) == row and int(widget.grid_info()["column"]) == col
+                            ]
+                            if cell:
+                                cell[0].configure(text=str(value))
+
+                        edit_window.destroy()
+                        self.load_data()
+                        messagebox.showinfo("Sucesso", "Fornecedor atualizado com sucesso!")
+                    else:
+                        messagebox.showerror("Erro", "Falha ao atualizar o fornecedor no banco de dados.")
+
+                except Exception as e:
+                    messagebox.showerror("Erro", f"Erro ao atualizar fornecedor: {e}")
+                    print(f"Erro na função save_edit: {e}")  # Para debug
+
+            def delete_row():
+                # Create confirmation dialog
+                confirm = ctk.CTkToplevel(edit_window)
+                confirm.title("Confirmar exclusão")
+                confirm.geometry("250x150")
+                confirm.resizable(False, False)
+                confirm.overrideredirect(True)
+                confirm.grab_set()
+                
+                # Center the confirmation window relative to the edit window
+                x = edit_window.winfo_x() + (edit_window.winfo_width() // 2) - (300 // 2)
+                y = edit_window.winfo_y() + (edit_window.winfo_height() // 2) - (150 // 2)
+                confirm.geometry(f"250x150+{x}+{y}")
+
+                # Confirmation message
+                msg = ctk.CTkLabel(
+                    confirm,
+                    text="Tem certeza que deseja excluir este fornecedor?",
+                    font=self.fonts["input_font"],
+                    wraplength=250
+                )
+                msg.pack(pady=20)
+
+                # Buttons frame
+                btn_frame = ctk.CTkFrame(confirm, fg_color="transparent")
+                btn_frame.pack(pady=10)
+
+                def confirm_delete():
+                    if fornecedor.delete(cdg_supplier):
+                        for widget in self.table_container.grid_slaves(row=row):
+                            widget.destroy()
+                        confirm.destroy()
+                        edit_window.destroy()
+                        self.load_data()
+                    else:
+                        messagebox.showerror("Erro", "Falha ao excluir o fornecedor do banco de dados.")
+
+                # Confirmation buttons
+                ctk.CTkButton(
+                    btn_frame,
+                    text="Não",
+                    font=self.fonts["button_font"],
+                    width=100,
+                    fg_color=self.colors["second_color"],
+                    hover_color=self.colors["second_hover_color"],
+                    command=confirm.destroy
+                ).pack(side="left", padx=5)
+
+                ctk.CTkButton(
+                    btn_frame,
+                    text="Sim",
+                    font=self.fonts["button_font"],
+                    width=100,
+                    fg_color="#FF0000",
+                    hover_color="#CC0000",
+                    command=confirm_delete
+                ).pack(side="left", padx=5)
+            
+            # Buttons frame
+            buttons_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
+            buttons_frame.pack(side="bottom", pady=(5, 15), fill="x", padx=20)
+
+            trash_icon = self.load_image("trash.png", size=(24, 24))
+            
+            # Delete button 
+            delete_button = ctk.CTkButton(
+                buttons_frame,
+                text="",  
+                image=trash_icon,
+                width=40,  
+                height=35,
+                fg_color="transparent", 
+                hover_color=None,
+                command=delete_row
+            )
+            delete_button.pack(side="left", padx=5)
+            
+            # Cancel button
+            cancel_button = ctk.CTkButton(
+                buttons_frame,
+                text="Cancelar",
+                font=self.fonts["button_font"],
+                width=80,
+                height=35,
+                fg_color="#FF0000",
+                hover_color="#CC0000",
+                command=edit_window.destroy
+            )
+            cancel_button.pack(side="left", padx=5)            
+
+            # Save button
+            save_button = ctk.CTkButton(
+                buttons_frame,
+                text="Salvar",
+                font=self.fonts["button_font"],
+                width=80,
+                height=35,
+                fg_color=self.colors["second_color"],
+                hover_color=self.colors["second_hover_color"],
+                command=save_edit
+            )
+            save_button.pack(side="right", padx=5)                               
