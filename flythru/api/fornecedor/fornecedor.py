@@ -33,7 +33,7 @@ class Fornecedor:
             return False
 
     def update(self, codFornecedor, nome, telefone, email, cnpj):
-        codCardapio = int(codCardapio)
+        codFornecedor = int(codFornecedor)
 
         query = "UPDATE fornecedor SET nome = %s, telefone = %s, email = %s, cnpj = %s WHERE codFornecedor = %s"
         params = (nome, telefone, email, cnpj, codFornecedor)

@@ -74,7 +74,7 @@ class SupplierMenu:
         self.table_container.pack(fill="both", expand=True, padx=20, pady=(20, 10))
 
         # Table headers
-        headers = ["Código", "Nome", "CNPJ", "Número", "Email", " "]
+        headers = ["Código", "Nome", "CNPJ", "Email", "Telefone", " "]
         for i, header in enumerate(headers):
             header_label = ctk.CTkLabel(
                 self.table_container,
@@ -233,25 +233,6 @@ class SupplierMenu:
         )
         cnpj_entry.pack(padx=10, pady=(0, 5), fill="x")
         
-        telefone_label = ctk.CTkLabel(
-            input_frame,
-            text="Telefone:",
-            font=self.fonts["input_font"],
-            text_color="white"
-        )
-        telefone_label.pack(padx=5, pady=(5, 0), anchor="w")
-        
-        telefone_entry = ctk.CTkEntry(
-            input_frame,
-            placeholder_text="(xx) xxxxx-xxxx",
-            font=self.fonts["input_font"],
-            height=30,
-            fg_color="black",
-            text_color="white",
-            border_color="gray"
-        )
-        telefone_entry.pack(padx=10, pady=(0, 5), fill="x")
-        
         email_label = ctk.CTkLabel(
             input_frame,
             text="E-Mail:",
@@ -271,6 +252,25 @@ class SupplierMenu:
         )
         email_entry.pack(padx=10, pady=(0, 5), fill="x")
         
+        telefone_label = ctk.CTkLabel(
+            input_frame,
+            text="Telefone:",
+            font=self.fonts["input_font"],
+            text_color="white"
+        )
+        telefone_label.pack(padx=5, pady=(5, 0), anchor="w")
+        
+        telefone_entry = ctk.CTkEntry(
+            input_frame,
+            placeholder_text="(xx) xxxxx-xxxx",
+            font=self.fonts["input_font"],
+            height=30,
+            fg_color="black",
+            text_color="white",
+            border_color="gray"
+        )
+        telefone_entry.pack(padx=10, pady=(0, 5), fill="x")      
+                
         def cancel():
             add_window.destroy()
 
@@ -481,7 +481,7 @@ class SupplierMenu:
             # Telefone input
             telefone_label = ctk.CTkLabel(
                 input_frame, 
-                text="Telefone:", 
+                text="Email:", 
                 font=self.fonts["input_font"], 
                 text_color="white"
             )
@@ -500,7 +500,7 @@ class SupplierMenu:
             # Email input
             email_label = ctk.CTkLabel(
                 input_frame, 
-                text="Email:", 
+                text="Telefone:", 
                 font=self.fonts["input_font"], 
                 text_color="white"
             )
@@ -523,7 +523,7 @@ class SupplierMenu:
                     new_telefone = telefone_entry.get().strip()
                     new_email = email_entry.get().strip()
 
-                    if fornecedor.update(cdg_supplier, new_nome, new_telefone, new_email, new_cnpj):
+                    if fornecedor.update(cdg_supplier, new_nome, new_cnpj, new_telefone, new_email):
                         # Update the row in the table
                         new_values = [cdg_supplier, new_nome, new_cnpj, new_telefone, new_email]
                         for col, value in enumerate(new_values):
