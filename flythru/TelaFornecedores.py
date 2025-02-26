@@ -130,7 +130,7 @@ class SupplierMenu:
     def add_supplier_row(self, root):        
         add_window = ctk.CTkToplevel()
         add_window.title("Cadastrar Fornecedor")
-        add_window.geometry("300x500")
+        add_window.geometry("300x450")
         add_window.resizable(False, False)
         add_window.overrideredirect(True)
         add_window.grab_set()
@@ -194,24 +194,24 @@ class SupplierMenu:
         )
         nome_entry.pack(padx=10, pady=(0, 5), fill="x")
         
-        cnpj_label = ctk.CTkLabel(
+        telefone_label = ctk.CTkLabel(
             input_frame,
-            text="Telefone:",
+            text="CNPJ:",
             font=self.fonts["input_font"],
             text_color="white"
         )
-        cnpj_label.pack(padx=5, pady=(5, 0), anchor="w")
+        telefone_label.pack(padx=5, pady=(5, 0), anchor="w")
         
-        cnpj_entry = ctk.CTkEntry(
+        telefone_entry = ctk.CTkEntry(
             input_frame,
-            placeholder_text="(xx) xxxxx-xxxx",
+            placeholder_text="xx.xxx.xxx/xxxx-xx",
             font=self.fonts["input_font"],
             height=30,
             fg_color="black",
             text_color="white",
             border_color="gray"
         )
-        cnpj_entry.pack(padx=10, pady=(0, 5), fill="x")
+        telefone_entry.pack(padx=10, pady=(0, 5), fill="x")
         
         email_label = ctk.CTkLabel(
             input_frame,
@@ -232,24 +232,25 @@ class SupplierMenu:
         )
         email_entry.pack(padx=10, pady=(0, 5), fill="x")
         
-        telefone_label = ctk.CTkLabel(
+        cnpj_label = ctk.CTkLabel(
             input_frame,
-            text="CNPJ:",
+            text="Telefone:",
             font=self.fonts["input_font"],
             text_color="white"
         )
-        telefone_label.pack(padx=5, pady=(5, 0), anchor="w")
+        cnpj_label.pack(padx=5, pady=(5, 0), anchor="w")
         
-        telefone_entry = ctk.CTkEntry(
+        cnpj_entry = ctk.CTkEntry(
             input_frame,
-            placeholder_text="xx.xxx.xxx/xxxx-xx",
+            placeholder_text="(xx) xxxxx-xxxx",
             font=self.fonts["input_font"],
             height=30,
             fg_color="black",
             text_color="white",
             border_color="gray"
         )
-        telefone_entry.pack(padx=10, pady=(0, 5), fill="x")      
+        cnpj_entry.pack(padx=10, pady=(0, 5), fill="x")       
+             
                 
         def cancel():
             add_window.destroy()
