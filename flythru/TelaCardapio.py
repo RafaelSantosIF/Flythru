@@ -389,36 +389,87 @@ class CarteMenu:
     def refresh_menu(self):
         """Refresh the menu content to reflect changes"""
         if hasattr(self, 'main_content'):
-            # Clear the main content
-            for widget in self.main_content.winfo_children():
-                widget.destroy()
+            # First, remove the entire main_content from the root
+            self.main_content.pack_forget()
 
-            # Recreate the menu
+            # Destroy the old main_content frame completely
+            self.main_content.destroy()
+
+            # Recreate the menu by calling create_main_content
             self.create_main_content(self.main_menu, self.root)
 
     def create_card(self, parent, name, price, img, ingredients, idx):
-        """Create a menu item card"""
-        card = ctk.CTkFrame(parent, fg_color="#2E2E2E", corner_radius=10)
-        card.grid(row=0, column=idx, padx=10, pady=5, sticky="nsew")
+        """Create a menu item card with fixed dimensions"""
+        card = ctk.CTkFrame(parent, fg_color="#2E2E2E", corner_radius=10, width=180, height=280)
+        card.grid_propagate(False)  # Prevent the card from resizing based on content
 
-        image = self.load_image(img, (100, 100))
+        image = self.load_image(img, (80, 80))
         if image:
             img_label = ctk.CTkLabel(card, image=image, text="")
-            img_label.pack(pady=5)
+            img_label.pack(pady=(10, 5))
 
         name_label = ctk.CTkLabel(card, text=name, font=self.fonts["menu_font"], text_color="white")
-        name_label.pack()
+        name_label.pack(pady=(5, 0))
 
         price_label = ctk.CTkLabel(card, text=f"R$ {price:.2f}", font=self.fonts["input_font"], text_color="white")
-        price_label.pack()
+        price_label.pack(pady=(0, 5))
 
-        ingredients_label = ctk.CTkLabel(card, text="\n".join(ingredients), font=self.fonts["input_font"],
-                                         text_color="white")
-        ingredients_label.pack(pady=5)
+        # Ingredients frame with fixed height
+        ingredients_frame = ctk.CTkFrame(card, fg_color="transparent", height=100)
+        ingredients_frame.pack(pady=(0, 5), fill="x", padx=5)
+        ingredients_frame.pack_propagate(False)  # Keep height fixed
+
+        # Limit visible ingredients
+        max_ingredients = 5
+        display_ingredients = ingredients[:max_ingredients]
+
+        for ing in display_ingredients:
+            ing_label = ctk.CTkLabel(
+                ingredients_frame,
+                text="• " + ing,
+                font=ctk.CTkFont(family="Verdana", size=10),
+                text_color="white",
+                anchor="w",
+                wraplength=150  # Increased to handle longer text
+            )
+            ing_label.pack(fill="x", pady=0)
+
+        quantity_frame = ctk.CTkFrame(card, fg_color="transparent")
+        quantity_frame.pack(fill="x", padx=10, pady=(5, 0))
 
         quantity_var = ctk.StringVar(value="0")
-        quantity_entry = ctk.CTkEntry(card, textvariable=quantity_var, width=50)
-        quantity_entry.pack(pady=5)
+        quantity_entry = ctk.CTkEntry(
+            quantity_frame,
+            textvariable=quantity_var,
+            width=50,
+            height=25,
+            fg_color="#3E3E3E",
+            border_color="#555555"
+        )
+        quantity_entry.pack(side="left")
+
+        # Botões + e - para quantidade
+        minus_btn = ctk.CTkButton(
+            quantity_frame,
+            text="-",
+            width=25,
+            height=25,
+            fg_color=self.colors["main_color"],
+            hover_color=self.colors["hover_color"],
+            command=lambda: quantity_var.set(str(max(0, int(quantity_var.get()) - 1)))
+        )
+        minus_btn.pack(side="left", padx=(5, 0))
+
+        plus_btn = ctk.CTkButton(
+            quantity_frame,
+            text="+",
+            width=25,
+            height=25,
+            fg_color=self.colors["main_color"],
+            hover_color=self.colors["hover_color"],
+            command=lambda: quantity_var.set(str(int(quantity_var.get()) + 1))
+        )
+        plus_btn.pack(side="left", padx=(5, 0))
 
         add_button = ctk.CTkButton(
             card,
@@ -426,11 +477,95 @@ class CarteMenu:
             fg_color=self.colors["main_color"],
             hover_color=self.colors["hover_color"],
             font=self.fonts["button_font"],
-            command=lambda n=name, p=price, q=quantity_var: self.add_to_order(n, p, q)
+            command=lambda n=name, p=price, q=quantity_var: self.add_to_order(n, p, q),
+            height=25
         )
-        add_button.pack(pady=5)
+        add_button.pack(pady=5, padx=10, fill="x")  # Make button fill width
 
         return card
+
+    def create_horizontal_section(self, parent, category, items):
+        """Create a horizontal scrollable section for a category"""
+        # Section frame
+        section_frame = ctk.CTkFrame(parent, fg_color="transparent")
+        section_frame.pack(fill="x", pady=10, padx=10)
+
+        # Category heading
+        category_label = ctk.CTkLabel(
+            section_frame,
+            text=category,
+            font=self.fonts["menu_font"],
+            text_color="white"
+        )
+        category_label.pack(anchor="w", pady=5)
+
+        # Create scrollable frame for horizontal scrolling
+        scroll_container = ctk.CTkScrollableFrame(
+            section_frame,
+            fg_color=self.colors["dark_bg"],
+            orientation="horizontal",
+            height=320,  # Increased height to show full cards
+            width=800  # Adjusted to container width
+        )
+        scroll_container.pack(fill="x", pady=5)
+
+        # Create a frame to hold the cards
+        cards_frame = ctk.CTkFrame(scroll_container, fg_color=self.colors["dark_bg"])
+        cards_frame.pack(fill="both", expand=True, pady=5, padx=5)
+
+        # Create item cards in a horizontal layout
+        for idx, (name, price, img, ingredients) in enumerate(items):
+            card = self.create_card(cards_frame, name, price, img, ingredients, idx)
+            card.grid(row=0, column=idx, padx=10, pady=5, sticky="nsew")
+
+            # Set fixed width for each column to ensure consistent card sizing
+            cards_frame.grid_columnconfigure(idx, minsize=180)  # Increased from 140 to 180
+
+        # Add the plus card at the end
+        plus_card = ctk.CTkFrame(
+            cards_frame,
+            border_width=2,
+            border_color="#2E2E2E",
+            fg_color="transparent",
+            corner_radius=10,
+            width=180,  # Match the other cards width
+            height=280  # Match card height
+        )
+        plus_card.grid(row=0, column=len(items), padx=10, pady=5, sticky="nsew")
+        cards_frame.grid_columnconfigure(len(items), minsize=180)  # Consistent sizing
+
+        # Center the plus button
+        plus_image = self.load_image("plus_square.png", (45, 45))
+        add_button_frame = ctk.CTkFrame(plus_card, fg_color="transparent")
+        add_button_frame.place(relx=0.5, rely=0.5, anchor="center")
+
+        # Add plus button
+        if plus_image:
+            add_new_button = ctk.CTkButton(
+                add_button_frame,
+                image=plus_image,
+                text="",
+                fg_color="transparent",
+                width=50,
+                height=50,
+                corner_radius=10,
+                command=lambda cat=category: self.add_new_item(cat)
+            )
+        else:
+            add_new_button = ctk.CTkButton(
+                add_button_frame,
+                text="+",
+                fg_color=self.colors["main_color"],
+                hover_color=None,
+                width=50,
+                height=50,
+                corner_radius=10,
+                font=ctk.CTkFont(family="Verdana", size=24),
+                command=lambda cat=category: self.add_new_item(cat)
+            )
+        add_new_button.pack()
+
+        return section_frame
 
     def create_main_content(self, main_menu, root):
         self.fonts = main_menu.fonts
@@ -439,92 +574,31 @@ class CarteMenu:
         self.main_menu = main_menu
 
         # Main content frame
-        self.main_content = ctk.CTkFrame(root, fg_color=self.colors["dark_bg"], width=800)
+        self.main_content = ctk.CTkFrame(root, fg_color=self.colors["dark_bg"])
         self.main_content.pack(side="right", fill="both", expand=True)
 
-        # Create a container frame for the canvas to manage padding
-        container_frame = ctk.CTkFrame(self.main_content, fg_color=self.colors["dark_bg"])
-        container_frame.pack(fill="both", expand=True, padx=(20, 0), pady=(0, 1))
-        canvas = ctk.CTkCanvas(container_frame, bg=self.colors["dark_bg"], highlightthickness=0)
-        scroll_frame = ctk.CTkFrame(canvas, fg_color=self.colors["dark_bg"])
-
-        # Configure scrolling
-        def on_mousewheel(event):
-            canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
-
-        # Bind mouse wheel to canvas
-        canvas.bind_all("<MouseWheel>", on_mousewheel)
-
-        # Configure scroll frame
-        scroll_frame.bind(
-            "<Configure>",
-            lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+        # Create scrollable container for vertical scrolling
+        container_frame = ctk.CTkScrollableFrame(
+            self.main_content,
+            fg_color=self.colors["dark_bg"],
+            orientation="vertical"
         )
+        container_frame.pack(fill="both", expand=True, padx=0, pady=0)
 
-        # Create window in canvas
-        canvas.create_window((0, 0), window=scroll_frame, anchor="nw")
-
-        # Configure canvas to fill the space
-        canvas.pack(side="left", fill="both", expand=True)
-
-        plus_image = self.load_image("plus_square.png", (45, 45))
-
+        # Create each category section
         for category, items in self.categories.items():
-            category_label = ctk.CTkLabel(scroll_frame, text=category, font=self.fonts["menu_font"], text_color="white")
-            category_label.pack(anchor="w", pady=5)
+            self.create_horizontal_section(container_frame, category, items)
 
-            row_frame = ctk.CTkFrame(scroll_frame, fg_color="transparent")
-            row_frame.pack(fill="x", pady=5)
-
-            for idx, (name, price, img, ingredients) in enumerate(items):
-                self.create_card(row_frame, name, price, img, ingredients, idx)
-
-            # Add the empty card with plus button at the end of each row
-            add_card = ctk.CTkFrame(row_frame, border_width=4, border_color="#2E2E2E", fg_color="transparent",
-                                    corner_radius=10)
-            add_card.grid(row=0, column=len(items), padx=5, pady=5, sticky="nsew")
-
-            # Make the card the same size as other cards
-            add_card.configure(width=140, height=280)
-
-            # Center the plus button in the card
-            add_button_frame = ctk.CTkFrame(add_card, fg_color="transparent")
-            add_button_frame.place(relx=0.5, rely=0.5, anchor="center")
-
-            # Add a plus button
-            if plus_image:
-                add_new_button = ctk.CTkButton(
-                    add_button_frame,
-                    image=plus_image,
-                    text="",
-                    fg_color="transparent",
-                    width=50,
-                    height=50,
-                    corner_radius=10,
-                    command=lambda cat=category: self.add_new_item(cat)
-                )
-            else:
-                # Fallback if image is not found
-                add_new_button = ctk.CTkButton(
-                    add_button_frame,
-                    text="+",
-                    fg_color=self.colors["main_color"],
-                    hover_color=None,
-                    width=50,
-                    height=50,
-                    corner_radius=10,
-                    font=ctk.CTkFont(family="Verdana", size=24),
-                    command=lambda cat=category: self.add_new_item(cat)
-                )
-            add_new_button.pack()
-
-            # Bottom frame
+        # Bottom frame
         bottom_frame = ctk.CTkFrame(self.main_content, fg_color="#D3D3D3", height=50, corner_radius=0)
         bottom_frame.pack(side="bottom", fill="x")
-        bottom_frame.lift()
 
-        self.total_label = ctk.CTkLabel(bottom_frame, text=f"Sub-Total R$ {self.total_price:.2f}",
-                                        font=self.fonts["menu_font"], text_color="black")
+        self.total_label = ctk.CTkLabel(
+            bottom_frame,
+            text=f"Sub-Total R$ {self.total_price:.2f}",
+            font=self.fonts["menu_font"],
+            text_color="black"
+        )
         self.total_label.pack(side="left", padx=20)
 
         generate_order_button = ctk.CTkButton(
@@ -537,13 +611,3 @@ class CarteMenu:
             command=self.open_order_screen
         )
         generate_order_button.pack(side="right", padx=20, pady=5)
-
-        # Update canvas configuration to handle window resizing
-        canvas.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
-
-        # Modify the MouseWheel binding to ensure bottom frame stays visible
-        def on_scroll(event):
-            canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
-            bottom_frame.lift()
-
-        canvas.bind_all("<MouseWheel>", on_scroll)
