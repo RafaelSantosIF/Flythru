@@ -400,7 +400,8 @@ class CarteMenu:
 
     def create_card(self, parent, name, price, img, ingredients, idx):
         """Create a menu item card with fixed dimensions"""
-        card = ctk.CTkFrame(parent, fg_color="#2E2E2E", corner_radius=10, width=180, height=280)
+        # Increase card height from 300 to 320px
+        card = ctk.CTkFrame(parent, fg_color="#2E2E2E", corner_radius=10, width=180, height=320)
         card.grid_propagate(False)  # Prevent the card from resizing based on content
 
         image = self.load_image(img, (80, 80))
@@ -414,13 +415,13 @@ class CarteMenu:
         price_label = ctk.CTkLabel(card, text=f"R$ {price:.2f}", font=self.fonts["input_font"], text_color="white")
         price_label.pack(pady=(0, 5))
 
-        # Ingredients frame with fixed height
-        ingredients_frame = ctk.CTkFrame(card, fg_color="transparent", height=100)
+        # Increase the ingredients frame height from 90 to 120px
+        ingredients_frame = ctk.CTkFrame(card, fg_color="transparent", height=120)
         ingredients_frame.pack(pady=(0, 5), fill="x", padx=5)
         ingredients_frame.pack_propagate(False)  # Keep height fixed
 
-        # Limit visible ingredients
-        max_ingredients = 5
+        # Increase max visible ingredients if needed
+        max_ingredients = 6  # Changed from 5 to 6
         display_ingredients = ingredients[:max_ingredients]
 
         for ing in display_ingredients:
@@ -430,7 +431,7 @@ class CarteMenu:
                 font=ctk.CTkFont(family="Verdana", size=10),
                 text_color="white",
                 anchor="w",
-                wraplength=150  # Increased to handle longer text
+                wraplength=150
             )
             ing_label.pack(fill="x", pady=0)
 
@@ -471,6 +472,7 @@ class CarteMenu:
         )
         plus_btn.pack(side="left", padx=(5, 0))
 
+        # Aumentar o padding vertical para o botão ADD
         add_button = ctk.CTkButton(
             card,
             text="+ ADD",
@@ -480,7 +482,7 @@ class CarteMenu:
             command=lambda n=name, p=price, q=quantity_var: self.add_to_order(n, p, q),
             height=25
         )
-        add_button.pack(pady=5, padx=10, fill="x")  # Make button fill width
+        add_button.pack(pady=(5, 10), padx=10, fill="x")  # Aumentar o padding inferior
 
         return card
 
@@ -500,12 +502,13 @@ class CarteMenu:
         category_label.pack(anchor="w", pady=5)
 
         # Create scrollable frame for horizontal scrolling
+        # Ajustar a altura do scrollable frame para acomodar o card mais alto
         scroll_container = ctk.CTkScrollableFrame(
             section_frame,
             fg_color=self.colors["dark_bg"],
             orientation="horizontal",
-            height=320,  # Increased height to show full cards
-            width=800  # Adjusted to container width
+            height=360,  # Increased from 340 to 360
+            width=800
         )
         scroll_container.pack(fill="x", pady=5)
 
@@ -522,15 +525,16 @@ class CarteMenu:
             cards_frame.grid_columnconfigure(idx, minsize=180)  # Increased from 140 to 180
 
         # Add the plus card at the end
-        plus_card = ctk.CTkFrame(
-            cards_frame,
-            border_width=2,
-            border_color="#2E2E2E",
-            fg_color="transparent",
-            corner_radius=10,
-            width=180,  # Match the other cards width
-            height=280  # Match card height
-        )
+            # Update the plus card height
+            plus_card = ctk.CTkFrame(
+                cards_frame,
+                border_width=2,
+                border_color="#2E2E2E",
+                fg_color="transparent",
+                corner_radius=10,
+                width=180,
+                height=320  # Increased from 300 to 320
+            )
         plus_card.grid(row=0, column=len(items), padx=10, pady=5, sticky="nsew")
         cards_frame.grid_columnconfigure(len(items), minsize=180)  # Consistent sizing
 
