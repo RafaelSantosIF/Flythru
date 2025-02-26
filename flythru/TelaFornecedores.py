@@ -173,27 +173,7 @@ class SupplierMenu:
             corner_radius=5
         )
         input_frame.pack(padx=10, fill="x")
-
-        '''# Código input
-        cdg_label = ctk.CTkLabel(
-            input_frame,
-            text="Código:",
-            font=self.fonts["input_font"],
-            text_color="white"
-        )
-        cdg_label.pack(padx=5, pady=(5, 0), anchor="w")
-        
-        cdg_entry = ctk.CTkEntry(
-            input_frame,
-            placeholder_text="#F1001",
-            font=self.fonts["input_font"],
-            height=30,
-            fg_color="black",
-            text_color="white",
-            border_color="gray"
-        )
-        cdg_entry.pack(padx=10, pady=(0, 5), fill="x")'''
-
+       
         # Nome input
         nome_label = ctk.CTkLabel(
             input_frame,
@@ -216,7 +196,7 @@ class SupplierMenu:
         
         cnpj_label = ctk.CTkLabel(
             input_frame,
-            text="CNPJ:",
+            text="Telefone:",
             font=self.fonts["input_font"],
             text_color="white"
         )
@@ -224,7 +204,7 @@ class SupplierMenu:
         
         cnpj_entry = ctk.CTkEntry(
             input_frame,
-            placeholder_text="xx.xxx.xxx/xxxx-xx",
+            placeholder_text="(xx) xxxxx-xxxx",
             font=self.fonts["input_font"],
             height=30,
             fg_color="black",
@@ -254,7 +234,7 @@ class SupplierMenu:
         
         telefone_label = ctk.CTkLabel(
             input_frame,
-            text="Telefone:",
+            text="CNPJ:",
             font=self.fonts["input_font"],
             text_color="white"
         )
@@ -262,7 +242,7 @@ class SupplierMenu:
         
         telefone_entry = ctk.CTkEntry(
             input_frame,
-            placeholder_text="(xx) xxxxx-xxxx",
+            placeholder_text="xx.xxx.xxx/xxxx-xx",
             font=self.fonts["input_font"],
             height=30,
             fg_color="black",
