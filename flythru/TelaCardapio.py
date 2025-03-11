@@ -212,6 +212,12 @@ class CarteMenu:
         )
         trash_button.pack(side="right")
 
+    def delete_menu_item(self, category, index):
+        """Delete an item from the menu category"""
+        if 0 <= index < len(self.categories[category]):
+            del self.categories[category][index]
+            self.refresh_menu()
+
     def add_new_item(self, category):
         """Open a dialog to add a new item to the specified category"""
         # Create a new window for adding an item with the same style as the order screen
@@ -398,7 +404,7 @@ class CarteMenu:
             # Recreate the menu by calling create_main_content
             self.create_main_content(self.main_menu, self.root)
 
-    def create_card(self, parent, name, price, img, ingredients, idx):
+    def create_card(self, parent, name, price, img, ingredients, idx, category):
         """Create a menu item card with fixed dimensions"""
         # Increase card height from 300 to 320px
         card = ctk.CTkFrame(parent, fg_color="#2E2E2E", corner_radius=10, width=180, height=320)
@@ -472,22 +478,40 @@ class CarteMenu:
         )
         plus_btn.pack(side="left", padx=(5, 0))
 
-        # Aumentar o padding vertical para o botão ADD
+        # Botões frame
+        buttons_frame = ctk.CTkFrame(card, fg_color="transparent")
+        buttons_frame.pack(fill="x", padx=10, pady=(5, 10))
+
+        # Botão ADD
         add_button = ctk.CTkButton(
-            card,
+            buttons_frame,
             text="+ ADD",
             fg_color=self.colors["main_color"],
             hover_color=self.colors["hover_color"],
             font=self.fonts["button_font"],
             command=lambda n=name, p=price, q=quantity_var: self.add_to_order(n, p, q),
-            height=25
+            height=25,
+            width=100
         )
-        add_button.pack(pady=(5, 10), padx=10, fill="x")  # Aumentar o padding inferior
+        add_button.pack(side="left", fill="x", expand=True)
+
+        # Botão DELETE
+        delete_button = ctk.CTkButton(
+            buttons_frame,
+            text="🗑",
+            fg_color="#ff4444",
+            hover_color="#ff0000",
+            font=self.fonts["button_font"],
+            command=lambda cat=category, i=idx: self.delete_menu_item(cat, i),
+            height=25,
+            width=30
+        )
+        delete_button.pack(side="right", padx=(5, 0))
 
         return card
 
-    def create_horizontal_section(self, parent, category, items):
-        """Create a horizontal scrollable section for a category"""
+    def create_category_section(self, parent, category, items):
+        """Create a section for a category with grid layout"""
         # Section frame
         section_frame = ctk.CTkFrame(parent, fg_color="transparent")
         section_frame.pack(fill="x", pady=10, padx=10)
@@ -501,42 +525,38 @@ class CarteMenu:
         )
         category_label.pack(anchor="w", pady=5)
 
-        # Create scrollable frame for horizontal scrolling
-        # Ajustar a altura do scrollable frame para acomodar o card mais alto
-        scroll_container = ctk.CTkScrollableFrame(
-            section_frame,
-            fg_color=self.colors["dark_bg"],
-            orientation="horizontal",
-            height=360,  # Increased from 340 to 360
-            width=800
-        )
-        scroll_container.pack(fill="x", pady=5)
+        # Create a frame to hold the cards in a grid layout
+        cards_container = ctk.CTkFrame(section_frame, fg_color="transparent")
+        cards_container.pack(fill="x", pady=5)
 
-        # Create a frame to hold the cards
-        cards_frame = ctk.CTkFrame(scroll_container, fg_color=self.colors["dark_bg"])
-        cards_frame.pack(fill="both", expand=True, pady=5, padx=5)
+        # Define max cards per row
+        max_cards_per_row = 6
+        rows = (len(items) + 1) // max_cards_per_row + 1  # +1 for the plus card
 
-        # Create item cards in a horizontal layout
+        # Create item cards in a grid layout
         for idx, (name, price, img, ingredients) in enumerate(items):
-            card = self.create_card(cards_frame, name, price, img, ingredients, idx)
-            card.grid(row=0, column=idx, padx=10, pady=5, sticky="nsew")
+            row = idx // max_cards_per_row
+            col = idx % max_cards_per_row
 
-            # Set fixed width for each column to ensure consistent card sizing
-            cards_frame.grid_columnconfigure(idx, minsize=180)  # Increased from 140 to 180
+            card = self.create_card(cards_container, name, price, img, ingredients, idx, category)
+            card.grid(row=row, column=col, padx=10, pady=10, sticky="nsew")
 
-        # Add the plus card at the end
-            # Update the plus card height
-            plus_card = ctk.CTkFrame(
-                cards_frame,
-                border_width=2,
-                border_color="#2E2E2E",
-                fg_color="transparent",
-                corner_radius=10,
-                width=180,
-                height=320  # Increased from 300 to 320
-            )
-        plus_card.grid(row=0, column=len(items), padx=10, pady=5, sticky="nsew")
-        cards_frame.grid_columnconfigure(len(items), minsize=180)  # Consistent sizing
+        # Add the plus card at the appropriate position
+        row = len(items) // max_cards_per_row
+        col = len(items) % max_cards_per_row
+
+        # Adicionar o card de "+"
+        plus_card = ctk.CTkFrame(
+            cards_container,
+            border_width=2,
+            border_color="#2E2E2E",
+            fg_color="transparent",
+            corner_radius=10,
+            width=180,
+            height=320
+        )
+        plus_card.grid(row=row, column=col, padx=10, pady=10, sticky="nsew")
+        plus_card.grid_propagate(False)  # Prevent resizing
 
         # Center the plus button
         plus_image = self.load_image("plus_square.png", (45, 45))
@@ -569,6 +589,10 @@ class CarteMenu:
             )
         add_new_button.pack()
 
+        # Configure grid for proper spacing
+        for i in range(max_cards_per_row):
+            cards_container.grid_columnconfigure(i, minsize=180, weight=1)
+
         return section_frame
 
     def create_main_content(self, main_menu, root):
@@ -589,9 +613,9 @@ class CarteMenu:
         )
         container_frame.pack(fill="both", expand=True, padx=0, pady=0)
 
-        # Create each category section
+        # Create each category section with grid layout
         for category, items in self.categories.items():
-            self.create_horizontal_section(container_frame, category, items)
+            self.create_category_section(container_frame, category, items)
 
         # Bottom frame
         bottom_frame = ctk.CTkFrame(self.main_content, fg_color="#D3D3D3", height=50, corner_radius=0)
