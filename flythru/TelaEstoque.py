@@ -31,6 +31,18 @@ class StorageMenu:
             print(f"{filename} file not found at: {image_path}")
             return None    
         
+    def create_input_validation(self):        
+        def validate_quantity(P):            
+            return P == "" or P.isdigit()        
+        
+        def validate_name(P):            
+            return len(P) <= 20        
+        
+        quantity_validation = self.root.register(validate_quantity)
+        name_validation = self.root.register(validate_name)
+        
+        return quantity_validation, name_validation
+    
     def create_main_content(self, main_menu, root):
         # Use main_menu to access fonts and colors
         self.fonts = main_menu.fonts
@@ -89,7 +101,7 @@ class StorageMenu:
         self.table_container.pack(fill="both", expand=True, padx=20, pady=(20, 10))
 
         # Table headers
-        headers = ["ID", "Produto", "Quantidade", "Categoria", "Ação"]
+        headers = ["ID", "Produto", "Quantidade (Un)", "Categoria", "Ação"]
         for i, header in enumerate(headers):
             header_label = ctk.CTkLabel(
                 self.table_container,
@@ -269,6 +281,8 @@ class StorageMenu:
         add_window.overrideredirect(True)
         add_window.grab_set()
         add_window.focus_force()
+        
+        quantity_validation, name_validation = self.create_input_validation()
 
         # Create a main frame 
         main_frame = ctk.CTkFrame(
@@ -345,7 +359,8 @@ class StorageMenu:
             fg_color="black",
             text_color="white",
             border_color="gray"
-        )
+        )        
+        nome_entry.configure(validate="key", validatecommand=(name_validation, "%P"))
         nome_entry.pack(padx=10, pady=(0, 10), fill="x")
         
         quant_label = ctk.CTkLabel(
@@ -365,6 +380,7 @@ class StorageMenu:
             text_color="white",
             border_color="gray"
         )
+        quant_entry.configure(validate="key", validatecommand=(quantity_validation, "%P"))
         quant_entry.pack(padx=10, pady=(0, 10), fill="x")
 
         # Category dropdown
@@ -502,6 +518,8 @@ class StorageMenu:
             edit_window.overrideredirect(True)
             edit_window.grab_set()
             edit_window.focus_force()
+            
+            quantity_validation, name_validation = self.create_input_validation()
 
             # Create a main frame 
             main_frame = ctk.CTkFrame(
@@ -566,9 +584,10 @@ class StorageMenu:
                 fg_color="black",
                 text_color="white",
                 border_color="gray"
-            )
+            )            
+            nome_entry.configure(validate="key", validatecommand=(name_validation, "%P"))
+            nome_entry.pack(padx=10, pady=(0, 10), fill="x")
             nome_entry.insert(0, produto)
-            nome_entry.pack(padx=5, pady=(0, 5), fill="x")
 
             # Quantity input
             quant_label = ctk.CTkLabel(input_frame, text="Quantidade:", font=self.fonts["input_font"], text_color="white")
@@ -581,6 +600,7 @@ class StorageMenu:
                 text_color="white",
                 border_color="gray"
             )
+            quant_entry.configure(validate="key", validatecommand=(quantity_validation, "%P"))
             quant_entry.insert(0, quant)
             quant_entry.pack(padx=5, pady=(0, 5), fill="x")
 
