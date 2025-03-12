@@ -223,7 +223,22 @@ class CarteMenu:
         # Create a new window for adding an item with the same style as the order screen
         add_window = ctk.CTkToplevel()
         add_window.title(f"Adicionar Item - {category}")
-        add_window.geometry("500x500")
+
+        # Get screen dimensions
+        screen_width = add_window.winfo_screenwidth()
+        screen_height = add_window.winfo_screenheight()
+
+        # Set a more appropriate window size
+        window_width = 450  # Reduced from 500
+        window_height = 550  # Reduced from 600
+
+        # Calculate position to center the window
+        x_position = (screen_width - window_width) // 2
+        y_position = (screen_height - window_height) // 2
+
+        # Set window geometry with position and size
+        add_window.geometry(f"{window_width}x{window_height}+{x_position}+{y_position}")
+
         add_window.resizable(False, False)
         add_window.overrideredirect(True)
         add_window.grab_set()
@@ -267,7 +282,7 @@ class CarteMenu:
 
         # Form fields
         form_frame = ctk.CTkFrame(content_frame, fg_color="transparent")
-        form_frame.pack(fill="both", expand=True, padx=20, pady=20)
+        form_frame.pack(fill="both", expand=True, padx=15, pady=15)  # Reduced padding
 
         # Name field
         name_label = ctk.CTkLabel(
@@ -276,7 +291,7 @@ class CarteMenu:
             font=ctk.CTkFont(family="Verdana", size=14),
             anchor="w"
         )
-        name_label.pack(fill="x", pady=(10, 5))
+        name_label.pack(fill="x", pady=(5, 5))  # Reduced padding
 
         name_var = ctk.StringVar()
         name_entry = ctk.CTkEntry(
@@ -285,7 +300,7 @@ class CarteMenu:
             font=ctk.CTkFont(family="Verdana", size=12),
             height=35
         )
-        name_entry.pack(fill="x", pady=(0, 15))
+        name_entry.pack(fill="x", pady=(0, 10))  # Reduced from 15
 
         # Price field
         price_label = ctk.CTkLabel(
@@ -294,7 +309,7 @@ class CarteMenu:
             font=ctk.CTkFont(family="Verdana", size=14),
             anchor="w"
         )
-        price_label.pack(fill="x", pady=(10, 5))
+        price_label.pack(fill="x", pady=(5, 5))  # Reduced padding
 
         price_var = ctk.StringVar()
         price_entry = ctk.CTkEntry(
@@ -304,26 +319,201 @@ class CarteMenu:
             height=35,
             placeholder_text="0.00"
         )
-        price_entry.pack(fill="x", pady=(0, 15))
+        price_entry.pack(fill="x", pady=(0, 10))  # Reduced from 15
 
-        # Ingredients field
+        # Ingredients selection section
         ingredients_label = ctk.CTkLabel(
             form_frame,
-            text="Ingredientes (um por linha):",
+            text="Ingredientes:",
             font=ctk.CTkFont(family="Verdana", size=14),
             anchor="w"
         )
-        ingredients_label.pack(fill="x", pady=(10, 5))
+        ingredients_label.pack(fill="x", pady=(5, 5))  # Reduced padding
 
-        ingredients_text = ctk.CTkTextbox(
-            form_frame,
+        # Lista de ingredientes disponíveis com suas quantidades
+        available_ingredients = [
+            {"name": "Hambúrguer", "unit": "g", "default_qty": 180},
+            {"name": "Queijo", "unit": "g", "default_qty": 30},
+            {"name": "Alface", "unit": "g", "default_qty": 20},
+            {"name": "Tomate", "unit": "g", "default_qty": 50},
+            {"name": "Cebola", "unit": "g", "default_qty": 30},
+            {"name": "Picles", "unit": "g", "default_qty": 20},
+            {"name": "Bacon", "unit": "g", "default_qty": 40},
+            {"name": "Molho Especial", "unit": "ml", "default_qty": 25},
+            {"name": "Pão", "unit": "un", "default_qty": 1},
+            {"name": "Batata Frita", "unit": "g", "default_qty": 150},
+            {"name": "Refrigerante", "unit": "ml", "default_qty": 350},
+        ]
+
+        # Lista para armazenar ingredientes selecionados com suas quantidades
+        selected_ingredients = []
+
+        # Frame para seleção de ingredientes
+        selection_frame = ctk.CTkFrame(form_frame, fg_color="#3E3E3E")
+        selection_frame.pack(fill="x", pady=(0, 5))
+
+        # Combobox para selecionar ingredientes
+        ingredient_var = ctk.StringVar()
+        ingredient_names = [item["name"] for item in available_ingredients]
+        ingredient_dropdown = ctk.CTkComboBox(
+            selection_frame,
+            values=ingredient_names,
+            variable=ingredient_var,
             font=ctk.CTkFont(family="Verdana", size=12),
-            height=150
+            height=35,
+            width=180  # Reduced from 200
         )
-        ingredients_text.pack(fill="x", pady=(0, 15))
+        ingredient_dropdown.pack(side="left", padx=(10, 5), pady=10)
+
+        # Variável e campo para a quantidade
+        quantity_var = ctk.StringVar(value="")
+        quantity_entry = ctk.CTkEntry(
+            selection_frame,
+            textvariable=quantity_var,
+            font=ctk.CTkFont(family="Verdana", size=12),
+            width=50,  # Reduced from 60
+            height=35,
+            placeholder_text="Qtd"
+        )
+        quantity_entry.pack(side="left", padx=(0, 5), pady=10)
+
+        # Rótulo de unidade (será atualizado dinamicamente)
+        unit_label = ctk.CTkLabel(
+            selection_frame,
+            text="",
+            font=ctk.CTkFont(family="Verdana", size=12),
+            width=30
+        )
+        unit_label.pack(side="left", pady=10)
+
+        # Função para atualizar o valor padrão e a unidade quando o ingrediente é selecionado
+        def update_quantity_default(*args):
+            selected = ingredient_var.get()
+            for ing in available_ingredients:
+                if ing["name"] == selected:
+                    quantity_var.set(str(ing["default_qty"]))
+                    unit_label.configure(text=ing["unit"])
+                    break
+
+        # Vincular a função ao ComboBox
+        ingredient_var.trace_add("write", update_quantity_default)
+
+        # Definir o valor inicial
+        if ingredient_names:
+            ingredient_var.set(ingredient_names[0])
+            update_quantity_default()
+
+        # Função para adicionar ingrediente à lista
+        def add_ingredient():
+            selected = ingredient_var.get()
+            quantity = quantity_var.get().strip()
+
+            # Verificar se os campos estão preenchidos
+            if not selected or not quantity:
+                return
+
+            try:
+                quantity = float(quantity.replace(',', '.'))
+            except ValueError:
+                # Mostrar mensagem de erro
+                error_label = ctk.CTkLabel(
+                    selection_frame,
+                    text="Quantidade inválida!",
+                    font=ctk.CTkFont(family="Verdana", size=10),
+                    text_color="red"
+                )
+                error_label.pack(side="right", padx=5)
+                selection_frame.after(2000, error_label.destroy)
+                return
+
+            # Encontrar a unidade do ingrediente selecionado
+            unit = ""
+            for ing in available_ingredients:
+                if ing["name"] == selected:
+                    unit = ing["unit"]
+                    break
+
+            # Verificar se o ingrediente já está na lista
+            for i, item in enumerate(selected_ingredients):
+                if item["name"] == selected:
+                    # Atualizar a quantidade
+                    selected_ingredients[i]["quantity"] = quantity
+                    update_ingredients_list()
+                    return
+
+            # Adicionar à lista de ingredientes selecionados
+            selected_ingredients.append({
+                "name": selected,
+                "quantity": quantity,
+                "unit": unit
+            })
+            update_ingredients_list()
+
+        # Botão para adicionar ingrediente
+        add_ingredient_button = ctk.CTkButton(
+            selection_frame,
+            text="+",
+            width=30,  # Reduced from 35
+            height=30,  # Reduced from 35
+            fg_color="#4CAF50",
+            hover_color="#45a049",
+            command=add_ingredient
+        )
+        add_ingredient_button.pack(side="right", padx=10, pady=10)
+
+        # Frame para exibir os ingredientes selecionados
+        ingredients_display_frame = ctk.CTkFrame(form_frame, fg_color="#3E3E3E",
+                                                 height=100)  # Reduced from 180 to 100
+        ingredients_display_frame.pack(fill="x", pady=(0, 10))  # Reduced from 15
+        ingredients_display_frame.pack_propagate(False)  # Manter altura fixa
+
+        # Função para atualizar a lista de ingredientes
+        def update_ingredients_list():
+            # Limpar o frame primeiro
+            for widget in ingredients_display_frame.winfo_children():
+                widget.destroy()
+
+            # Criar um frame para scrolling
+            scroll_frame = ctk.CTkScrollableFrame(ingredients_display_frame, fg_color="transparent")
+            scroll_frame.pack(fill="both", expand=True)
+
+            # Mostrar ingredientes selecionados
+            for i, ingredient in enumerate(selected_ingredients):
+                ingredient_row = ctk.CTkFrame(scroll_frame, fg_color="transparent")
+                ingredient_row.pack(fill="x", padx=5, pady=2)
+
+                # Mostrar nome e quantidade
+                ingredient_text = f"• {ingredient['name']} - {ingredient['quantity']} {ingredient['unit']}"
+                ingredient_label = ctk.CTkLabel(
+                    ingredient_row,
+                    text=ingredient_text,
+                    font=ctk.CTkFont(family="Verdana", size=12),
+                    text_color="white",
+                    anchor="w"
+                )
+                ingredient_label.pack(side="left", fill="x", expand=True)
+
+                # Botão para remover ingrediente
+                def remove_ingredient(idx=i):
+                    selected_ingredients.pop(idx)
+                    update_ingredients_list()
+
+                remove_button = ctk.CTkButton(
+                    ingredient_row,
+                    text="✕",
+                    width=20,  # Reduced from 25
+                    height=20,  # Reduced from 25
+                    fg_color="transparent",
+                    hover_color="#ff4444",
+                    command=lambda idx=i: remove_ingredient(idx)
+                )
+                remove_button.pack(side="right")
+
+        # Inicializar o frame de ingredientes
+        update_ingredients_list()
 
         # Bottom frame
-        bottom_frame = ctk.CTkFrame(add_window, fg_color="white", height=80)
+        bottom_frame = ctk.CTkFrame(add_window, fg_color="white", height=60)  # Reduced from 80
         bottom_frame.pack(side="bottom", fill="x")
 
         # Add item button
@@ -345,10 +535,7 @@ class CarteMenu:
                 bottom_frame.after(2000, error_label.destroy)
                 return
 
-            ingredients_content = ingredients_text.get("1.0", "end-1c")
-            ingredients_list = [ing.strip() for ing in ingredients_content.split('\n') if ing.strip()]
-
-            if not name or not ingredients_list:
+            if not name or not selected_ingredients:
                 # Show error if name or ingredients are empty
                 error_label = ctk.CTkLabel(
                     bottom_frame,
@@ -359,6 +546,9 @@ class CarteMenu:
                 error_label.pack(side="left", padx=20)
                 bottom_frame.after(2000, error_label.destroy)
                 return
+
+            # Criar lista de nomes de ingredientes para salvar no formato original
+            ingredients_list = [item["name"] for item in selected_ingredients]
 
             # Add new item to the category
             self.categories[category].append((name, price, "round_logo.png", ingredients_list))
@@ -375,10 +565,10 @@ class CarteMenu:
             fg_color="#4CAF50",
             hover_color="#45a049",
             font=ctk.CTkFont(family="Verdana", size=12, weight="bold"),
-            height=35,
+            height=30,  # Reduced from 35
             command=confirm_add_item
         )
-        add_button.pack(side="left", expand=True, padx=20, pady=10)
+        add_button.pack(side="left", expand=True, padx=15, pady=15)  # Reduced padding
 
         # Cancel button
         cancel_button = ctk.CTkButton(
@@ -387,10 +577,10 @@ class CarteMenu:
             fg_color="#ff4444",
             hover_color="#ff0000",
             font=ctk.CTkFont(family="Verdana", size=12, weight="bold"),
-            height=35,
+            height=30,  # Reduced from 35
             command=add_window.destroy
         )
-        cancel_button.pack(side="right", padx=20, pady=10)
+        cancel_button.pack(side="right", padx=15, pady=15)  # Reduced padding
 
     def refresh_menu(self):
         """Refresh the menu content to reflect changes"""
