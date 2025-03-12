@@ -72,6 +72,7 @@ def init_fonts(root):
         "text_primary": "#FFFFFF",    # Texto primário (branco)
         "text_secondary": "#CCCCCC",  # Texto secundário (cinza claro)
         "text_disabled": "#888888",   # Texto desabilitado (cinza médio)
+        "text_dark": "#000000",       # Texto para fundos brancos (preto)
         
         # Cores de status
         "success": "#00CC88",         # Sucesso (verde)
@@ -83,19 +84,19 @@ def init_fonts(root):
         "selected": "#555555",        # Cor para itens selecionados
         "border": "#555555",          # Cor para bordas
         "link": "#74B9FF",            # Cor para links
-        "table_bg": "white",        # Cor para fundo de tabelas
+        "table_bg": "white",          # Cor para fundo de tabelas
         "table_header": "#3D3D3D",    # Cor para cabeçalho de tabelas
         "table_row_alt": "#383838",   # Cor alternativa para linhas de tabelas
         
         # Mapeamento das cores antigas para manter compatibilidade
-        "main_color": "#FF8C00",      # mantém compatibilidade
-        "hover_color": "#E57200",     # atualizado
-        "second_color": "#00B894",    # atualizado
+        "main_color": "#FF8C00",         # mantém compatibilidade
+        "hover_color": "#E57200",        # atualizado
+        "second_color": "#00B894",       # atualizado
         "second_hover_color": "#00A085", # atualizado
-        "selected_color": "#555555",  # atualizado
-        "link_color_login": "#74B9FF",# atualizado
-        "menu_bg": "#2D2D2D",         # atualizado
-        "link_color": "#74B9FF",      # atualizado
+        "selected_color": "#555555",     # atualizado
+        "link_color_login": "#74B9FF",   # atualizado
+        "menu_bg": "#2D2D2D",            # atualizado
+        "link_color": "#74B9FF",         # atualizado
     }
     
     return fonts, colors

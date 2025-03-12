@@ -122,12 +122,12 @@ class SupplierMenu:
         # Search bar
         search_bar = ctk.CTkEntry(
             search_container,
-            placeholder_text="🔎 Pesquisar Produto",
+            placeholder_text="🔎 Pesquisar Fornecedor",
             font=self.fonts["input_font"],
             height=40,
-            fg_color="white",
-            text_color="black",
-            placeholder_text_color="gray"
+            fg_color=self.colors["text_primary"],
+            text_color=self.colors["dark_bg"],
+            placeholder_text_color=self.colors["text_disabled"]
         )
         search_bar.place(relx=0, rely=0, relwidth=1, relheight=1)
 
@@ -137,9 +137,9 @@ class SupplierMenu:
             text="",
             width=28,
             height=28,
-            fg_color="white",
+            fg_color=self.colors["text_primary"],
             corner_radius=0,
-            hover_color=self.colors["hover_color"],
+            hover_color=self.colors["primary_hover"],
             command=None
         )
         filter_button.place(relx=0.97, rely=0.5, anchor="center")
@@ -156,7 +156,7 @@ class SupplierMenu:
                 text=header,
                 font=self.fonts["header_font"],
                 fg_color=None,
-                text_color="black"
+                text_color=self.colors["dark_bg"]
             )
             header_label.grid(row=0, column=i, padx=8, pady=5, sticky="ew")
                 
@@ -173,21 +173,22 @@ class SupplierMenu:
             text="Cadastrar",
             width=120,
             height=40,
-            fg_color=self.colors["second_color"],
-            hover_color=self.colors["second_hover_color"],
-            text_color="white",
+            fg_color=self.colors["secondary"],
+            hover_color=self.colors["secondary_hover"],
+            text_color=self.colors["text_primary"],
             font=self.fonts["button_font"],
             command=lambda: self.add_supplier_row(root)  
         )
         add_row_button.place(relx=0.425, rely=0.2, anchor="s")
+        
         print_supplier_button = ctk.CTkButton(
             btn_frame,
             text="Imprimir",
             width=120,
             height=40,
-            fg_color="white",
-            hover_color="gray",
-            text_color="blacK",
+            fg_color=self.colors["text_primary"],
+            hover_color=self.colors["selected"],
+            text_color=self.colors["dark_bg"],
             font=self.fonts["button_font"],
             command=lambda: self.add_supplier_row(root)  
         )
@@ -213,9 +214,6 @@ class SupplierMenu:
                 print("Não há fornecedores cadastrados.")
         except Exception as e:
             print(f"Erro ao carregar dados: {e}")
-
-        except Exception as e:
-            print(f"Erro ao carregar dados: {e}")
             messagebox.showerror("Erro", f"Falha ao carregar fornecedores: {e}")
         
     def add_supplier_row(self, root):        
@@ -230,7 +228,7 @@ class SupplierMenu:
         # Main frame 
         main_frame = ctk.CTkFrame(
             add_window,
-            fg_color="#1E1E1E",  
+            fg_color=self.colors["dark_bg"],  
             corner_radius=10
         )
         main_frame.pack(padx=10, pady=10, fill="both", expand=True)
@@ -248,8 +246,8 @@ class SupplierMenu:
         title = ctk.CTkLabel(
             main_frame,
             text="Cadastrar Fornecedor",
-            font=ctk.CTkFont(family="Verdana", size=16, weight="bold"),
-            text_color="white"
+            font=self.fonts["menu_font"],
+            text_color=self.colors["text_primary"]
         )
         title.pack(pady=(5, 20))        
         
@@ -259,7 +257,7 @@ class SupplierMenu:
         # Input frame 
         input_frame = ctk.CTkFrame(
             main_frame,
-            fg_color="#1E1E1E",  
+            fg_color=self.colors["dark_bg"],  
             corner_radius=5
         )
         input_frame.pack(padx=10, fill="x")
@@ -268,7 +266,7 @@ class SupplierMenu:
             input_frame,
             text="Nome:",
             font=self.fonts["input_font"],
-            text_color="white"
+            text_color=self.colors["text_primary"]
         )
         nome_label.pack(padx=5, pady=(5, 0), anchor="w")        
         
@@ -277,9 +275,9 @@ class SupplierMenu:
             placeholder_text="",
             font=self.fonts["input_font"],
             height=30,
-            fg_color="black",
-            text_color="white",
-            border_color="gray"
+            fg_color=self.colors["medium_bg"],
+            text_color=self.colors["text_primary"],
+            border_color=self.colors["border"]
         )
         nome_entry.pack(padx=10, pady=(0, 5), fill="x")
         nome_entry.bind("<KeyRelease>", lambda event, widget=nome_entry: self.validate_text_length(event, widget, 40))
@@ -288,7 +286,7 @@ class SupplierMenu:
             input_frame,
             text="CNPJ:",
             font=self.fonts["input_font"],
-            text_color="white"
+            text_color=self.colors["text_primary"]
         )
         telefone_label.pack(padx=5, pady=(5, 0), anchor="w")
         
@@ -297,9 +295,9 @@ class SupplierMenu:
             placeholder_text="xx.xxx.xxx/xxxx-xx",
             font=self.fonts["input_font"],
             height=30,
-            fg_color="black",
-            text_color="white",
-            border_color="gray"
+            fg_color=self.colors["medium_bg"],
+            text_color=self.colors["text_primary"],
+            border_color=self.colors["border"]
         )
         telefone_entry.pack(padx=10, pady=(0, 5), fill="x")
         telefone_entry.bind("<KeyRelease>", lambda event, widget=telefone_entry: self.validate_cnpj(event, widget))
@@ -308,7 +306,7 @@ class SupplierMenu:
             input_frame,
             text="E-Mail:",
             font=self.fonts["input_font"],
-            text_color="white"
+            text_color=self.colors["text_primary"]
         )
         email_label.pack(padx=5, pady=(5, 0), anchor="w")
         
@@ -317,9 +315,9 @@ class SupplierMenu:
             placeholder_text="contato@alimentos.com",
             font=self.fonts["input_font"],
             height=30,
-            fg_color="black",
-            text_color="white",
-            border_color="gray"
+            fg_color=self.colors["medium_bg"],
+            text_color=self.colors["text_primary"],
+            border_color=self.colors["border"]
         )
         email_entry.pack(padx=10, pady=(0, 5), fill="x")
         email_entry.bind("<KeyRelease>", lambda event, widget=email_entry: self.validate_email(event, widget))
@@ -328,7 +326,7 @@ class SupplierMenu:
             input_frame,
             text="Telefone:",
             font=self.fonts["input_font"],
-            text_color="white"
+            text_color=self.colors["text_primary"]
         )
         cnpj_label.pack(padx=5, pady=(5, 0), anchor="w")
         
@@ -337,9 +335,9 @@ class SupplierMenu:
             placeholder_text="(xx) xxxxx-xxxx",
             font=self.fonts["input_font"],
             height=30,
-            fg_color="black",
-            text_color="white",
-            border_color="gray"
+            fg_color=self.colors["medium_bg"],
+            text_color=self.colors["text_primary"],
+            border_color=self.colors["border"]
         )
         cnpj_entry.pack(padx=10, pady=(0, 5), fill="x")
         cnpj_entry.bind("<KeyRelease>", lambda event, widget=cnpj_entry: self.validate_phone(event, widget))       
@@ -367,7 +365,7 @@ class SupplierMenu:
             font=self.fonts["button_font"],
             width=120,
             height=35,
-            fg_color="#FF0000", 
+            fg_color=self.colors["error"], 
             hover_color="#CC0000",  
             command=cancel
         )
@@ -379,8 +377,8 @@ class SupplierMenu:
             font=self.fonts["button_font"],
             width=120,
             height=35,
-            fg_color=self.colors["second_color"],  
-            hover_color=self.colors["second_hover_color"],
+            fg_color=self.colors["secondary"],  
+            hover_color=self.colors["secondary_hover"],
             command=save
         )
         save_button.place(relx=0.75, rely=0.95, anchor="center")
@@ -407,7 +405,7 @@ class SupplierMenu:
                     text=str(value),
                     font=self.fonts["input_font"],
                     fg_color="transparent",
-                    text_color="black"
+                    text_color=self.colors["dark_bg"]
                 )
                 row_label.grid(row=new_row, column=col, padx=8, pady=5, sticky="we")
                        
@@ -460,8 +458,8 @@ class SupplierMenu:
                     text="Não",
                     font=self.fonts["button_font"],
                     width=100,
-                    fg_color=self.colors["second_color"],
-                    hover_color=self.colors["second_hover_color"],
+                    fg_color=self.colors["secondary"],
+                    hover_color=self.colors["secondary_hover"],
                     command=confirm.destroy
                 ).pack(side="left", padx=5)
 
@@ -470,7 +468,7 @@ class SupplierMenu:
                     text="Sim",
                     font=self.fonts["button_font"],
                     width=100,
-                    fg_color="#FF0000",
+                    fg_color=self.colors["error"],
                     hover_color="#CC0000",
                     command=confirm_delete
                 ).pack(side="right", padx=5)
@@ -482,7 +480,7 @@ class SupplierMenu:
                 width=35,
                 height=35,
                 fg_color="transparent",
-                hover_color="#E5E5E5",
+                hover_color=self.colors["selected"],
                 corner_radius=5,               
                 command=lambda r=new_row: self.edit_row(r)  
             )
@@ -495,7 +493,7 @@ class SupplierMenu:
                 width=40,  
                 height=35,
                 fg_color="transparent", 
-                hover_color="#E5E5E5",  
+                hover_color=self.colors["selected"],  
                 command=delete_row
             )
             delete_button.pack(side="left", padx=(2, 0))
@@ -528,7 +526,7 @@ class SupplierMenu:
             # Main frame 
             main_frame = ctk.CTkFrame(
                 edit_window,
-                fg_color="#1E1E1E",
+                fg_color=self.colors["dark_bg"],
                 corner_radius=10
             )
             main_frame.pack(padx=10, pady=(10, 10), fill="both", expand=True)            
@@ -545,8 +543,8 @@ class SupplierMenu:
             title = ctk.CTkLabel(
                 main_frame,
                 text="Editar Fornecedor",
-                font=ctk.CTkFont(family="Verdana", size=16, weight="bold"),
-                text_color="white"
+                font=self.fonts["menu_font"],
+                text_color=self.colors["text_primary"]
             )
             title.pack(pady=(5, 15))            
             
@@ -556,7 +554,7 @@ class SupplierMenu:
             # Input frame
             input_frame = ctk.CTkFrame(
                 main_frame,
-                fg_color="#1E1E1E",
+                fg_color=self.colors["dark_bg"],
                 corner_radius=5
             )
             input_frame.pack(padx=10, fill="x")
@@ -566,16 +564,16 @@ class SupplierMenu:
                 input_frame, 
                 text="Nome:", 
                 font=self.fonts["input_font"], 
-                text_color="white"
+                text_color=self.colors["text_primary"]
             )
             nome_label.pack(padx=5, pady=(5, 0), anchor="w")
             nome_entry = ctk.CTkEntry(
                 input_frame,
                 font=self.fonts["input_font"],
                 height=30,
-                fg_color="black",
-                text_color="white",
-                border_color="gray"
+                fg_color=self.colors["medium_bg"],
+                text_color=self.colors["text_primary"],
+                border_color=self.colors["border"]
             )
             nome_entry.insert(0, supplier)
             nome_entry.pack(padx=5, pady=(0, 5), fill="x")
@@ -586,16 +584,16 @@ class SupplierMenu:
                 input_frame, 
                 text="CNPJ:", 
                 font=self.fonts["input_font"], 
-                text_color="white"
+                text_color=self.colors["text_primary"]
             )
             cnpj_label.pack(padx=5, pady=(5, 0), anchor="w")
             cnpj_entry = ctk.CTkEntry(
                 input_frame,
                 font=self.fonts["input_font"],
                 height=30,
-                fg_color="black",
-                text_color="white",
-                border_color="gray"
+                fg_color=self.colors["medium_bg"],
+                text_color=self.colors["text_primary"],
+                border_color=self.colors["border"]
             )
             cnpj_entry.insert(0, cnpj)
             cnpj_entry.pack(padx=5, pady=(0, 5), fill="x")
@@ -606,16 +604,16 @@ class SupplierMenu:
                 input_frame, 
                 text="Email:", 
                 font=self.fonts["input_font"], 
-                text_color="white"
+                text_color=self.colors["text_primary"]
             )
             telefone_label.pack(padx=5, pady=(5, 0), anchor="w")
             telefone_entry = ctk.CTkEntry(
                 input_frame,
                 font=self.fonts["input_font"],
                 height=30,
-                fg_color="black",
-                text_color="white",
-                border_color="gray"
+                fg_color=self.colors["medium_bg"],
+                text_color=self.colors["text_primary"],
+                border_color=self.colors["border"]
             )
             telefone_entry.insert(0, telefone)
             telefone_entry.pack(padx=5, pady=(0, 5), fill="x")
@@ -626,16 +624,16 @@ class SupplierMenu:
                 input_frame, 
                 text="Telefone:", 
                 font=self.fonts["input_font"], 
-                text_color="white"
+                text_color=self.colors["text_primary"]
             )
             email_label.pack(padx=5, pady=(5, 0), anchor="w")
             email_entry = ctk.CTkEntry(
                 input_frame,
                 font=self.fonts["input_font"],
                 height=30,
-                fg_color="black",
-                text_color="white",
-                border_color="gray"
+                fg_color=self.colors["medium_bg"],
+                text_color=self.colors["text_primary"],
+                border_color=self.colors["border"]
             )
             email_entry.insert(0, email)
             email_entry.pack(padx=5, pady=(0, 10), fill="x")
@@ -667,30 +665,6 @@ class SupplierMenu:
                 except Exception as e:
                     messagebox.showerror("Erro", f"Erro ao atualizar fornecedor: {e}")
                     print(f"Erro na função save_edit: {e}")                        
-
-                # Confirmation buttons
-                btn_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
-                btn_frame.pack(side="bottom", pady=(5, 15), fill="x", padx=20)
-            
-                ctk.CTkButton(
-                    btn_frame,
-                    text="Não",
-                    font=self.fonts["button_font"],
-                    width=100,
-                    fg_color=self.colors["second_color"],
-                    hover_color=self.colors["second_hover_color"],
-                    command=confirm.destroy
-                ).pack(side="left", padx=5)
-
-                ctk.CTkButton(
-                    btn_frame,
-                    text="Sim",
-                    font=self.fonts["button_font"],
-                    width=100,
-                    fg_color="#FF0000",
-                    hover_color="#CC0000",
-                    command=confirm_delete
-                ).pack(side="left", padx=5)
             
             # Buttons frame
             buttons_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
@@ -703,7 +677,7 @@ class SupplierMenu:
                 font=self.fonts["button_font"],
                 width=80,
                 height=35,
-                fg_color="#FF0000",
+                fg_color=self.colors["error"],
                 hover_color="#CC0000",
                 command=edit_window.destroy
             )
@@ -716,8 +690,8 @@ class SupplierMenu:
                 font=self.fonts["button_font"],
                 width=80,
                 height=35,
-                fg_color=self.colors["second_color"],
-                hover_color=self.colors["second_hover_color"],
+                fg_color=self.colors["secondary"],
+                hover_color=self.colors["secondary_hover"],
                 command=save_edit
             )
-            save_button.pack(side="right", padx=5)                               
+            save_button.pack(side="right", padx=5)
