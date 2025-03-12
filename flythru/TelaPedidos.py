@@ -69,7 +69,7 @@ class OrdersMenu:
         self.table_container.pack(fill="both", expand=True, padx=20, pady=(20, 10))
 
         # Table headers
-        headers = ["N°", "Data", "Cliente", "Valor (R$)", "Pagamento", " "]
+        headers = ["N°", "Data", "Descrição", "Valor (R$)", "Pagamento", " "]
         for i, header in enumerate(headers):
             header_label = ctk.CTkLabel(
                 self.table_container,

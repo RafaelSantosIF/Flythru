@@ -167,7 +167,7 @@ class StorageMenu:
         # Create a main frame 
         main_frame = ctk.CTkFrame(
             add_window,
-            fg_color="#FF8C00",  
+            fg_color="#1E1E1E",  
             corner_radius=10
         )
         main_frame.pack(padx=10, pady=10, fill="both", expand=True)
@@ -287,7 +287,7 @@ class StorageMenu:
         # Create a main frame 
         main_frame = ctk.CTkFrame(
             add_window,
-            fg_color="#FF8C00",  
+            fg_color="#1E1E1E",  
             corner_radius=10
         )
         main_frame.pack(padx=10, pady=10, fill="both", expand=True)
@@ -600,7 +600,7 @@ class StorageMenu:
             # Create a main frame 
             main_frame = ctk.CTkFrame(
                 edit_window,
-                fg_color="#FF8C00",
+                fg_color="#1E1E1E",
                 corner_radius=10
             )
             main_frame.pack(padx=10, pady=(10, 10), fill="both", expand=True)

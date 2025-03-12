@@ -165,8 +165,11 @@ class SupplierMenu:
             self.table_container.grid_columnconfigure(i, weight=1)
             
         # Supplier button
+        btn_frame = ctk.CTkFrame(main_content, fg_color="transparent")
+        btn_frame.pack(pady=(0, 5), padx=20, fill="x")
+        
         add_row_button = ctk.CTkButton(
-            main_content,
+            btn_frame,
             text="Cadastrar",
             width=120,
             height=40,
@@ -176,7 +179,20 @@ class SupplierMenu:
             font=self.fonts["button_font"],
             command=lambda: self.add_supplier_row(root)  
         )
-        add_row_button.pack(pady=(0, 20))
+        add_row_button.place(relx=0.425, rely=0.2, anchor="s")
+        print_supplier_button = ctk.CTkButton(
+            btn_frame,
+            text="Imprimir",
+            width=120,
+            height=40,
+            fg_color="white",
+            hover_color="gray",
+            text_color="blacK",
+            font=self.fonts["button_font"],
+            command=lambda: self.add_supplier_row(root)  
+        )
+        print_supplier_button.place(relx=0.575, rely=0.2, anchor="s")
+        
         self.load_data()
         
     def update_table(self):
@@ -214,7 +230,7 @@ class SupplierMenu:
         # Main frame 
         main_frame = ctk.CTkFrame(
             add_window,
-            fg_color="#FF8C00",  
+            fg_color="#1E1E1E",  
             corner_radius=10
         )
         main_frame.pack(padx=10, pady=10, fill="both", expand=True)
@@ -512,7 +528,7 @@ class SupplierMenu:
             # Main frame 
             main_frame = ctk.CTkFrame(
                 edit_window,
-                fg_color="#FF8C00",
+                fg_color="#1E1E1E",
                 corner_radius=10
             )
             main_frame.pack(padx=10, pady=(10, 10), fill="both", expand=True)            
