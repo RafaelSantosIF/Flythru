@@ -474,30 +474,106 @@ class StorageMenu:
                 )
                 row_label.grid(row=new_row, column=col, padx=10, pady=5, sticky="ew")
             
-            # Add edit button in the action column
-            edit_button = ctk.CTkButton(
+            def delete_row():                
+                confirm = ctk.CTkToplevel(self.root)
+                confirm.title("Confirmar exclusão")
+                confirm.geometry("250x150")
+                confirm.resizable(False, False)
+                confirm.overrideredirect(True)
+                confirm.grab_set()                
+                
+                x = self.root.winfo_x() + (self.root.winfo_width() // 2) - (300 // 2)
+                y = self.root.winfo_y() + (self.root.winfo_height() // 2) - (150 // 2)
+                confirm.geometry(f"250x150+{x}+{y}")
+                
+                msg = ctk.CTkLabel(
+                    confirm,
+                    text="Tem certeza que deseja excluir este item?",
+                    font=self.fonts["input_font"],
+                    wraplength=250
+                )
+                msg.pack(pady=20)
+               
+                btn_frame = ctk.CTkFrame(confirm, fg_color="transparent")
+                btn_frame.pack(pady=10)
+
+                def confirm_delete():                    
+                    if estoque.delete(id_produto):
+                        for widget in self.table_container.grid_slaves(row=new_row):
+                            widget.destroy()
+                        confirm.destroy()
+                        edit_window.destroy()
+                        self.load_data()
+                    else:
+                        messagebox.showerror("Erro", "Falha ao excluir o produto do banco de dados.")
+                
+                ctk.CTkButton(
+                    btn_frame,
+                    text="Não",
+                    font=self.fonts["button_font"],
+                    width=100,
+                    fg_color=self.colors["second_color"],
+                    hover_color=self.colors["second_hover_color"],
+                    command=confirm.destroy
+                ).pack(side="left", padx=5)
+
+                ctk.CTkButton(
+                    btn_frame,
+                    text="Sim",
+                    font=self.fonts["button_font"],
+                    width=100,
+                    fg_color="#FF0000",
+                    hover_color="#CC0000",
+                    command=confirm_delete
+                ).pack(side="left", padx=5)
+            
+            button_frame = ctk.CTkFrame(
                 self.table_container,
-                text="Editar",
-                width=30,
-                height=30,
-                fg_color=self.colors["main_color"],
-                hover_color=self.colors["hover_color"],
-                text_color="white",
-                font=self.fonts["input_font"],
-                command=lambda r=new_row: self.edit_row(r)  # Pass the row number to edit_row method
+                fg_color="transparent",
+                width=50,  
+                height=35  
             )
-            edit_button.grid(row=new_row, column=4, padx=2, pady=5, sticky="ns")  
+            button_frame.grid(row=new_row, column=4, padx=(8, 2), pady=(5), sticky="ns")
+            button_frame.grid_propagate(False)
+                        
+            edit_icon = self.load_image("edit_icon.png", size=(25, 25))
+            trash_icon = self.load_image("trash.png", size=(24, 24))
+            
+            edit_button = ctk.CTkButton(
+                button_frame,
+                text="",
+                image=edit_icon,
+                width=35,
+                height=35,
+                fg_color="transparent",
+                hover_color="#E5E5E5",
+                corner_radius=5,               
+                command=lambda r=new_row: self.edit_row(r)  
+            )
+            edit_button.pack(side="left", padx=(0, 2))
+            
+            delete_button = ctk.CTkButton(
+                button_frame,
+                text="",  
+                image=trash_icon,
+                width=40,  
+                height=35,
+                fg_color="transparent", 
+                hover_color="#E5E5E5",  
+                command=delete_row
+            )
+            delete_button.pack(side="left", padx=(2, 0))  
             
             # Configure the new row
             self.table_container.grid_rowconfigure(new_row, pad=3)
             
-            print(f"Added new row: {values}")  # Debug print
+            print(f"Added new row: {values}")  # Debug 
             
         except Exception as e:
             print(f"Error adding row to table: {e}")
 
     def edit_row(self, row):
-        # Get the current values from the row
+        # Get the current values 
         current_values = []
         for col in range(4):  
             cell = [
@@ -529,7 +605,7 @@ class StorageMenu:
             )
             main_frame.pack(padx=10, pady=(10, 10), fill="both", expand=True)
             
-            # Create a title bar frame for dragging
+            # Create a title frame 
             title_bar = ctk.CTkFrame(
                 main_frame,
                 fg_color="transparent",  
@@ -545,9 +621,8 @@ class StorageMenu:
                 font=ctk.CTkFont(family="Verdana", size=16, weight="bold"),
                 text_color="white"
             )
-            title.pack(pady=(5, 15))
+            title.pack(pady=(5, 15))            
             
-            # Add dragging functionality
             from MainMenu import WindowDragging
             WindowDragging(edit_window, title_bar)
 
@@ -658,88 +733,12 @@ class StorageMenu:
                     messagebox.showerror("Erro", "Quantidade inválida. Deve ser um número.")
                 except Exception as e:
                     messagebox.showerror("Erro", f"Erro ao atualizar produto: {e}")
-                    print(f"Erro na função save_edit: {e}") # Para debug
-
-
-
-            def delete_row():
-                # Create confirmation dialog
-                confirm = ctk.CTkToplevel(edit_window)
-                confirm.title("Confirmar exclusão")
-                confirm.geometry("250x150")
-                confirm.resizable(False, False)
-                confirm.overrideredirect(True)
-                confirm.grab_set()
-                
-                # Center the confirmation window relative to the edit window
-                x = edit_window.winfo_x() + (edit_window.winfo_width() // 2) - (300 // 2)
-                y = edit_window.winfo_y() + (edit_window.winfo_height() // 2) - (150 // 2)
-                confirm.geometry(f"250x150+{x}+{y}")
-
-                # Confirmation message
-                msg = ctk.CTkLabel(
-                    confirm,
-                    text="Tem certeza que deseja excluir este item?",
-                    font=self.fonts["input_font"],
-                    wraplength=250
-                )
-                msg.pack(pady=20)
-
-                # Buttons frame
-                btn_frame = ctk.CTkFrame(confirm, fg_color="transparent")
-                btn_frame.pack(pady=10)
-
-                def confirm_delete():
-                    # Remove all widgets in the row
-                    if estoque.delete(id_produto):
-                        for widget in self.table_container.grid_slaves(row=row):
-                            widget.destroy()
-                        confirm.destroy()
-                        edit_window.destroy()
-                        self.load_data()
-                    else:
-                        messagebox.showerror("Erro", "Falha ao excluir o produto do banco de dados.")
-
-                # Confirmation buttons
-                ctk.CTkButton(
-                    btn_frame,
-                    text="Não",
-                    font=self.fonts["button_font"],
-                    width=100,
-                    fg_color=self.colors["second_color"],
-                    hover_color=self.colors["second_hover_color"],
-                    command=confirm.destroy
-                ).pack(side="left", padx=5)
-
-                ctk.CTkButton(
-                    btn_frame,
-                    text="Sim",
-                    font=self.fonts["button_font"],
-                    width=100,
-                    fg_color="#FF0000",
-                    hover_color="#CC0000",
-                    command=confirm_delete
-                ).pack(side="left", padx=5)
+                    print(f"Erro na função save_edit: {e}")             
             
             # Buttons frame
             buttons_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
-            buttons_frame.pack(side="bottom", pady=(5, 15), fill="x", padx=20)
-
-            trash_icon = self.load_image("trash.png", size=(24, 24))
-            
-            # Delete button 
-            delete_button = ctk.CTkButton(
-                buttons_frame,
-                text="",  
-                image=trash_icon,
-                width=40,  
-                height=35,
-                fg_color="transparent", 
-                hover_color=None,
-                command=delete_row
-            )
-            delete_button.pack(side="left", padx=5)
-            
+            buttons_frame.pack(side="bottom", pady=(5, 15), fill="x", padx=20)         
+                        
             # Cancel button
             cancel_button = ctk.CTkButton(
                 buttons_frame,
