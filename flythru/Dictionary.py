@@ -83,7 +83,7 @@ def init_fonts(root):
         "selected": "#555555",        # Cor para itens selecionados
         "border": "#555555",          # Cor para bordas
         "link": "#74B9FF",            # Cor para links
-        "table_bg": "#2D2D2D",        # Cor para fundo de tabelas
+        "table_bg": "white",        # Cor para fundo de tabelas
         "table_header": "#3D3D3D",    # Cor para cabeçalho de tabelas
         "table_row_alt": "#383838",   # Cor alternativa para linhas de tabelas
         
