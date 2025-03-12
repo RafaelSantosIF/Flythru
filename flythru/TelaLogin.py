@@ -6,35 +6,29 @@ import Dictionary as dc
 from MainMenu import MainMenu
 
 class LoginScreen:
-    def __init__(self):
-        # Initialize the customtkinter framework
+    def __init__(self):        
         ctk.set_appearance_mode("dark")
         ctk.set_default_color_theme("blue")
         
-        # Initialize main window
         self.root = ctk.CTk()
         self.root.title("FlyThru - Login")
         self.root.geometry(self.root.geometry("{0}x{1}+0+0".format(self.root.winfo_screenwidth(), self.root.winfo_screenheight())))
         self.root.attributes('-fullscreen', True)    
-           
-        # Initialize fonts and colors AFTER root creation
+       
         self.fonts, self.colors = dc.init_fonts(self.root)
         
         self.root.bind('<Escape>', self.toggle_fullscreen)
         
-        # Get the current script's directory
         current_dir = os.path.dirname(os.path.abspath(__file__))
         self.assets_dir = os.path.join(current_dir, "assets")  # Store assets_dir as instance variable
         
-        # Load images with absolute path
         self.load_images(self.assets_dir)
         
-        # Create main grid layout
+        #GRID & FRAMES
         self.root.grid_rowconfigure(0, weight=1)
         self.root.grid_columnconfigure(0, weight=1)
         self.root.grid_columnconfigure(1, weight=1)
         
-        # Create frames
         self.create_frames()
         self.setup_left_frame()
         self.setup_right_frame()
@@ -44,14 +38,12 @@ class LoginScreen:
         self.root.attributes('-fullscreen', not is_fullscreen)    
         
     def load_images(self, assets_path):
-        #Load images from the assets folder
         try:
-            # Construct full paths using correct path joining
             logo_path = os.path.join(assets_path, "logo.png")
             bottom_icon_path = os.path.join(assets_path, "bottom_icon.png")
             flythru_path = os.path.join(assets_path, "FLYTHRU_W.png")
             print("teste")
-            # Check if files exist
+            
             if os.path.exists(logo_path):
                 print("Logo file found!")
                 self.logo_image = ctk.CTkImage(
@@ -91,14 +83,13 @@ class LoginScreen:
             self.bottom_image = None   
            
     def create_frames(self):
-        self.left_frame = ctk.CTkFrame(self.root, fg_color=self.colors["main_color"])
+        self.left_frame = ctk.CTkFrame(self.root, fg_color=self.colors["primary"])
         self.left_frame.grid(row=0, column=0, sticky="nsew")
         
         self.right_frame = ctk.CTkFrame(self.root, fg_color=self.colors["dark_bg"])
         self.right_frame.grid(row=0, column=1, sticky="nsew")
         
-    def setup_left_frame(self):
-        # Configure grid weights      
+    def setup_left_frame(self):     
         self.left_frame.grid_rowconfigure(0, weight=4)  
         self.left_frame.grid_rowconfigure(1, weight=0) 
         self.left_frame.grid_rowconfigure(2, weight=1)
@@ -106,11 +97,9 @@ class LoginScreen:
         self.left_frame.grid_rowconfigure(4, weight=1)  
         self.left_frame.grid_columnconfigure(0, weight=1)
         
-        # Create a container frame for the main content to keep it together
         content_frame = ctk.CTkFrame(self.left_frame, fg_color="transparent")
         content_frame.grid(row=1, column=0, sticky="nsew")
         
-        # Logo
         if self.logo_image:
             logo_label = ctk.CTkLabel(
                 content_frame,
@@ -125,7 +114,6 @@ class LoginScreen:
             )
         logo_label.pack(pady=(10, 10)) 
         
-        # FLYTHRU logo
         if self.flythru_image:
             logo_label = ctk.CTkLabel(
                 content_frame,
@@ -140,16 +128,14 @@ class LoginScreen:
             )
         logo_label.pack(pady=(10, 10))  
         
-        # Welcome text
         welcome_label = ctk.CTkLabel(
             content_frame,
             text="☕  Bem Vindo!  ♨️",
             font=self.fonts["welcome_font"],
-            text_color="white"
+            text_color=self.colors["text_primary"]
         )
         welcome_label.pack(pady=(30, 20))  
         
-        # Bottom button 
         if self.bottom_image:
             bottom_button = ctk.CTkButton(
                 self.left_frame,
@@ -158,7 +144,7 @@ class LoginScreen:
                 width=50,
                 height=50,
                 fg_color="transparent",
-                hover_color=self.colors["hover_color"],
+                hover_color=self.colors["primary_hover"],
                 command=self.bottom_button_click
             )
         else:
@@ -168,7 +154,7 @@ class LoginScreen:
                 width=50,
                 height=50,
                 fg_color="transparent",
-                hover_color=self.colors["hover_color"],
+                hover_color=self.colors["primary_hover"],
                 command=self.bottom_button_click
             )
         bottom_button.grid(row=4, column=0, pady=(0, 20), padx=(20, 0), sticky="w")
@@ -183,7 +169,6 @@ class LoginScreen:
         form_frame = ctk.CTkFrame(self.right_frame, fg_color="transparent")
         form_frame.grid(row=2, column=0)
         
-        # Username entry
         self.username_entry = ctk.CTkEntry(
             form_frame,
             width=450,
@@ -193,7 +178,6 @@ class LoginScreen:
         )
         self.username_entry.pack(pady=10)
         
-        # Password entry
         self.password_entry = ctk.CTkEntry(
             form_frame,
             width=450,
@@ -204,25 +188,23 @@ class LoginScreen:
         )
         self.password_entry.pack(pady=10)
         
-        # Login button
         login_button = ctk.CTkButton(
             form_frame,
             text="entrar",
             width=200,
             height=50,
             font=self.fonts["button_font_login"],
-            fg_color=self.colors["main_color"],
-            hover_color=self.colors["hover_color"],
+            fg_color=self.colors["primary"],
+            hover_color=self.colors["primary_hover"],
             command=self.login
         )
         login_button.pack(pady=(20, 0))
         
-        # Forgot password link
         forgot_pwd = ctk.CTkLabel(
             form_frame,
             text="Esqueceu sua senha?",
             font=self.fonts["link_font"],
-            text_color=self.colors["link_color_login"],
+            text_color=self.colors["link"],
             cursor="hand2"
         )
         forgot_pwd.pack(pady=0)

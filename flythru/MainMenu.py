@@ -59,7 +59,7 @@ class MainMenu:
         # Top bar frame
         top_bar = ctk.CTkFrame(
             root, 
-            fg_color=self.colors["main_color"], 
+            fg_color=self.colors["primary"], 
             height=80,
             corner_radius=0 
             )
@@ -84,7 +84,7 @@ class MainMenu:
                 width=45,
                 height=45,
                 fg_color="transparent",
-                hover_color=self.colors["hover_color"],
+                hover_color=self.colors["primary_hover"],
                 command=root.destroy
             )
             close_button.place(relx=0.969, rely=0.5, anchor="center")
@@ -95,14 +95,14 @@ class MainMenu:
                 width=50,
                 height=50,
                 fg_color="transparent",
-                hover_color=self.colors["hover_color"],
+                hover_color=self.colors["primary_hover"],
                 command=root.destroy
             )
             close_button.place(relx=0.95, rely=0.5, anchor="center")
             
     def create_side_menu(self, root):
         # Side menu frame
-        side_menu = ctk.CTkFrame(root, fg_color=self.colors["menu_bg"], width=200, corner_radius=0 )
+        side_menu = ctk.CTkFrame(root, fg_color=self.colors["medium_bg"], width=200, corner_radius=0 )
         side_menu.pack(side="left", fill="both", expand=False)
 
         # Create a frame for padding and organization
@@ -117,9 +117,9 @@ class MainMenu:
                 text=item,
                 width=180,
                 height=50,
-                fg_color=self.colors["main_color"] if item != "Cardapio 🍔" else self.colors["selected_color"],  
-                hover_color=self.colors["hover_color"] if item != "Cardapio 🍔" else self.colors["selected_color"],
-                text_color="white",
+                fg_color=self.colors["primary"] if item != "Cardapio 🍔" else self.colors["selected"],  
+                hover_color=self.colors["primary_hover"] if item != "Cardapio 🍔" else self.colors["selected"],
+                text_color=self.colors["text_primary"],
                 font=self.fonts["menu_font"],
                 corner_radius=10,
                 command=lambda x=item: self.menu_item_clicked(x)
@@ -143,9 +143,9 @@ class MainMenu:
         # Update colors of all buttons
         for item, button in self.menu_buttons.items():
             if item == selected_item:
-                button.configure(fg_color=self.colors["selected_color"], hover_color=self.colors["selected_color"])                 
+                button.configure(fg_color=self.colors["selected"], hover_color=self.colors["selected"])                 
             else:
-                button.configure(fg_color=self.colors["main_color"], hover_color=self.colors["hover_color"])  
+                button.configure(fg_color=self.colors["primary"], hover_color=self.colors["primary_hover"])  
         
     def menu_item_clicked(self, item):
         # Update button colors
@@ -228,4 +228,3 @@ def main():
     
 if __name__ == "__main__":
     main()
- 

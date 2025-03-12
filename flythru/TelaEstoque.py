@@ -64,7 +64,7 @@ class StorageMenu:
             placeholder_text="🔎 Pesquisar Produto",
             font=self.fonts["input_font"],
             height=40,
-            fg_color="white",
+            fg_color=self.colors["text_primary"],
             text_color="black",
             placeholder_text_color="gray"
         )
@@ -89,14 +89,14 @@ class StorageMenu:
             text="",
             width=28,
             height=28,
-            fg_color="white",
+            fg_color=self.colors["text_primary"],
             corner_radius=0,
-            hover_color=self.colors["hover_color"],
+            hover_color=self.colors["primary_hover"],
             command=lambda: self.filter_table(root)
         )
         filter_button.place(relx=0.97, rely=0.5, anchor="center")            
 
-        # Table container with white background
+        # Table container with appropriate background
         self.table_container = ctk.CTkFrame(main_content, fg_color=self.colors["table_bg"])
         self.table_container.pack(fill="both", expand=True, padx=20, pady=(20, 10))
 
@@ -122,11 +122,11 @@ class StorageMenu:
             text="Cadastrar",
             width=120,
             height=40,
-            fg_color=self.colors["second_color"],
-            hover_color=self.colors["second_hover_color"],
-            text_color="white",
+            fg_color=self.colors["secondary"],
+            hover_color=self.colors["secondary_hover"],
+            text_color=self.colors["text_primary"],
             font=self.fonts["button_font"],
-            command=lambda: self.add_stock_row(root)  # Changed to use instance method
+            command=lambda: self.add_stock_row(root)
         )
         add_row_button.pack(pady=(0, 20))
         self.load_data()
@@ -167,7 +167,7 @@ class StorageMenu:
         # Create a main frame 
         main_frame = ctk.CTkFrame(
             add_window,
-            fg_color="#1E1E1E",  
+            fg_color=self.colors["dark_bg"],  
             corner_radius=10
         )
         main_frame.pack(padx=10, pady=10, fill="both", expand=True)
@@ -185,8 +185,8 @@ class StorageMenu:
         title = ctk.CTkLabel(
             main_frame,
             text="Filtros",
-            font=ctk.CTkFont(family="Verdana", size=16, weight="bold"),
-            text_color="white"
+            font=self.fonts["menu_font"],
+            text_color=self.colors["text_primary"]
         )
         title.pack(pady=(5, 20))
         
@@ -197,7 +197,7 @@ class StorageMenu:
         # Input frame 
         input_frame = ctk.CTkFrame(
             main_frame,
-            fg_color="#1E1E1E",  
+            fg_color=self.colors["dark_bg"],  
             corner_radius=5
         )
         input_frame.pack(padx=10, fill="x")
@@ -206,7 +206,7 @@ class StorageMenu:
             input_frame,
             text="Filtrar por:",
             font=self.fonts["input_font"],
-            text_color="white"
+            text_color=self.colors["text_primary"]
         )
         filtro_label.pack(padx=5, pady=(5, 0), anchor="w")
         
@@ -218,11 +218,11 @@ class StorageMenu:
             variable=filtro_var,
             font=self.fonts["input_font"],
             fg_color="black",
-            button_color="#FF8C00",
-            button_hover_color="#FFA500",
+            button_color=self.colors["primary"],
+            button_hover_color=self.colors["primary_hover"],
             dropdown_fg_color="black",
-            dropdown_hover_color="#333333",
-            dropdown_text_color="white"
+            dropdown_hover_color=self.colors["light_bg"],
+            dropdown_text_color=self.colors["text_primary"]
         )
         filtro_dropdown.pack(padx=10, pady=(0, 20), fill="x")
         
@@ -254,7 +254,7 @@ class StorageMenu:
             font=self.fonts["button_font"],
             width=120,
             height=35,
-            fg_color="#FF0000", 
+            fg_color=self.colors["error"], 
             hover_color="#CC0000",  
             command=cancel
         )
@@ -266,8 +266,8 @@ class StorageMenu:
             font=self.fonts["button_font"],
             width=120,
             height=35,
-            fg_color=self.colors["second_color"],  
-            hover_color=self.colors["second_hover_color"],
+            fg_color=self.colors["secondary"],  
+            hover_color=self.colors["secondary_hover"],
             command=save
         )
         save_button.place(relx=0.75, rely=0.90, anchor="center")        
@@ -287,7 +287,7 @@ class StorageMenu:
         # Create a main frame 
         main_frame = ctk.CTkFrame(
             add_window,
-            fg_color="#1E1E1E",  
+            fg_color=self.colors["dark_bg"],  
             corner_radius=10
         )
         main_frame.pack(padx=10, pady=10, fill="both", expand=True)
@@ -305,8 +305,8 @@ class StorageMenu:
         title = ctk.CTkLabel(
             main_frame,
             text="Cadastrar produto",
-            font=ctk.CTkFont(family="Verdana", size=16, weight="bold"),
-            text_color="white"
+            font=self.fonts["menu_font"],
+            text_color=self.colors["text_primary"]
         )
         title.pack(pady=(5, 20))
         
@@ -317,37 +317,17 @@ class StorageMenu:
         # Input frame 
         input_frame = ctk.CTkFrame(
             main_frame,
-            fg_color="#1E1E1E",  
+            fg_color=self.colors["dark_bg"],  
             corner_radius=5
         )
         input_frame.pack(padx=10, fill="x")
-
-        # ID input
-        '''id_label = ctk.CTkLabel(
-            input_frame,
-            text="ID:",
-            font=self.fonts["input_font"],
-            text_color="white"
-        )
-        id_label.pack(padx=5, pady=(5, 0), anchor="w")
-        
-        id_entry = ctk.CTkEntry(
-            input_frame,
-            placeholder_text="#01",
-            font=self.fonts["input_font"],
-            height=30,
-            fg_color="black",
-            text_color="white",
-            border_color="gray"
-        )
-        id_entry.pack(padx=10, pady=(0, 10), fill="x")'''
 
         # Nome input
         nome_label = ctk.CTkLabel(
             input_frame,
             text="Nome:",
             font=self.fonts["input_font"],
-            text_color="white"
+            text_color=self.colors["text_primary"]
         )
         nome_label.pack(padx=5, pady=(5, 0), anchor="w")
         
@@ -357,8 +337,8 @@ class StorageMenu:
             font=self.fonts["input_font"],
             height=30,
             fg_color="black",
-            text_color="white",
-            border_color="gray"
+            text_color=self.colors["text_primary"],
+            border_color=self.colors["border"]
         )        
         nome_entry.configure(validate="key", validatecommand=(name_validation, "%P"))
         nome_entry.pack(padx=10, pady=(0, 10), fill="x")
@@ -367,7 +347,7 @@ class StorageMenu:
             input_frame,
             text="Quantidade:",
             font=self.fonts["input_font"],
-            text_color="white"
+            text_color=self.colors["text_primary"]
         )
         quant_label.pack(padx=5, pady=(5, 0), anchor="w")
         
@@ -377,8 +357,8 @@ class StorageMenu:
             font=self.fonts["input_font"],
             height=30,
             fg_color="black",
-            text_color="white",
-            border_color="gray"
+            text_color=self.colors["text_primary"],
+            border_color=self.colors["border"]
         )
         quant_entry.configure(validate="key", validatecommand=(quantity_validation, "%P"))
         quant_entry.pack(padx=10, pady=(0, 10), fill="x")
@@ -388,7 +368,7 @@ class StorageMenu:
             input_frame,
             text="Categoria:",
             font=self.fonts["input_font"],
-            text_color="white"
+            text_color=self.colors["text_primary"]
         )
         categoria_label.pack(padx=5, pady=(5, 0), anchor="w")
         
@@ -400,11 +380,11 @@ class StorageMenu:
             variable=categoria_var,
             font=self.fonts["input_font"],
             fg_color="black",
-            button_color="#FF8C00",
-            button_hover_color="#FFA500",
+            button_color=self.colors["primary"],
+            button_hover_color=self.colors["primary_hover"],
             dropdown_fg_color="black",
-            dropdown_hover_color="#333333",
-            dropdown_text_color="white"
+            dropdown_hover_color=self.colors["light_bg"],
+            dropdown_text_color=self.colors["text_primary"]
         )
         categoria_dropdown.pack(padx=10, pady=(0, 20), fill="x")
 
@@ -413,7 +393,6 @@ class StorageMenu:
 
         def save():
             # Get values
-           # id_produto = id_entry.get().strip()
             produto = nome_entry.get().strip()
             quant = quant_entry.get().strip()
             categoria = categoria_var.get()
@@ -435,7 +414,7 @@ class StorageMenu:
             font=self.fonts["button_font"],
             width=120,
             height=35,
-            fg_color="#FF0000", 
+            fg_color=self.colors["error"], 
             hover_color="#CC0000",  
             command=cancel
         )
@@ -447,8 +426,8 @@ class StorageMenu:
             font=self.fonts["button_font"],
             width=120,
             height=35,
-            fg_color=self.colors["second_color"],  
-            hover_color=self.colors["second_hover_color"],
+            fg_color=self.colors["secondary"],  
+            hover_color=self.colors["secondary_hover"],
             command=save
         )
         save_button.place(relx=0.75, rely=0.90, anchor="center")
@@ -512,8 +491,8 @@ class StorageMenu:
                     text="Não",
                     font=self.fonts["button_font"],
                     width=100,
-                    fg_color=self.colors["second_color"],
-                    hover_color=self.colors["second_hover_color"],
+                    fg_color=self.colors["secondary"],
+                    hover_color=self.colors["secondary_hover"],
                     command=confirm.destroy
                 ).pack(side="left", padx=5)
 
@@ -522,7 +501,7 @@ class StorageMenu:
                     text="Sim",
                     font=self.fonts["button_font"],
                     width=100,
-                    fg_color="#FF0000",
+                    fg_color=self.colors["error"],
                     hover_color="#CC0000",
                     command=confirm_delete
                 ).pack(side="left", padx=5)
@@ -600,7 +579,7 @@ class StorageMenu:
             # Create a main frame 
             main_frame = ctk.CTkFrame(
                 edit_window,
-                fg_color="#1E1E1E",
+                fg_color=self.colors["dark_bg"],
                 corner_radius=10
             )
             main_frame.pack(padx=10, pady=(10, 10), fill="both", expand=True)
@@ -618,8 +597,8 @@ class StorageMenu:
             title = ctk.CTkLabel(
                 main_frame,
                 text="Editar produto",
-                font=ctk.CTkFont(family="Verdana", size=16, weight="bold"),
-                text_color="white"
+                font=self.fonts["menu_font"],
+                text_color=self.colors["text_primary"]
             )
             title.pack(pady=(5, 15))            
             
@@ -629,58 +608,43 @@ class StorageMenu:
             # Input frame
             input_frame = ctk.CTkFrame(
                 main_frame,
-                fg_color="#1E1E1E",
+                fg_color=self.colors["dark_bg"],
                 corner_radius=5
             )
             input_frame.pack(padx=10, fill="x")
 
-            '''# ID input (disabled since it's the identifier)
-            id_label = ctk.CTkLabel(input_frame, text="ID:", font=self.fonts["input_font"], text_color="white")
-            id_label.pack(padx=5, pady=(5, 0), anchor="w")
-            id_entry = ctk.CTkEntry(
-                input_frame,
-                font=self.fonts["input_font"],
-                height=30,
-                fg_color="black",
-                text_color="white",
-                border_color="gray"
-            )
-            id_entry.insert(0, id_produto)
-            id_entry.configure(state="disabled")
-            id_entry.pack(padx=5, pady=(0, 5), fill="x")'''
-
             # Name input
-            nome_label = ctk.CTkLabel(input_frame, text="Nome:", font=self.fonts["input_font"], text_color="white")
+            nome_label = ctk.CTkLabel(input_frame, text="Nome:", font=self.fonts["input_font"], text_color=self.colors["text_primary"])
             nome_label.pack(padx=5, pady=(5, 0), anchor="w")
             nome_entry = ctk.CTkEntry(
                 input_frame,
                 font=self.fonts["input_font"],
                 height=30,
                 fg_color="black",
-                text_color="white",
-                border_color="gray"
+                text_color=self.colors["text_primary"],
+                border_color=self.colors["border"]
             )            
             nome_entry.configure(validate="key", validatecommand=(name_validation, "%P"))
             nome_entry.pack(padx=10, pady=(0, 10), fill="x")
             nome_entry.insert(0, produto)
 
             # Quantity input
-            quant_label = ctk.CTkLabel(input_frame, text="Quantidade:", font=self.fonts["input_font"], text_color="white")
+            quant_label = ctk.CTkLabel(input_frame, text="Quantidade:", font=self.fonts["input_font"], text_color=self.colors["text_primary"])
             quant_label.pack(padx=5, pady=(5, 0), anchor="w")
             quant_entry = ctk.CTkEntry(
                 input_frame,
                 font=self.fonts["input_font"],
                 height=30,
                 fg_color="black",
-                text_color="white",
-                border_color="gray"
+                text_color=self.colors["text_primary"],
+                border_color=self.colors["border"]
             )
             quant_entry.configure(validate="key", validatecommand=(quantity_validation, "%P"))
             quant_entry.insert(0, quant)
             quant_entry.pack(padx=5, pady=(0, 5), fill="x")
 
             # Category dropdown
-            categoria_label = ctk.CTkLabel(input_frame, text="Categoria:", font=self.fonts["input_font"], text_color="white")
+            categoria_label = ctk.CTkLabel(input_frame, text="Categoria:", font=self.fonts["input_font"], text_color=self.colors["text_primary"])
             categoria_label.pack(padx=5, pady=(5, 0), anchor="w")
             categorias = ["Carnes", "Bebidas", "Acompanhamentos", "Sobremesas", "Embalagens", "Outros"]
             categoria_var = ctk.StringVar(value=categoria)
@@ -690,18 +654,16 @@ class StorageMenu:
                 variable=categoria_var,
                 font=self.fonts["input_font"],
                 fg_color="black",
-                button_color="#FF8C00",
-                button_hover_color="#FFA500",
+                button_color=self.colors["primary"],
+                button_hover_color=self.colors["primary_hover"],
                 dropdown_fg_color="black",
-                dropdown_hover_color="#333333",
-                dropdown_text_color="white"
+                dropdown_hover_color=self.colors["light_bg"],
+                dropdown_text_color=self.colors["text_primary"]
             )
             categoria_dropdown.pack(padx=5, pady=(0, 10), fill="x")
 
             def save_edit():
                 # Update the row in the table
-                
-                   # id_entry.get(),
                 produto = nome_entry.get(),
                 quant = quant_entry.get(),
                 categoria = categoria_var.get()
@@ -746,7 +708,7 @@ class StorageMenu:
                 font=self.fonts["button_font"],
                 width=80,
                 height=35,
-                fg_color="#FF0000",
+                fg_color=self.colors["error"],
                 hover_color="#CC0000",
                 command=edit_window.destroy
             )
@@ -759,10 +721,8 @@ class StorageMenu:
                 font=self.fonts["button_font"],
                 width=80,
                 height=35,
-                fg_color=self.colors["second_color"],
-                hover_color=self.colors["second_hover_color"],
+                fg_color=self.colors["secondary"],
+                hover_color=self.colors["secondary_hover"],
                 command=save_edit
             )
-            save_button.pack(side="right", padx=5)   
-
-
+            save_button.pack(side="right", padx=5)
