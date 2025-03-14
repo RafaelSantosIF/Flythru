@@ -22,7 +22,7 @@ class Item_Cardapio:
 
     def listar_tudo(self):
         if self.db.conexao:
-            self.db.cursor.execute("SELECT codCardapio, nome, preco, codProduto FROM item_cardapio")
+            self.db.cursor.execute("SELECT nome, preco, codProduto FROM item_cardapio")
             return self.db.cursor.fetchall()
         return []
 
