@@ -2,6 +2,9 @@ import customtkinter as ctk
 from PIL import Image
 import os
 import Dictionary as dc
+from api.pedido.pedido import Pedido
+
+pedido = Pedido()
 
 class OrdersMenu:
     def __init__(self, root=None):
@@ -88,6 +91,18 @@ class OrdersMenu:
         # Configure grid columns to expand properly
         for i in range(len(headers)):
             self.table_container.grid_columnconfigure(i, weight=1)
+        
+        # Carregar e exibir os pedidos
+        self.load_orders()
+
+    # Método para carregar os pedidos do banco de dados
+    def load_orders(self):
+        # Obter os pedidos do banco de dados
+        pedidos = pedido.listar_tudo()
+        
+        # Adicionar cada pedido como uma linha na tabela
+        for row_index, pedido_data in enumerate(pedidos):
+            self.add_row(row_index, pedido_data)
     
     # Método para adicionar linha de dados à tabela
     def add_row(self, row_index, data):

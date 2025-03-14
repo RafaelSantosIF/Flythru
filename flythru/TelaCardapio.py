@@ -2,7 +2,11 @@ import customtkinter as ctk
 from PIL import Image
 import os
 import Dictionary as dc
+from api.pedido.pedido import Pedido
+from api.cardapio.item_cardapio import Item_Cardapio
 
+pedido = Pedido()
+cardapio = Item_Cardapio()
 
 class CarteMenu:
     def __init__(self):
@@ -195,7 +199,8 @@ class CarteMenu:
             fg_color="#4CAF50",
             hover_color="#45a049",
             font=ctk.CTkFont(family="Verdana", size=12, weight="bold"),
-            height=35
+            height=35,
+            command=lambda:pedido.save("Teste",self.total_price,"cartão de Crédito")
         )
         finish_button.pack(side="left", expand=True, padx=(0, 10))
 
