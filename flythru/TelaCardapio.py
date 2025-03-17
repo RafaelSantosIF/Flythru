@@ -155,10 +155,13 @@ class CarteMenu:
         items_frame = ctk.CTkFrame(content_frame, fg_color="transparent")
         items_frame.pack(fill="both", expand=True, padx=20)
 
+        order_description = ''
+
         # Display order items
         for item in self.order_items:
             item_frame = ctk.CTkFrame(items_frame, fg_color="transparent")
             item_frame.pack(fill="x", pady=5)
+            order_description += f'{item['item']} {item['qty']}\n'
 
             ctk.CTkLabel(item_frame, text=item["id"], width=50).grid(row=0, column=0, padx=5, sticky="w")
             ctk.CTkLabel(item_frame, text=item["item"], width=180).grid(row=0, column=1, padx=5, sticky="w")
@@ -200,7 +203,7 @@ class CarteMenu:
             hover_color="#45a049",
             font=ctk.CTkFont(family="Verdana", size=12, weight="bold"),
             height=35,
-            command=lambda:pedido.save("Teste",self.total_price,"cartão de Crédito")
+            command=lambda:pedido.save(order_description,self.total_price,"cartão de Crédito")
         )
         finish_button.pack(side="left", expand=True, padx=(0, 10))
 
