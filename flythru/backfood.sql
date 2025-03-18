@@ -16,6 +16,14 @@ CREATE TABLE produto (
   categoria VARCHAR(255)
 );
 
+CREATE TABLE pedido (
+  codPedido INT PRIMARY KEY AUTO_INCREMENT, -- Código único do pedido (auto incremento)
+  order_date DATETIME DEFAULT CURRENT_TIMESTAMP, -- Data e hora do pedido (valor padrão é o momento da inserção)
+  description VARCHAR(255), -- Descrição do pedido (opcional)
+  value DECIMAL(10, 2) NOT NULL, -- Valor total a ser pago (não pode ser nulo)
+  payment_method VARCHAR(100) NOT NULL -- Método de pagamento (não pode ser nulo)
+);
+
 CREATE TABLE item_cardapio (
   codCardapio INT PRIMARY KEY AUTO_INCREMENT,
   nome varchar(255),
@@ -57,3 +65,4 @@ INSERT INTO produto_cardapio (codProduto, codCardapio) VALUES
 (1, 2), (2, 2), (3, 2), -- Cheeseburguer usa pão, carne e queijo
 (1, 3), (2, 3), (3, 3), (4, 3); -- X-Salada usa pão, carne, queijo e alface
 
+drop database backfood;
