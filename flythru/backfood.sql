@@ -65,4 +65,3 @@ INSERT INTO produto_cardapio (codProduto, codCardapio) VALUES
 (1, 2), (2, 2), (3, 2), -- Cheeseburguer usa pão, carne e queijo
 (1, 3), (2, 3), (3, 3), (4, 3); -- X-Salada usa pão, carne, queijo e alface
 
-drop database backfood;

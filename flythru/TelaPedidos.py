@@ -45,8 +45,7 @@ class OrdersMenu:
         search_container = ctk.CTkFrame(main_content, fg_color="transparent", height=40)
         search_container.pack(side="top", fill="x", padx=20, pady=(15, 5))
         search_container.pack_propagate(False)
-
-        # Updated search bar usando as fontes e cores do dicionário
+        
         search_bar = ctk.CTkEntry(
             search_container,
             placeholder_text="🔎 Pesquisar Produto",
@@ -57,8 +56,7 @@ class OrdersMenu:
             placeholder_text_color=self.colors["text_disabled"]
         )
         search_bar.place(relx=0, rely=0, relwidth=1, relheight=1)
-
-        # Botão de filtro com as cores do dicionário
+        
         filter_button = ctk.CTkButton(
             search_container,
             image=self.filter_icon,
@@ -71,12 +69,10 @@ class OrdersMenu:
             command=None
         )
         filter_button.place(relx=0.97, rely=0.5, anchor="center")
-
-        # Table container com a cor de fundo da tabela
+        
         self.table_container = ctk.CTkFrame(main_content, fg_color=self.colors["table_bg"])
         self.table_container.pack(fill="both", expand=True, padx=20, pady=(20, 10))
-
-        # Table headers com a fonte header_font
+        
         headers = ["N°", "Data", "Descrição", "Valor (R$)", "Pagamento", " "]
         for i, header in enumerate(headers):
             header_label = ctk.CTkLabel(
@@ -88,7 +84,7 @@ class OrdersMenu:
             )
             header_label.grid(row=0, column=i, padx=10, pady=5, sticky="ew")
                 
-        # Configure grid columns to expand properly
+        # Configure grid columns 
         for i in range(len(headers)):
             self.table_container.grid_columnconfigure(i, weight=1)
         
