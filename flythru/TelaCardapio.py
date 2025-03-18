@@ -88,6 +88,12 @@ class CarteMenu:
         self.update_total()
         order_screen.destroy()
 
+    def refresh_orders_after_save(self):
+        # Access the OrdersMenu instance from MainMenu if available
+        if hasattr(self.main_menu, 'orders_menu') and self.main_menu.orders_menu:
+            if hasattr(self.main_menu.orders_menu, 'refresh_orders_table'):
+                self.main_menu.orders_menu.refresh_orders_table()
+    
     def open_order_screen(self):
         order_screen = ctk.CTkToplevel()
         order_screen.title("FlyThru - Comanda")
@@ -203,7 +209,11 @@ class CarteMenu:
             hover_color="#45a049",
             font=ctk.CTkFont(family="Verdana", size=12, weight="bold"),
             height=35,
-            command=lambda:pedido.save(order_description,self.total_price,"cartão de Crédito")
+            command=lambda: [
+                pedido.save(order_description, self.total_price, "cartão de Crédito"),
+                self.clear_order(order_screen), 
+                self.refresh_orders_after_save()                
+            ]
         )
         finish_button.pack(side="left", expand=True, padx=(0, 10))
 

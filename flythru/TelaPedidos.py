@@ -82,15 +82,22 @@ class OrdersMenu:
                 fg_color=self.colors["table_bg"],
                 text_color=self.colors["text_dark"]
             )
-            header_label.grid(row=0, column=i, padx=10, pady=5, sticky="ew")
-                
+            header_label.grid(row=0, column=i, padx=10, pady=5, sticky="ew")                
+        
         # Configure grid columns 
         for i in range(len(headers)):
             self.table_container.grid_columnconfigure(i, weight=1)
         
-        # Carregar e exibir os pedidos
+        # Clear existing rows if any (important for reloading)
+        for widget in self.table_container.winfo_children():
+            if isinstance(widget, ctk.CTkLabel) and widget.grid_info()["row"] > 0:
+                widget.destroy()
+            if isinstance(widget, ctk.CTkButton):
+                widget.destroy()
+        
+        # Load orders data
         self.load_orders()
-
+    
     # Método para carregar os pedidos do banco de dados
     def load_orders(self):
         # Obter os pedidos do banco de dados
@@ -100,18 +107,27 @@ class OrdersMenu:
         for row_index, pedido_data in enumerate(pedidos):
             self.add_row(row_index, pedido_data)
     
-    # Método para adicionar linha de dados à tabela
-    def add_row(self, row_index, data):
-        # Aplicar cor alternada nas linhas
-        bg_color = self.colors["table_row_alt"] if row_index % 2 == 1 else self.colors["table_bg"]
+    def refresh_orders_table(self):
+        # Clear existing rows
+        for widget in self.table_container.winfo_children():
+            if isinstance(widget, ctk.CTkLabel) and widget.grid_info()["row"] > 0:
+                widget.destroy()
+            if isinstance(widget, ctk.CTkButton):
+                widget.destroy()
         
+        # Reload orders data
+        self.load_orders()
+    
+    # Método para adicionar linha de dados à tabela
+    def add_row(self, row_index, data):      
+                
         for col_index, value in enumerate(data):
-            text_color = "black" if self.colors["table_bg"] == "white" else self.colors["text_primary"]
+            text_color = "black" 
             cell = ctk.CTkLabel(
                 self.table_container,
                 text=str(value),
                 font=self.fonts["input_font"],
-                fg_color=bg_color,
+                fg_color=self.colors["table_bg"],
                 text_color=text_color
             )
             cell.grid(row=row_index + 1, column=col_index, padx=10, pady=5, sticky="ew")
