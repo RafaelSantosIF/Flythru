@@ -28,19 +28,8 @@ CREATE TABLE item_cardapio (
   codCardapio INT PRIMARY KEY AUTO_INCREMENT,
   nome varchar(255),
   preco float,
-  codProduto INT,
-  FOREIGN KEY (codProduto) REFERENCES produto (codProduto) on delete set null on update cascade
+  listaProdutos varchar(1000)
 );
-
-
-CREATE TABLE produto_cardapio (
-  codProduto INT,
-  codCardapio INT,
-  PRIMARY KEY (codProduto, codCardapio),
-  FOREIGN KEY (codProduto) REFERENCES produto (codProduto) on delete cascade,
-  FOREIGN KEY (codCardapio) REFERENCES item_cardapio (codCardapio) on delete cascade
-);
-
 
 INSERT INTO fornecedor (nome, telefone, email, cnpj) VALUES
 ('Fornecedor A', '1234-5678', 'fornecedorA@email.com', '12345678910235'),
@@ -53,15 +42,4 @@ INSERT INTO produto (nome, quantidade, categoria) VALUES
 ('Queijo Cheddar', 80, 'Laticínios'),
 ('Alface', 30, 'Verduras');
 
--- Inserindo itens no cardápio
-INSERT INTO item_cardapio (nome, preco, codProduto) VALUES
-('Hambúrguer Simples', 15.99, 1),
-('Cheeseburguer', 18.99, 2),
-('X-Salada', 20.99, 3);
-
--- Relacionando produtos com itens do cardápio
-INSERT INTO produto_cardapio (codProduto, codCardapio) VALUES
-(1, 1), (2, 1), -- Hambúrguer Simples usa pão e carne
-(1, 2), (2, 2), (3, 2), -- Cheeseburguer usa pão, carne e queijo
-(1, 3), (2, 3), (3, 3), (4, 3); -- X-Salada usa pão, carne, queijo e alface
-
+drop database backfood;

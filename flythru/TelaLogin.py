@@ -4,6 +4,8 @@ from PIL import Image
 import os
 import Dictionary as dc
 from MainMenu import MainMenu
+from api.login import login
+
 
 class LoginScreen:
     def __init__(self):        
@@ -212,18 +214,27 @@ class LoginScreen:
     def login(self):
         username = self.username_entry.get()
         password = self.password_entry.get()
-        
-        # Hide the login window instead of destroying it
-        self.root.withdraw()
-        
-        # Create a new top-level window for the menu
-        menu_window = ctk.CTkToplevel()
-        menu_window.title("FlyThru - Menu")
-        menu_window.geometry("{0}x{1}+0+0".format(self.root.winfo_screenwidth(), self.root.winfo_screenheight()))
-        menu_window.attributes('-fullscreen', True)
-         
-        # Initialize the Cartemenu in the new window
-        menu_screen = MainMenu(menu_window)
+
+        if login.verify_login(username, password):  # Verifica o login usando o backend
+            # Login bem-sucedido
+            self.root.withdraw()
+
+            menu_window = ctk.CTkToplevel()
+            menu_window.title("FlyThru - Menu")
+            menu_window.geometry("{0}x{1}+0+0".format(self.root.winfo_screenwidth(), self.root.winfo_screenheight()))
+            menu_window.attributes('-fullscreen', True)
+
+            menu_screen = MainMenu(menu_window)
+
+            def on_menu_close():
+                menu_window.destroy()
+                self.root.deiconify()
+
+            menu_window.protocol("WM_DELETE_WINDOW", on_menu_close)
+        else:
+            # Login falhou
+            print("Login falhou. Código Empresa ou senha incorretos.") #Replace with a label on the screen
+            self.password_entry.delete(0, 'end') #Limpa o campo de senha
         
         # When menu window is closed, show login window again
         def on_menu_close():

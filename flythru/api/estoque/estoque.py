@@ -62,8 +62,23 @@ class Estoque:
 
     def baixoEstoque(self):
         if self.db.conexao:
-            self.db.cursor.execute("SELECT codProduto, nome, quantidade, categoria FROM produto where quantidade < 10")
-            return self.db.cursor.fetchall()
+            self.db.cursor.execute("SELECT codProduto, nome, quantidade, categoria FROM produto")
+            produtos = self.db.cursor.fetchall()
+
+            produtos_baixo_estoque = []
+            for produto in produtos:
+                codProduto, nome, quantidade, categoria = produto
+                limite_baixo_estoque = 10  # Valor padrão para unidades
+
+                if categoria == "Bebidas":
+                    limite_baixo_estoque = 1000  # 1000 ml = 1 litro
+                elif categoria in ["Carnes", "Laticíneos", "Verduras", "Laticínios"]:
+                    limite_baixo_estoque = 1000  # 1000 g = 1 kg
+
+                if quantidade < limite_baixo_estoque:
+                    produtos_baixo_estoque.append(produto)
+
+            return produtos_baixo_estoque
         return []
 
     def buscar(self, nome_produto):

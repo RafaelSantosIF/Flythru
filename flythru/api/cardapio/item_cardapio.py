@@ -4,25 +4,21 @@ class Item_Cardapio:
     def __init__(self):
         self.db = Database()
 
-    def save(self, nome, preco, codProduto):
-        query_check = "SELECT codProduto FROM produto WHERE codProduto = %s"
-        self.db.cursor.execute(query_check, (codProduto,))
-        produto = self.db.cursor.fetchone()
+    def save(self, nome, preco, listaProdutos):
+        query = """
+            INSERT INTO item_cardapio (nome, preco, listaProdutos)
+            VALUES (%s, %s, %s)
+        """
+        params = (nome, preco, listaProdutos)
 
-        if produto:
-            query = "INSERT INTO item_cardapio (nome, preco, codProduto) VALUES (%s, %s, %s)"
-            params = (nome, preco, codProduto)
-
-            if self.db.executar_query(query, params):
-                return {"message": "Item do cardápio cadastrado com sucesso!"}
-            else:
-                return {"message": "Erro ao cadastrar item do cardápio."}
+        if self.db.executar_query(query, params):
+            return {"message": "Item do cardápio cadastrado com sucesso!"}
         else:
-            return {"message": "Produto não encontrado. Verifique o código do produto."}
+            return {"message": "Erro ao cadastrar item do cardápio."}
 
     def listar_tudo(self):
         if self.db.conexao:
-            self.db.cursor.execute("SELECT nome, preco, codProduto FROM item_cardapio")
+            self.db.cursor.execute("SELECT codCardapio, nome, preco, listaProdutos FROM item_cardapio")
             return self.db.cursor.fetchall()
         return []
 
@@ -39,11 +35,15 @@ class Item_Cardapio:
             print("Erro ao excluir Item do Cardapio.")
             return False
 
-    def update(self, codCardapio, nome, preco):
+    def update(self, codCardapio, nome, preco, listaProdutos):
         codCardapio = int(codCardapio)
 
-        query = "UPDATE item_cardapio SET nome = %s, preco = %s WHERE codCardapio = %s"
-        params = (nome, preco, codCardapio)
+        query = """
+            UPDATE item_cardapio
+            SET nome = %s, preco = %s, listaProdutos = %s
+            WHERE codCardapio = %s
+        """
+        params = (nome, preco, listaProdutos, codCardapio)
 
         if self.db.executar_query(query, params):
             print("Item Cardapio atualizado com sucesso!")

@@ -17,30 +17,40 @@ class CarteMenu:
         self.total_label = None
         self.order_items = []
         self.order_id = 1
-        self.categories = {
-            "Hambúrguer": [
-                ("AMERICANO", 13.99, "round_logo.png", ["Hambúrguer", "Tomate", "Queijo", "Alface", "Molho Especial"]),
-                ("AMERICANO", 13.99, "round_logo.png", ["Hambúrguer", "Tomate", "Queijo", "Alface", "Molho Especial"]),
-                ("AMERICANO", 13.99, "round_logo.png", ["Hambúrguer", "Tomate", "Queijo", "Alface", "Molho Especial"]),
-                ("AMERICANO", 13.99, "round_logo.png", ["Hambúrguer", "Tomate", "Queijo", "Alface", "Molho Especial"]),
-                ("AMERICANO", 13.99, "round_logo.png", ["Hambúrguer", "Tomate", "Queijo", "Alface", "Molho Especial"])
-            ],
-            "Batatas": [
-                ("BATATA P", 8.99, "round_logo.png", ["Batata frita", "Molho Especial"]),
-                ("BATATA M", 10.99, "round_logo.png", ["Batata frita", "Molho Especial"]),
-                ("BATATA M", 10.99, "round_logo.png", ["Batata frita", "Molho Especial"]),
-                ("BATATA M", 10.99, "round_logo.png", ["Batata frita", "Molho Especial"]),
-                ("BATATA G", 13.99, "round_logo.png", ["Batata frita", "Molho Especial"])
-            ],
-            "Refrigerantes": [
-                ("COCA COLA", 5.99, "round_logo.png", ["Refrigerante Gelado"]),
-                ("COCA LATA", 4.00, "round_logo.png", ["350ML"]),
-                ("GUARANÁ", 5.99, "round_logo.png", ["Refrigerante Gelado"]),
-                ("COCA COLA", 5.99, "round_logo.png", ["Refrigerante Gelado"]),
-                ("COCA COLA", 5.99, "round_logo.png", ["Refrigerante Gelado"])
-            ]
-        }
+        self.categories = {}  # Dicionário para armazenar os itens do cardápio por categoria
+        self.fonts = None
+        self.colors = None
+        self.root = None
+        self.main_menu = None
+        self.main_content = None
+        self.load_menu_items()  # Carregar os itens do cardápio ao inicializar
 
+    def load_menu_items(self):
+        """Carrega os itens do cardápio a partir do banco de dados."""
+        itens_cardapio = cardapio.listar_tudo()  # Busca os itens do cardápio
+        self.categories = self.organize_items_by_category(itens_cardapio)  # Organiza por categoria
+
+    def organize_items_by_category(self, itens_cardapio):
+        """Organiza os itens do cardápio em categorias."""
+        categories = {}
+        for item in itens_cardapio:
+            codCardapio, nome, preco, listaProdutos = item
+            # Define a categoria com base no nome do item
+            if "Hambúrguer" in nome:
+                category = "Hambúrguer"
+            elif "Batata" in nome:
+                category = "Batatas"
+            elif "Refrigerante" in nome:
+                category = "Refrigerantes"
+            else:
+                category = "Outros"  # Categoria padrão para itens que não se encaixam nas outras
+
+            # Adiciona o item à categoria correspondente
+            if category not in categories:
+                categories[category] = []
+            categories[category].append((nome, preco, "round_logo.png", listaProdutos.split("--")))
+        return categories
+    
     def load_image(self, filename, size):
         current_dir = os.path.dirname(os.path.abspath(__file__))
         assets_dir = os.path.join(current_dir, "assets")
@@ -169,7 +179,7 @@ class CarteMenu:
         for item in self.order_items:
             item_frame = ctk.CTkFrame(items_frame, fg_color="transparent")
             item_frame.pack(fill="x", pady=5)
-            order_description += f'{item['item']} {item['qty']}\n'
+            order_description += f"{item['item']} {item['qty']}\n"
 
             ctk.CTkLabel(item_frame, text=item["id"], width=50).grid(row=0, column=0, padx=5, sticky="w")
             ctk.CTkLabel(item_frame, text=item["item"], width=180).grid(row=0, column=1, padx=5, sticky="w")
@@ -574,6 +584,10 @@ class CarteMenu:
             ingredients_list = [item["name"] for item in selected_ingredients]
 
             # Add new item to the category
+            lista_ingredientes = ''
+            for ingrediente in ingredients_list:
+                lista_ingredientes += ingrediente+"--"
+            cardapio.save(name, price, lista_ingredientes)
             self.categories[category].append((name, price, "round_logo.png", ingredients_list))
 
             # Refresh the menu
@@ -724,7 +738,7 @@ class CarteMenu:
         return card
 
     def create_category_section(self, parent, category, items):
-        """Create a section for a category with grid layout"""
+        """Cria uma seção para uma categoria com layout de grade."""
         # Section frame
         section_frame = ctk.CTkFrame(parent, fg_color="transparent")
         section_frame.pack(fill="x", pady=10, padx=10)
