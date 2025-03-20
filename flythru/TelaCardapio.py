@@ -4,9 +4,11 @@ import os
 import Dictionary as dc
 from api.pedido.pedido import Pedido
 from api.cardapio.item_cardapio import Item_Cardapio
+from api.estoque.estoque import Estoque
 
 pedido = Pedido()
 cardapio = Item_Cardapio()
+estoque = Estoque()
 
 class CarteMenu:
     def __init__(self):
@@ -349,19 +351,22 @@ class CarteMenu:
         ingredients_label.pack(fill="x", pady=(5, 5))  # Reduced padding
 
         # Lista de ingredientes disponíveis com suas quantidades
-        available_ingredients = [
-            {"name": "Hambúrguer", "unit": "g", "default_qty": 180},
-            {"name": "Queijo", "unit": "g", "default_qty": 30},
-            {"name": "Alface", "unit": "g", "default_qty": 20},
-            {"name": "Tomate", "unit": "g", "default_qty": 50},
-            {"name": "Cebola", "unit": "g", "default_qty": 30},
-            {"name": "Picles", "unit": "g", "default_qty": 20},
-            {"name": "Bacon", "unit": "g", "default_qty": 40},
-            {"name": "Molho Especial", "unit": "ml", "default_qty": 25},
-            {"name": "Pão", "unit": "un", "default_qty": 1},
-            {"name": "Batata Frita", "unit": "g", "default_qty": 150},
-            {"name": "Refrigerante", "unit": "ml", "default_qty": 350},
-        ]
+        ingredientes_back = estoque.listar_tudo()
+        available_ingredients = []
+        for ingrediente in ingredientes_back:
+            ingrediente_unidade = ''
+            if ingrediente[3] == "Bebidas":
+                ingrediente_unidade = 'ml'
+            elif ingrediente[3] == "Carnes" or ingrediente[3] == "Laticíneos" or ingrediente[3] == "Verduras" or ingrediente[3] == "Laticínios":
+                ingrediente_unidade = 'g'
+            else:
+                ingrediente_unidade = 'un'
+            
+            available_ingredients.append({
+                "name": ingrediente[1],
+                "unit": ingrediente_unidade,
+                "default_qty": ingrediente[2]
+            })
 
         # Lista para armazenar ingredientes selecionados com suas quantidades
         selected_ingredients = []
