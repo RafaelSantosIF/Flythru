@@ -180,6 +180,19 @@ class LoginScreen:
         )
         self.username_entry.pack(pady=10)
         
+        # Frame para conter o campo de erro do username
+        self.username_error_frame = ctk.CTkFrame(form_frame, fg_color="transparent", height=20)
+        self.username_error_frame.pack(fill="x", pady=(0, 5))
+        
+        # Label de erro para o username (inicialmente vazio)
+        self.username_error_label = ctk.CTkLabel(
+            self.username_error_frame,
+            text="",
+            text_color="#FF5555",  # Cor vermelha para o erro
+            font=("Roboto", 12)
+        )
+        self.username_error_label.pack(anchor="w", padx=(10, 0))
+        
         self.password_entry = ctk.CTkEntry(
             form_frame,
             width=450,
@@ -189,6 +202,32 @@ class LoginScreen:
             font=self.fonts["input_font_login"]
         )
         self.password_entry.pack(pady=10)
+        
+        # Frame para conter o campo de erro da senha
+        self.password_error_frame = ctk.CTkFrame(form_frame, fg_color="transparent", height=20)
+        self.password_error_frame.pack(fill="x", pady=(0, 5))
+        
+        # Label de erro para a senha (inicialmente vazio)
+        self.password_error_label = ctk.CTkLabel(
+            self.password_error_frame,
+            text="",
+            text_color="#FF5555",  # Cor vermelha para o erro
+            font=("Roboto", 12)
+        )
+        self.password_error_label.pack(anchor="w", padx=(10, 0))
+        
+        # Frame para mensagem de erro geral do login
+        self.login_error_frame = ctk.CTkFrame(form_frame, fg_color="transparent", height=25)
+        self.login_error_frame.pack(fill="x", pady=(5, 10))
+        
+        # Label de erro geral para o login (inicialmente vazio)
+        self.login_error_label = ctk.CTkLabel(
+            self.login_error_frame,
+            text="",
+            text_color="#FF5555",  # Cor vermelha para o erro
+            font=("Roboto", 14)
+        )
+        self.login_error_label.pack()
         
         login_button = ctk.CTkButton(
             form_frame,
@@ -200,7 +239,7 @@ class LoginScreen:
             hover_color=self.colors["primary_hover"],
             command=self.login
         )
-        login_button.pack(pady=(20, 0))
+        login_button.pack(pady=(5, 10))
         
         forgot_pwd = ctk.CTkLabel(
             form_frame,
@@ -211,10 +250,34 @@ class LoginScreen:
         )
         forgot_pwd.pack(pady=0)
         
+    def clear_error_messages(self):
+        """Limpa todas as mensagens de erro"""
+        self.username_error_label.configure(text="")
+        self.password_error_label.configure(text="")
+        self.login_error_label.configure(text="")
+        
     def login(self):
+        # Limpar mensagens de erro anteriores
+        self.clear_error_messages()
+        
         username = self.username_entry.get()
         password = self.password_entry.get()
-
+        
+        # Validar se os campos foram preenchidos
+        has_error = False
+        
+        if not username:
+            self.username_error_label.configure(text="* Campo obrigatório")
+            has_error = True
+            
+        if not password:
+            self.password_error_label.configure(text="* Campo obrigatório")
+            has_error = True
+            
+        if has_error:
+            return  # Parar aqui se houver erros de validação
+        
+        # Verificar login
         if login.verify_login(username, password):  # Verifica o login usando o backend
             # Login bem-sucedido
             self.root.withdraw()
@@ -233,15 +296,8 @@ class LoginScreen:
             menu_window.protocol("WM_DELETE_WINDOW", on_menu_close)
         else:
             # Login falhou
-            print("Login falhou. Código Empresa ou senha incorretos.") #Replace with a label on the screen
-            self.password_entry.delete(0, 'end') #Limpa o campo de senha
-        
-        # When menu window is closed, show login window again
-        def on_menu_close():
-            menu_window.destroy()
-            self.root.deiconify()
-            
-        menu_window.protocol("WM_DELETE_WINDOW", on_menu_close)
+            self.login_error_label.configure(text="Código Empresa ou senha incorretos.")
+            self.password_entry.delete(0, 'end')  # Limpa o campo de senha
         
     def run(self):
         self.root.mainloop()

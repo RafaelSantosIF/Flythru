@@ -28,7 +28,8 @@ CREATE TABLE item_cardapio (
   codCardapio INT PRIMARY KEY AUTO_INCREMENT,
   nome varchar(255),
   preco float,
-  listaProdutos varchar(1000)
+  listaProdutos varchar(1000),
+  category varchar(255) null
 );
 
 INSERT INTO fornecedor (nome, telefone, email, cnpj) VALUES

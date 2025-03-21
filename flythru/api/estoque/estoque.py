@@ -88,3 +88,17 @@ class Estoque:
             self.db.cursor.execute(query, params)
             return self.db.cursor.fetchall()
         return []
+    
+    def update_quantity(self, id_ingrediente, nova_quantidade):
+        """Atualiza a quantidade de um ingrediente no estoque"""
+        try:
+            nova_quantidade = max(0, nova_quantidade)  # Garantir que não fique negativo
+            self.cursor.execute(
+                "UPDATE ingrediente SET quantidade = ? WHERE id = ?",
+                (nova_quantidade, id_ingrediente)
+            )
+            self.conexao.commit()
+            return True
+        except Exception as e:
+            print(f"Erro ao atualizar quantidade: {e}")
+            return False
