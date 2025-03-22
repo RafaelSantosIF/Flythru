@@ -36,7 +36,7 @@ class CarteMenu:
         
         # Organize items from database into appropriate categories
         for item in itens_cardapio:
-            codCardapio, nome, preco, listaProdutos, category = item
+            codCardapio, nome, preco, listaProdutos,listaQuantidades, category = item
             # Define a categoria com base no nome do item
             if "Hambúrguer" in category:
                 categoria = "Hambúrguer"
@@ -84,7 +84,7 @@ class CarteMenu:
             self.order_items.append({
                 "id": f"#{self.order_id:02d}",
                 "item": name,
-                "qty": f"x{quantity}",
+                "qty": f"{quantity}",
                 "price": f"R$ {total_item_price:.2f}"
             })
             self.order_id += 1
@@ -179,12 +179,14 @@ class CarteMenu:
         items_frame.pack(fill="both", expand=True, padx=20)
 
         order_description = ''
+        quantidade_description = ''
 
         # Display order items
         for item in self.order_items:
             item_frame = ctk.CTkFrame(items_frame, fg_color="transparent")
             item_frame.pack(fill="x", pady=5)
-            order_description += f"{item['item']} {item['qty']}\n"
+            order_description+= f"{item['item']}\n"
+            quantidade_description += f"{item['qty']}\n"
 
             ctk.CTkLabel(item_frame, text=item["id"], width=50).grid(row=0, column=0, padx=5, sticky="w")
             ctk.CTkLabel(item_frame, text=item["item"], width=180).grid(row=0, column=1, padx=5, sticky="w")
@@ -229,7 +231,7 @@ class CarteMenu:
             font=ctk.CTkFont(family="Verdana", size=12, weight="bold"),
             height=35,
             command=lambda: [
-                pedido.save(order_description, self.total_price, "cartão de Crédito"),
+                pedido.save(order_description,quantidade_description, self.total_price, "cartão de Crédito"),
                 self.update_inventory_from_order(),  # Chama o novo método para atualizar o estoque
                 self.clear_order(order_screen),
                 self.refresh_orders_after_save()
@@ -591,16 +593,22 @@ class CarteMenu:
 
             # Criar lista de nomes de ingredientes para salvar no formato original (Mudei aqui)
             ingredients_list = []
+            quantidade_list = []
             lista_ingredientes = ''
+            ingredients_quant = ""
             for item in selected_ingredients:
                 # Formato: nome_ingrediente(quantidade unidade)
-                ing_with_qty = f"{item['name']}({item['quantity']}{item['unit']})"
+                ing_with_qty = f"{item['name']}"
                 ingredients_list.append(ing_with_qty)
                 lista_ingredientes += ing_with_qty + "--"
 
+                numberQuantidade = f"{item['quantity']}"
+                quantidade_list.append(numberQuantidade)
+                ingredients_quant += numberQuantidade + "--"
+
             # O resto permanece similar
             self.categories[category].append((name, price, "round_logo.png", ingredients_list))
-            cardapio.save(name, price, lista_ingredientes, category)
+            cardapio.save(name, price, lista_ingredientes,ingredients_quant, category)
 #mudei aqui 
             # Refresh the menu
             self.refresh_menu()

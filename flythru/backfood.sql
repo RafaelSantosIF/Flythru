@@ -20,6 +20,7 @@ CREATE TABLE pedido (
   codPedido INT PRIMARY KEY AUTO_INCREMENT, -- Código único do pedido (auto incremento)
   order_date DATETIME DEFAULT CURRENT_TIMESTAMP, -- Data e hora do pedido (valor padrão é o momento da inserção)
   description VARCHAR(255), -- Descrição do pedido (opcional)
+  quantidade_description varchar(255),
   value DECIMAL(10, 2) NOT NULL, -- Valor total a ser pago (não pode ser nulo)
   payment_method VARCHAR(100) NOT NULL -- Método de pagamento (não pode ser nulo)
 );
@@ -29,6 +30,7 @@ CREATE TABLE item_cardapio (
   nome varchar(255),
   preco float,
   listaProdutos varchar(1000),
+  quantidadeProdutos varchar(255),
   category varchar(255) null
 );
 

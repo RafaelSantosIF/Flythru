@@ -102,3 +102,36 @@ class Estoque:
         except Exception as e:
             print(f"Erro ao atualizar quantidade: {e}")
             return False
+        
+    def subtrairQuantidade(self, nome, quantidade):
+        nome = str(nome).rstrip('-')
+        print(f'Estoque.py Linha 108: {nome}')
+
+        # Passo 1: Buscar o produto pelo nome
+        query_select = """SELECT * FROM produto WHERE nome = %s"""
+        params = (nome,)  # Tupla com um único elemento
+
+        if self.db.executar_query(query_select, params):
+            print("Produto selecionado com sucesso!")
+            resultado = self.db.cursor.fetchone()  # Usar fetchone() para pegar o primeiro resultado
+            print(f'Estoque.py Linha 117: {resultado}')
+
+            if resultado:
+                # Passo 2: Extrair a quantidade atual do produto
+                id_produto, nome_produto, quantidade_inicial = resultado[0], resultado[1], resultado[2]
+
+                # Passo 3: Calcular a nova quantidade
+                nova_quantidade = quantidade_inicial - quantidade
+
+                # Passo 4: Atualizar a quantidade no banco de dados
+                query_update = """UPDATE produto SET quantidade = %s WHERE codProduto = %s"""
+                params_update = (nova_quantidade, id_produto)
+
+                if self.db.executar_query(query_update, params_update):
+                    print("Quantidade atualizada com sucesso!")
+                else:
+                    print("Erro ao atualizar a quantidade do produto.")
+            else:
+                print("Nenhum produto encontrado com o nome especificado.")
+        else:
+            print("Erro ao selecionar Produto.")
