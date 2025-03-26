@@ -480,8 +480,7 @@ class StorageMenu:
                     if estoque.delete(id_produto):
                         for widget in self.table_container.grid_slaves(row=new_row):
                             widget.destroy()
-                        confirm.destroy()
-                        edit_window.destroy()
+                        confirm.destroy()                        
                         self.load_data()
                     else:
                         messagebox.showerror("Erro", "Falha ao excluir o produto do banco de dados.")
