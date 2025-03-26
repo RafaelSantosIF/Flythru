@@ -62,8 +62,23 @@ class Estoque:
 
     def baixoEstoque(self):
         if self.db.conexao:
-            self.db.cursor.execute("SELECT codProduto, nome, quantidade, categoria FROM produto where quantidade < 10")
-            return self.db.cursor.fetchall()
+            self.db.cursor.execute("SELECT codProduto, nome, quantidade, categoria FROM produto")
+            produtos = self.db.cursor.fetchall()
+
+            produtos_baixo_estoque = []
+            for produto in produtos:
+                codProduto, nome, quantidade, categoria = produto
+                limite_baixo_estoque = 10  # Valor padrão para unidades
+
+                if categoria == "Bebidas":
+                    limite_baixo_estoque = 1000  # 1000 ml = 1 litro
+                elif categoria in ["Carnes", "Laticíneos", "Verduras", "Laticínios"]:
+                    limite_baixo_estoque = 1000  # 1000 g = 1 kg
+
+                if quantidade < limite_baixo_estoque:
+                    produtos_baixo_estoque.append(produto)
+
+            return produtos_baixo_estoque
         return []
 
     def buscar(self, nome_produto):
@@ -73,3 +88,50 @@ class Estoque:
             self.db.cursor.execute(query, params)
             return self.db.cursor.fetchall()
         return []
+    
+    def update_quantity(self, id_ingrediente, nova_quantidade):
+        """Atualiza a quantidade de um ingrediente no estoque"""
+        try:
+            nova_quantidade = max(0, nova_quantidade)  # Garantir que não fique negativo
+            self.cursor.execute(
+                "UPDATE ingrediente SET quantidade = ? WHERE id = ?",
+                (nova_quantidade, id_ingrediente)
+            )
+            self.conexao.commit()
+            return True
+        except Exception as e:
+            print(f"Erro ao atualizar quantidade: {e}")
+            return False
+        
+    def subtrairQuantidade(self, nome, quantidade):
+        nome = str(nome).rstrip('-')
+        print(f'Estoque.py Linha 108: {nome}')
+
+        # Passo 1: Buscar o produto pelo nome
+        query_select = """SELECT * FROM produto WHERE nome = %s"""
+        params = (nome,)  # Tupla com um único elemento
+
+        if self.db.executar_query(query_select, params):
+            print("Produto selecionado com sucesso!")
+            resultado = self.db.cursor.fetchone()  # Usar fetchone() para pegar o primeiro resultado
+            print(f'Estoque.py Linha 117: {resultado}')
+
+            if resultado:
+                # Passo 2: Extrair a quantidade atual do produto
+                id_produto, nome_produto, quantidade_inicial = resultado[0], resultado[1], resultado[2]
+
+                # Passo 3: Calcular a nova quantidade
+                nova_quantidade = quantidade_inicial - quantidade
+
+                # Passo 4: Atualizar a quantidade no banco de dados
+                query_update = """UPDATE produto SET quantidade = %s WHERE codProduto = %s"""
+                params_update = (nova_quantidade, id_produto)
+
+                if self.db.executar_query(query_update, params_update):
+                    print("Quantidade atualizada com sucesso!")
+                else:
+                    print("Erro ao atualizar a quantidade do produto.")
+            else:
+                print("Nenhum produto encontrado com o nome especificado.")
+        else:
+            print("Erro ao selecionar Produto.")

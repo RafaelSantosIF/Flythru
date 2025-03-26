@@ -4,9 +4,11 @@ import os
 import Dictionary as dc
 from api.pedido.pedido import Pedido
 from api.cardapio.item_cardapio import Item_Cardapio
+from api.estoque.estoque import Estoque
 
 pedido = Pedido()
 cardapio = Item_Cardapio()
+estoque = Estoque()
 
 class CarteMenu:
     def __init__(self):
@@ -15,30 +17,45 @@ class CarteMenu:
         self.total_label = None
         self.order_items = []
         self.order_id = 1
-        self.categories = {
-            "Hambúrguer": [
-                ("AMERICANO", 13.99, "round_logo.png", ["Hambúrguer", "Tomate", "Queijo", "Alface", "Molho Especial"]),
-                ("AMERICANO", 13.99, "round_logo.png", ["Hambúrguer", "Tomate", "Queijo", "Alface", "Molho Especial"]),
-                ("AMERICANO", 13.99, "round_logo.png", ["Hambúrguer", "Tomate", "Queijo", "Alface", "Molho Especial"]),
-                ("AMERICANO", 13.99, "round_logo.png", ["Hambúrguer", "Tomate", "Queijo", "Alface", "Molho Especial"]),
-                ("AMERICANO", 13.99, "round_logo.png", ["Hambúrguer", "Tomate", "Queijo", "Alface", "Molho Especial"])
-            ],
-            "Batatas": [
-                ("BATATA P", 8.99, "round_logo.png", ["Batata frita", "Molho Especial"]),
-                ("BATATA M", 10.99, "round_logo.png", ["Batata frita", "Molho Especial"]),
-                ("BATATA M", 10.99, "round_logo.png", ["Batata frita", "Molho Especial"]),
-                ("BATATA M", 10.99, "round_logo.png", ["Batata frita", "Molho Especial"]),
-                ("BATATA G", 13.99, "round_logo.png", ["Batata frita", "Molho Especial"])
-            ],
-            "Refrigerantes": [
-                ("COCA COLA", 5.99, "round_logo.png", ["Refrigerante Gelado"]),
-                ("COCA LATA", 4.00, "round_logo.png", ["350ML"]),
-                ("GUARANÁ", 5.99, "round_logo.png", ["Refrigerante Gelado"]),
-                ("COCA COLA", 5.99, "round_logo.png", ["Refrigerante Gelado"]),
-                ("COCA COLA", 5.99, "round_logo.png", ["Refrigerante Gelado"])
-            ]
-        }
+        self.categories = {}  # Dicionário para armazenar os itens do cardápio por categoria
+        self.fonts = None
+        self.colors = None
+        self.root = None
+        self.main_menu = None
+        self.main_content = None
+        self.load_menu_items()  # Carregar os itens do cardápio ao inicializar
+    def load_menu_items(self):
+        """Carrega os itens do cardápio a partir do banco de dados."""
+        itens_cardapio = cardapio.listar_tudo()  # Busca os itens do cardápio
+        
+        # Define default categories that should always appear
+        default_categories = ["Hambúrguer", "Batatas", "Refrigerantes", "Outros"]
+        
+        # Initialize categories dictionary with empty lists for each default category
+        self.categories = {categoria: [] for categoria in default_categories}
+        
+        # Organize items from database into appropriate categories
+        for item in itens_cardapio:
+            codCardapio, nome, preco, listaProdutos,listaQuantidades, category = item
+            # Define a categoria com base no nome do item
+            if "Hambúrguer" in category:
+                categoria = "Hambúrguer"
+            elif "Batatas" in category:
+                categoria = "Batatas"
+            elif "Refrigerantes" in category:
+                categoria = "Refrigerantes"
+            else:
+                categoria = "Outros"  # Categoria padrão para itens que não se encaixam nas outras
 
+            # Processar ingredientes que agora incluem quantidades
+            produtos_lista = listaProdutos.split("--")
+            produtos_formatados = []
+            for prod in produtos_lista:
+                if prod:  # Verificar se não está vazio
+                    produtos_formatados.append(prod)
+
+            # Adiciona o item à categoria correspondente
+            self.categories[categoria].append((nome, preco, "round_logo.png", produtos_formatados))
     def load_image(self, filename, size):
         current_dir = os.path.dirname(os.path.abspath(__file__))
         assets_dir = os.path.join(current_dir, "assets")
@@ -67,7 +84,7 @@ class CarteMenu:
             self.order_items.append({
                 "id": f"#{self.order_id:02d}",
                 "item": name,
-                "qty": f"x{quantity}",
+                "qty": f"{quantity}",
                 "price": f"R$ {total_item_price:.2f}"
             })
             self.order_id += 1
@@ -162,12 +179,14 @@ class CarteMenu:
         items_frame.pack(fill="both", expand=True, padx=20)
 
         order_description = ''
+        quantidade_description = ''
 
         # Display order items
         for item in self.order_items:
             item_frame = ctk.CTkFrame(items_frame, fg_color="transparent")
             item_frame.pack(fill="x", pady=5)
-            order_description += f'{item['item']} {item['qty']}\n'
+            order_description+= f"{item['item']}\n"
+            quantidade_description += f"{item['qty']}\n"
 
             ctk.CTkLabel(item_frame, text=item["id"], width=50).grid(row=0, column=0, padx=5, sticky="w")
             ctk.CTkLabel(item_frame, text=item["item"], width=180).grid(row=0, column=1, padx=5, sticky="w")
@@ -202,6 +221,8 @@ class CarteMenu:
         buttons_frame.pack(fill="x", padx=20, pady=10)
 
         # Finish order button
+        # Modifique o finish_button no método open_order_screen
+# Modifique o finish_button no método open_order_screen
         finish_button = ctk.CTkButton(
             buttons_frame,
             text="Finalizar Pedido",
@@ -210,9 +231,10 @@ class CarteMenu:
             font=ctk.CTkFont(family="Verdana", size=12, weight="bold"),
             height=35,
             command=lambda: [
-                pedido.save(order_description, self.total_price, "cartão de Crédito"),
-                self.clear_order(order_screen), 
-                self.refresh_orders_after_save()                
+                pedido.save(order_description,quantidade_description, self.total_price, "cartão de Crédito"),
+                self.update_inventory_from_order(),  # Chama o novo método para atualizar o estoque
+                self.clear_order(order_screen),
+                self.refresh_orders_after_save()
             ]
         )
         finish_button.pack(side="left", expand=True, padx=(0, 10))
@@ -233,6 +255,7 @@ class CarteMenu:
     def delete_menu_item(self, category, index):
         """Delete an item from the menu category"""
         if 0 <= index < len(self.categories[category]):
+            cardapio.delete(self.categories[category][index][0])
             del self.categories[category][index]
             self.refresh_menu()
 
@@ -349,19 +372,22 @@ class CarteMenu:
         ingredients_label.pack(fill="x", pady=(5, 5))  # Reduced padding
 
         # Lista de ingredientes disponíveis com suas quantidades
-        available_ingredients = [
-            {"name": "Hambúrguer", "unit": "g", "default_qty": 180},
-            {"name": "Queijo", "unit": "g", "default_qty": 30},
-            {"name": "Alface", "unit": "g", "default_qty": 20},
-            {"name": "Tomate", "unit": "g", "default_qty": 50},
-            {"name": "Cebola", "unit": "g", "default_qty": 30},
-            {"name": "Picles", "unit": "g", "default_qty": 20},
-            {"name": "Bacon", "unit": "g", "default_qty": 40},
-            {"name": "Molho Especial", "unit": "ml", "default_qty": 25},
-            {"name": "Pão", "unit": "un", "default_qty": 1},
-            {"name": "Batata Frita", "unit": "g", "default_qty": 150},
-            {"name": "Refrigerante", "unit": "ml", "default_qty": 350},
-        ]
+        ingredientes_back = estoque.listar_tudo()
+        available_ingredients = []
+        for ingrediente in ingredientes_back:
+            ingrediente_unidade = ''
+            if ingrediente[3] == "Bebidas":
+                ingrediente_unidade = 'ml'
+            elif ingrediente[3] == "Carnes" or ingrediente[3] == "Laticíneos" or ingrediente[3] == "Verduras" or ingrediente[3] == "Laticínios":
+                ingrediente_unidade = 'g'
+            else:
+                ingrediente_unidade = 'un'
+            
+            available_ingredients.append({
+                "name": ingrediente[1],
+                "unit": ingrediente_unidade,#categoria
+                "default_qty": ingrediente[2]
+            })
 
         # Lista para armazenar ingredientes selecionados com suas quantidades
         selected_ingredients = []
@@ -394,7 +420,7 @@ class CarteMenu:
             placeholder_text="Qtd"
         )
         quantity_entry.pack(side="left", padx=(0, 5), pady=10)
-
+        
         # Rótulo de unidade (será atualizado dinamicamente)
         unit_label = ctk.CTkLabel(
             selection_frame,
@@ -565,12 +591,25 @@ class CarteMenu:
                 bottom_frame.after(2000, error_label.destroy)
                 return
 
-            # Criar lista de nomes de ingredientes para salvar no formato original
-            ingredients_list = [item["name"] for item in selected_ingredients]
+            # Criar lista de nomes de ingredientes para salvar no formato original (Mudei aqui)
+            ingredients_list = []
+            quantidade_list = []
+            lista_ingredientes = ''
+            ingredients_quant = ""
+            for item in selected_ingredients:
+                # Formato: nome_ingrediente(quantidade unidade)
+                ing_with_qty = f"{item['name']}"
+                ingredients_list.append(ing_with_qty)
+                lista_ingredientes += ing_with_qty + "--"
 
-            # Add new item to the category
+                numberQuantidade = f"{item['quantity']}"
+                quantidade_list.append(numberQuantidade)
+                ingredients_quant += numberQuantidade + "--"
+
+            # O resto permanece similar
             self.categories[category].append((name, price, "round_logo.png", ingredients_list))
-
+            cardapio.save(name, price, lista_ingredientes,ingredients_quant, category)
+#mudei aqui 
             # Refresh the menu
             self.refresh_menu()
 
@@ -639,9 +678,10 @@ class CarteMenu:
         display_ingredients = ingredients[:max_ingredients]
 
         for ing in display_ingredients:
+            # O formato do ingrediente pode ser "Nome(quantidade unidade)"
             ing_label = ctk.CTkLabel(
                 ingredients_frame,
-                text="• " + ing,
+                text="• " + ing,  # O ingrediente já inclui a quantidade
                 font=ctk.CTkFont(family="Verdana", size=10),
                 text_color="white",
                 anchor="w",
@@ -718,8 +758,125 @@ class CarteMenu:
 
         return card
 
+    def update_inventory_from_order(self):
+        """
+        Atualiza o estoque subtraindo os ingredientes utilizados no pedido atual.
+        Chamado quando um pedido é finalizado.
+        """
+        if not self.order_items:
+            return
+        
+        # Dicionário para acumular o uso total de ingredientes em todos os itens do pedido
+        total_ingredient_usage = {}
+        
+        # Processa cada item no pedido
+        for order_item in self.order_items:
+            item_name = order_item["item"]
+            item_quantity = int(order_item["qty"].replace("x", ""))
+            
+            # Encontra o item nas categorias do menu
+            for category, items in self.categories.items():
+                for name, price, img, ingredients in items:
+                    if name == item_name:
+                        # Processa cada ingrediente neste item do menu
+                        for ingredient_str in ingredients:
+                            # Analisa a string do ingrediente - formato é "Nome(quantidadeunidade)"
+                            # Extrai nome e quantidade
+                            if "(" in ingredient_str and ")" in ingredient_str:
+                                ingredient_name = ingredient_str.split("(")[0]
+                                quantity_str = ingredient_str.split("(")[1].split(")")[0]
+                                
+                                # Extrai quantidade numérica e unidade
+                                # Lida com diferentes formatos (ex: "100g", "250ml")
+                                import re
+                                match = re.match(r"([\d.]+)([a-zA-Z]+)", quantity_str)
+                                if match:
+                                    try:
+                                        ingredient_quantity = float(match.group(1))
+                                        ingredient_unit = match.group(2)
+                                        
+                                        # Calcula o uso total para este ingrediente neste item do pedido
+                                        total_usage = ingredient_quantity * item_quantity
+                                        
+                                        # Acumula no dicionário de uso total
+                                        if ingredient_name in total_ingredient_usage:
+                                            total_ingredient_usage[ingredient_name] += total_usage
+                                        else:
+                                            total_ingredient_usage[ingredient_name] = total_usage
+                                    except ValueError:
+                                        print(f"Erro ao converter quantidade: {quantity_str}")
+        
+        # Agora atualiza o estoque no banco de dados subtraindo todos os ingredientes acumulados
+        for ingredient_name, usage_amount in total_ingredient_usage.items():
+            # Obtém o nível atual de estoque para este ingrediente
+            current_inventory = self.get_quantidade_by_nome(ingredient_name)
+            if current_inventory is not None:
+                # Calcula o novo nível de estoque
+                new_quantity = max(0, current_inventory - usage_amount)
+                # Atualiza o estoque no banco de dados
+                self.update_quantidade(ingredient_name, new_quantity)
+                print(f"Atualizado estoque: {ingredient_name} de {current_inventory} para {new_quantity}")
+
+
+    # Adicionar um método à classe Estoque para obter quantidade pelo nome
+    # Este método deve ser adicionado ao seu arquivo api/estoque/estoque.py
+    def get_quantidade_by_nome(self, nome):
+        """
+        Obtém a quantidade atual de um item pelo seu nome.
+        
+        Parâmetros:
+        nome (str): O nome do item para obter a quantidade
+        
+        Retorna:
+        float: A quantidade atual, ou None se o item não for encontrado
+        """
+        try:
+            conn = self.connect_db()
+            cursor = conn.cursor()
+            
+            cursor.execute("SELECT quantidade FROM estoque WHERE nome = ?", (nome,))
+            result = cursor.fetchone()
+            
+            if result:
+                return result[0]
+            return None
+        except Exception as e:
+            print(f"Erro ao buscar quantidade: {e}")
+            return None
+        finally:
+            if conn:
+                conn.close()
+
+    # Adicionar um método à classe Estoque para atualizar quantidade
+    # Este método deve ser adicionado ao seu arquivo api/estoque/estoque.py
+    def update_quantidade(self, nome, nova_quantidade):
+        """
+        Atualiza a quantidade de um item no estoque.
+        
+        Parâmetros:
+        nome (str): O nome do item a ser atualizado
+        nova_quantidade (float): A nova quantidade a ser definida
+        
+        Retorna:
+        bool: True se bem-sucedido, False caso contrário
+        """
+        try:
+            conn = self.connect_db()
+            cursor = conn.cursor()
+            
+            cursor.execute("UPDATE estoque SET quantidade = ? WHERE nome = ?", 
+                        (nova_quantidade, nome))
+            conn.commit()
+            return True
+        except Exception as e:
+            print(f"Erro ao atualizar quantidade: {e}")
+            return False
+        finally:
+            if conn:
+                conn.close()
+
     def create_category_section(self, parent, category, items):
-        """Create a section for a category with grid layout"""
+        """Cria uma seção para uma categoria com layout de grade."""
         # Section frame
         section_frame = ctk.CTkFrame(parent, fg_color="transparent")
         section_frame.pack(fill="x", pady=10, padx=10)

@@ -102,6 +102,8 @@ class OrdersMenu:
     def load_orders(self):
         # Obter os pedidos do banco de dados
         pedidos = pedido.listar_tudo()
+        #pedidos_formatados = [pedidos[0],pedidos[1],f'{pedidos[2]} x{pedidos[3]}',pedidos[4]]
+        print(pedidos)
         
         # Adicionar cada pedido como uma linha na tabela
         for row_index, pedido_data in enumerate(pedidos):
