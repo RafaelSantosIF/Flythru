@@ -29,7 +29,10 @@ class MainMenu:
         self.storage_menu = StorageMenu()
         self.carte_menu = CarteMenu()
         self.orders_menu = OrdersMenu()
-        self.supplier_menu = SupplierMenu()        
+        self.supplier_menu = SupplierMenu()
+        
+        self.carte_menu.set_main_menu(self)
+        self.orders_menu.set_main_menu(self)        
 
         # Create Menu Areas
         self.create_top_bar(root)        

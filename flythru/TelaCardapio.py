@@ -17,13 +17,17 @@ class CarteMenu:
         self.total_label = None
         self.order_items = []
         self.order_id = 1
-        self.categories = {}  # Dicionário para armazenar os itens do cardápio por categoria
+        self.categories = {}  
         self.fonts = None
         self.colors = None
         self.root = None
         self.main_menu = None
         self.main_content = None
-        self.load_menu_items()  # Carregar os itens do cardápio ao inicializar
+        self.load_menu_items()  
+    
+    def set_main_menu(self, main_menu):
+        self.main_menu = main_menu
+            
     def load_menu_items(self):
         """Carrega os itens do cardápio a partir do banco de dados."""
         itens_cardapio = cardapio.listar_tudo()  # Busca os itens do cardápio
@@ -36,7 +40,7 @@ class CarteMenu:
         
         # Organize items from database into appropriate categories
         for item in itens_cardapio:
-            codCardapio, nome, preco, listaProdutos,listaQuantidades, category = item
+            codCardapio, nome, preco, listaProdutos, listaQuantidades, category = item
             # Define a categoria com base no nome do item
             if "Hambúrguer" in category:
                 categoria = "Hambúrguer"
@@ -56,6 +60,7 @@ class CarteMenu:
 
             # Adiciona o item à categoria correspondente
             self.categories[categoria].append((nome, preco, "round_logo.png", produtos_formatados))
+            
     def load_image(self, filename, size):
         current_dir = os.path.dirname(os.path.abspath(__file__))
         assets_dir = os.path.join(current_dir, "assets")
@@ -106,10 +111,8 @@ class CarteMenu:
         order_screen.destroy()
 
     def refresh_orders_after_save(self):
-        # Access the OrdersMenu instance from MainMenu if available
-        if hasattr(self.main_menu, 'orders_menu') and self.main_menu.orders_menu:
-            if hasattr(self.main_menu.orders_menu, 'refresh_orders_table'):
-                self.main_menu.orders_menu.refresh_orders_table()
+        if self.main_menu and hasattr(self.main_menu, 'orders_menu'):
+            self.main_menu.orders_menu.refresh_orders_table()
     
     def open_order_screen(self):
         order_screen = ctk.CTkToplevel()
@@ -218,11 +221,8 @@ class CarteMenu:
 
         # Buttons frame
         buttons_frame = ctk.CTkFrame(bottom_frame, fg_color="transparent")
-        buttons_frame.pack(fill="x", padx=20, pady=10)
+        buttons_frame.pack(fill="x", padx=20, pady=10)       
 
-        # Finish order button
-        # Modifique o finish_button no método open_order_screen
-# Modifique o finish_button no método open_order_screen
         finish_button = ctk.CTkButton(
             buttons_frame,
             text="Finalizar Pedido",
@@ -609,7 +609,7 @@ class CarteMenu:
             # O resto permanece similar
             self.categories[category].append((name, price, "round_logo.png", ingredients_list))
             cardapio.save(name, price, lista_ingredientes,ingredients_quant, category)
-#mudei aqui 
+
             # Refresh the menu
             self.refresh_menu()
 

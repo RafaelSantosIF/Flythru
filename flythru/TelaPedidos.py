@@ -16,6 +16,9 @@ class OrdersMenu:
         
         self.filter_icon = self.load_image("filter.png", (28, 28))
         
+    def set_main_menu(self, main_menu):
+        self.main_menu = main_menu
+            
     def load_image(self, filename, size):
         current_dir = os.path.dirname(os.path.abspath(__file__))
         assets_dir = os.path.join(current_dir, "assets")
@@ -110,15 +113,15 @@ class OrdersMenu:
             self.add_row(row_index, pedido_data)
     
     def refresh_orders_table(self):
-        # Clear existing rows
-        for widget in self.table_container.winfo_children():
-            if isinstance(widget, ctk.CTkLabel) and widget.grid_info()["row"] > 0:
-                widget.destroy()
-            if isinstance(widget, ctk.CTkButton):
-                widget.destroy()
-        
-        # Reload orders data
-        self.load_orders()
+        if self.table_container:
+            # Clear existing rows
+            for widget in self.table_container.winfo_children():
+                if isinstance(widget, ctk.CTkLabel) and widget.grid_info()["row"] > 0:
+                    widget.destroy()
+                if isinstance(widget, ctk.CTkButton):
+                    widget.destroy()            
+            
+            self.load_orders()
     
     # Método para adicionar linha de dados à tabela
     def add_row(self, row_index, data):      
