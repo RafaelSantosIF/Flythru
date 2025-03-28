@@ -231,9 +231,25 @@ class CarteMenu:
             font=ctk.CTkFont(family="Verdana", size=12, weight="bold"),
             height=35,
             command=lambda: [
-                pedido.save(order_description,quantidade_description, self.total_price, "cartão de Crédito"),
-                self.update_inventory_from_order(),  # Chama o novo método para atualizar o estoque
+                # Primeiro salva o pedido
+                pedido.save(order_description, quantidade_description, self.total_price, "cartão de Crédito"),
+                
+                # Atualiza o estoque imediatamente (antes de mostrar a confirmação)
+                self.update_inventory_from_order(),
+                
+                # Mostra a tela de confirmação
+                self.show_confirmation_screen(
+                    order_screen, 
+                    order_description, 
+                    quantidade_description, 
+                    self.total_price, 
+                    "cartão de Crédito"
+                ),
+                
+                # Limpa o pedido atual
                 self.clear_order(order_screen),
+                
+                # Atualiza a lista de pedidos
                 self.refresh_orders_after_save()
             ]
         )
@@ -742,7 +758,20 @@ class CarteMenu:
             width=100
         )
         add_button.pack(side="left", fill="x", expand=True)
-
+        # Edit button
+        edit_button = ctk.CTkButton(
+            buttons_frame,
+            text="✎",  # Ícone de lápis (editar)
+            fg_color="#4CAF50",  # Verde padrão
+            hover_color="#45a049",  # Verde mais escuro para hover
+            text_color="white",  # Texto branco para melhor contraste
+            font=self.fonts["button_font"],
+            command=lambda cat=category, i=idx: self.edit_menu_item(cat, i),
+            height=25,
+            width=25,
+            corner_radius=6  # Cantos levemente arredondados
+        )
+        edit_button.pack(side="right", padx=(5, 0))
         # Botão DELETE
         delete_button = ctk.CTkButton(
             buttons_frame,
@@ -1004,3 +1033,459 @@ class CarteMenu:
             command=self.open_order_screen
         )
         generate_order_button.pack(side="right", padx=20, pady=5)
+
+    def edit_menu_item(self, category, index):
+        """Open a dialog to edit an existing menu item with optimized performance"""
+        # Get the item to edit
+        item = self.categories[category][index]
+        name, price, img, ingredients = item
+
+        # Create a new window for editing an item
+        edit_window = ctk.CTkToplevel()
+        edit_window.title(f"Editar Item - {name}")
+
+        # Window configuration
+        edit_window.geometry("450x550")
+        edit_window.resizable(False, False)
+        edit_window.overrideredirect(True)
+        edit_window.grab_set()
+        edit_window.focus_force()
+        
+        # Center window
+        edit_window.update_idletasks()
+        screen_width = edit_window.winfo_screenwidth()
+        screen_height = edit_window.winfo_screenheight()
+        x = (screen_width - edit_window.winfo_width()) // 2
+        y = (screen_height - edit_window.winfo_height()) // 2
+        edit_window.geometry(f"+{x}+{y}")
+
+        # Colors
+        main_color = self.colors["main_color"]
+        hover_color = self.colors["hover_color"]
+        bg_color = "#2b2b2b"
+        frame_color = "#3E3E3E"
+
+        # Top bar
+        top_bar = ctk.CTkFrame(edit_window, fg_color=main_color, height=50)
+        top_bar.pack(side="top", fill="x")
+
+        # Header frame
+        header_frame = ctk.CTkFrame(top_bar, fg_color="transparent")
+        header_frame.pack(fill="x", padx=10, pady=5)
+
+        # Back button
+        back_button = ctk.CTkButton(
+            header_frame,
+            text="←",
+            width=30,
+            fg_color="transparent",
+            hover_color=hover_color,
+            command=edit_window.destroy
+        )
+        back_button.pack(side="left")
+
+        # Title
+        title_label = ctk.CTkLabel(
+            header_frame,
+            text=f"Editar {name}",
+            font=ctk.CTkFont(family="Verdana", size=16, weight="bold"),
+            text_color="white"
+        )
+        title_label.pack(fill="x", side="left", padx=10)
+
+        # Add dragging functionality
+        from MainMenu import WindowDragging
+        WindowDragging(edit_window, header_frame)
+
+        # Main content frame
+        content_frame = ctk.CTkFrame(edit_window, fg_color=bg_color)
+        content_frame.pack(fill="both", expand=True)
+
+        # Form fields
+        form_frame = ctk.CTkFrame(content_frame, fg_color="transparent")
+        form_frame.pack(fill="both", expand=True, padx=15, pady=15)
+
+        # Name field
+        name_var = ctk.StringVar(value=name)
+        name_label = ctk.CTkLabel(
+            form_frame,
+            text="Nome do Item:",
+            font=ctk.CTkFont(family="Verdana", size=14),
+            anchor="w"
+        )
+        name_label.pack(fill="x", pady=(5, 5))
+
+        name_entry = ctk.CTkEntry(
+            form_frame,
+            textvariable=name_var,
+            font=ctk.CTkFont(family="Verdana", size=12),
+            height=35
+        )
+        name_entry.pack(fill="x", pady=(0, 10))
+
+        # Price field
+        price_var = ctk.StringVar(value=str(price))
+        price_label = ctk.CTkLabel(
+            form_frame,
+            text="Preço (R$):",
+            font=ctk.CTkFont(family="Verdana", size=14),
+            anchor="w"
+        )
+        price_label.pack(fill="x", pady=(5, 5))
+
+        price_entry = ctk.CTkEntry(
+            form_frame,
+            textvariable=price_var,
+            font=ctk.CTkFont(family="Verdana", size=12),
+            height=35,
+            placeholder_text="0.00"
+        )
+        price_entry.pack(fill="x", pady=(0, 10))
+
+        # Ingredients section
+        ingredients_label = ctk.CTkLabel(
+            form_frame,
+            text="Ingredientes:",
+            font=ctk.CTkFont(family="Verdana", size=14),
+            anchor="w"
+        )
+        ingredients_label.pack(fill="x", pady=(5, 5))
+
+        # Get available ingredients (optimized to run once)
+        ingredientes_back = estoque.listar_tudo()
+        available_ingredients = []
+        for ingrediente in ingredientes_back:
+            unit = 'ml' if ingrediente[3] == "Bebidas" else 'g' if ingrediente[3] in ["Carnes", "Laticíneos", "Verduras", "Laticínios"] else 'un'
+            available_ingredients.append({
+                "name": ingrediente[1],
+                "unit": unit,
+                "default_qty": ingrediente[2]
+            })
+
+        # Get current item ingredients
+        current_item_db = cardapio.listByName(name)
+        selected_ingredients = []
+        if current_item_db and current_item_db[0]:
+            db_ingredients = current_item_db[0][3].split('--') if current_item_db[0][3] else []
+            db_quantities = current_item_db[0][4].split('--') if current_item_db[0][4] else []
+            
+            for ing, qty in zip(db_ingredients, db_quantities):
+                if ing and ing.strip():
+                    selected_ingredients.append({
+                        "name": ing.strip(),
+                        "quantity": qty.strip()
+                    })
+
+        # Ingredients selection frame
+        selection_frame = ctk.CTkFrame(form_frame, fg_color=frame_color)
+        selection_frame.pack(fill="x", pady=(0, 5))
+
+        # Ingredient dropdown
+        ingredient_var = ctk.StringVar()
+        ingredient_names = [item["name"] for item in available_ingredients]
+        ingredient_dropdown = ctk.CTkComboBox(
+            selection_frame,
+            values=ingredient_names,
+            variable=ingredient_var,
+            font=ctk.CTkFont(family="Verdana", size=12),
+            height=35,
+            width=180
+        )
+        ingredient_dropdown.pack(side="left", padx=(10, 5), pady=10)
+
+        # Quantity field
+        quantity_var = ctk.StringVar(value="")
+        quantity_entry = ctk.CTkEntry(
+            selection_frame,
+            textvariable=quantity_var,
+            font=ctk.CTkFont(family="Verdana", size=12),
+            width=50,
+            height=35,
+            placeholder_text="Qtd"
+        )
+        quantity_entry.pack(side="left", padx=(0, 5), pady=10)
+        
+        # Unit label
+        unit_label = ctk.CTkLabel(
+            selection_frame,
+            text="",
+            font=ctk.CTkFont(family="Verdana", size=12),
+            width=30
+        )
+        unit_label.pack(side="left", pady=10)
+
+        # Update quantity default value
+        def update_quantity_default(*args):
+            selected = ingredient_var.get()
+            for ing in available_ingredients:
+                if ing["name"] == selected:
+                    quantity_var.set(str(ing["default_qty"]))
+                    unit_label.configure(text=ing["unit"])
+                    break
+
+        ingredient_var.trace_add("write", update_quantity_default)
+        if ingredient_names:
+            ingredient_var.set(ingredient_names[0])
+            update_quantity_default()
+
+        # Add ingredient button
+        add_ingredient_button = ctk.CTkButton(
+            selection_frame,
+            text="+",
+            width=30,
+            height=30,
+            fg_color="#4CAF50",
+            hover_color="#45a049",
+            command=lambda: self._add_ingredient(
+                ingredient_var, quantity_var, selected_ingredients, 
+                available_ingredients, ingredients_display_frame
+            )
+        )
+        add_ingredient_button.pack(side="right", padx=10, pady=10)
+
+        # Ingredients display frame
+        ingredients_display_frame = ctk.CTkFrame(form_frame, fg_color=frame_color, height=100)
+        ingredients_display_frame.pack(fill="x", pady=(0, 10))
+        ingredients_display_frame.pack_propagate(False)
+
+        # Initial update of ingredients list
+        self._update_ingredients_list(selected_ingredients, ingredients_display_frame)
+
+        # Bottom frame (ensure it's always visible)
+        bottom_frame = ctk.CTkFrame(edit_window, fg_color="white", height=60)
+        bottom_frame.pack(side="bottom", fill="x", pady=(0, 0))  # Explicit pady=0 to prevent overlap
+
+        # Confirm edit button
+        edit_button = ctk.CTkButton(
+            bottom_frame,
+            text="Confirmar Edição",
+            fg_color="#4CAF50",
+            hover_color="#45a049",
+            font=ctk.CTkFont(family="Verdana", size=12, weight="bold"),
+            height=30,
+            command=lambda: self._confirm_edit_item(
+                edit_window, category, index, name_var, price_var, 
+                selected_ingredients, name, category
+            )
+        )
+        edit_button.pack(side="left", expand=True, padx=15, pady=15)
+
+        # Cancel button
+        cancel_button = ctk.CTkButton(
+            bottom_frame,
+            text="Cancelar",
+            fg_color="#ff4444",
+            hover_color="#ff0000",
+            font=ctk.CTkFont(family="Verdana", size=12, weight="bold"),
+            height=30,
+            command=edit_window.destroy
+        )
+        cancel_button.pack(side="right", padx=15, pady=15)
+
+        # Make sure the window is properly rendered
+        edit_window.update()
+
+    def _add_ingredient(self, ingredient_var, quantity_var, selected_ingredients, available_ingredients, display_frame):
+        """Helper method to add an ingredient to the list"""
+        selected = ingredient_var.get()
+        quantity = quantity_var.get().strip()
+
+        if not selected or not quantity:
+            return
+
+        try:
+            quantity = float(quantity.replace(',', '.'))
+        except ValueError:
+            error_label = ctk.CTkLabel(
+                display_frame,
+                text="Quantidade inválida!",
+                font=ctk.CTkFont(family="Verdana", size=10),
+                text_color="red"
+            )
+            error_label.pack()
+            display_frame.after(2000, error_label.destroy)
+            return
+
+        # Check if ingredient already exists
+        for i, item in enumerate(selected_ingredients):
+            if item["name"] == selected:
+                selected_ingredients[i]["quantity"] = str(quantity)
+                self._update_ingredients_list(selected_ingredients, display_frame)
+                return
+
+        # Add new ingredient
+        selected_ingredients.append({"name": selected, "quantity": str(quantity)})
+        self._update_ingredients_list(selected_ingredients, display_frame)
+
+    def _update_ingredients_list(self, selected_ingredients, display_frame):
+        """Helper method to update the ingredients list display"""
+        # Clear the frame
+        for widget in display_frame.winfo_children():
+            widget.destroy()
+
+        # Create scrollable frame if there are many ingredients
+        if len(selected_ingredients) > 3:
+            scroll_frame = ctk.CTkScrollableFrame(display_frame, fg_color="transparent")
+            scroll_frame.pack(fill="both", expand=True)
+            parent_frame = scroll_frame
+        else:
+            parent_frame = display_frame
+
+        # Add ingredients
+        for i, ingredient in enumerate(selected_ingredients):
+            row_frame = ctk.CTkFrame(parent_frame, fg_color="transparent")
+            row_frame.pack(fill="x", padx=5, pady=2)
+
+            # Ingredient label
+            ctk.CTkLabel(
+                row_frame,
+                text=f"• {ingredient['name']} - {ingredient['quantity']}",
+                font=ctk.CTkFont(family="Verdana", size=12),
+                text_color="white",
+                anchor="w"
+            ).pack(side="left", fill="x", expand=True)
+
+            # Remove button
+            ctk.CTkButton(
+                row_frame,
+                text="✕",
+                width=20,
+                height=20,
+                fg_color="transparent",
+                hover_color="#ff4444",
+                command=lambda idx=i: self._remove_ingredient(idx, selected_ingredients, display_frame)
+            ).pack(side="right")
+
+    def _remove_ingredient(self, index, selected_ingredients, display_frame):
+        """Helper method to remove an ingredient"""
+        selected_ingredients.pop(index)
+        self._update_ingredients_list(selected_ingredients, display_frame)
+
+    def _confirm_edit_item(self, window, category, index, name_var, price_var, selected_ingredients, old_name, category_name):
+        """Helper method to confirm item editing"""
+        new_name = name_var.get().strip()
+
+        try:
+            new_price = float(price_var.get().replace(',', '.'))
+        except ValueError:
+            self._show_error("Preço inválido!")
+            return
+
+        if not new_name:
+            self._show_error("O nome do item é obrigatório!")
+            return
+
+        if not selected_ingredients:
+            self._show_error("Pelo menos um ingrediente é obrigatório!")
+            return
+
+        # Prepare ingredients strings
+        try:
+            ingredients_str = "--".join([item['name'].strip() for item in selected_ingredients])
+            quantities_str = "--".join([str(item['quantity']).strip() for item in selected_ingredients])
+            
+            # Debug print (pode remover depois)
+            print(f"Enviando para o banco de dados:")
+            print(f"Nome: {new_name}, Preço: {new_price}")
+            print(f"Ingredientes: {ingredients_str}")
+            print(f"Quantidades: {quantities_str}")
+            print(f"Categoria: {category_name}")
+            print(f"Old Name: {old_name}")
+
+            # Update local data - corrigido para manter a estrutura de tupla
+            self.categories[category][index] = (new_name, new_price, "round_logo.png", [item['name'] for item in selected_ingredients])
+
+            # Update database
+            success = cardapio.edit(old_name, new_name, new_price, ingredients_str, quantities_str, category_name)
+            
+            if not success:
+                self._show_error("Erro ao atualizar no banco de dados!")
+                return
+
+            # Refresh menu and close window
+            self.refresh_menu()
+            window.destroy()
+
+        except Exception as e:
+            print(f"Erro ao preparar dados para edição: {e}")
+            self._show_error(f"Erro ao editar item: {str(e)}")
+
+    def _show_error(self, message):
+        """Helper method to show error messages"""
+        error_window = ctk.CTkToplevel()
+        error_window.title("Erro")
+        error_window.geometry("300x100")
+        error_window.resizable(False, False)
+        
+        ctk.CTkLabel(
+            error_window,
+            text=message,
+            font=ctk.CTkFont(family="Verdana", size=12),
+            text_color="red"
+        ).pack(pady=20)
+        
+        ctk.CTkButton(
+            error_window,
+            text="OK",
+            command=error_window.destroy
+        ).pack(pady=5)
+        
+        error_window.grab_set()
+
+    def show_confirmation_screen(self, order_screen, order_description, quantidade_description, total_price, payment_method):
+        """Mostra uma tela simples de confirmação com botão OK"""
+        confirmation_screen = ctk.CTkToplevel()
+        confirmation_screen.title("Pedido Confirmado")
+        confirmation_screen.geometry("350x300")
+        confirmation_screen.resizable(False, False)
+        confirmation_screen.grab_set()
+        confirmation_screen.focus_force()
+        
+        # Centralizar a janela
+        confirmation_screen.update_idletasks()
+        screen_width = confirmation_screen.winfo_screenwidth()
+        screen_height = confirmation_screen.winfo_screenheight()
+        x = (screen_width - 350) // 2
+        y = (screen_height - 300) // 2
+        confirmation_screen.geometry(f"+{x}+{y}")
+
+        # Main frame
+        main_frame = ctk.CTkFrame(confirmation_screen)
+        main_frame.pack(fill="both", expand=True, padx=10, pady=10)
+
+        # Success icon
+        success_icon = self.load_image("success_icon.png", (60, 60))
+        if success_icon:
+            icon_label = ctk.CTkLabel(main_frame, image=success_icon, text="")
+            icon_label.pack(pady=(20, 10))
+
+        # Success message
+        success_label = ctk.CTkLabel(
+            main_frame,
+            text="Pedido confirmado!",
+            font=ctk.CTkFont(size=16, weight="bold")
+        )
+        success_label.pack(pady=(0, 15))
+
+        # Summary message
+        summary_label = ctk.CTkLabel(
+            main_frame,
+            text=f"Total: R$ {total_price:.2f}\n{payment_method}",
+            font=ctk.CTkFont(size=14)
+        )
+        summary_label.pack(pady=(0, 20))
+
+        # OK button
+        ok_button = ctk.CTkButton(
+            main_frame,
+            text="OK",
+            width=100,
+            command=lambda: [
+                order_screen.destroy(),
+                confirmation_screen.destroy(),
+                self.update_inventory_from_order(),
+                self.clear_order(order_screen),
+                self.refresh_orders_after_save()
+            ]
+        )
+        ok_button.pack(pady=(0, 10))

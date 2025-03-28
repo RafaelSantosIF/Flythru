@@ -49,17 +49,19 @@ class OrdersMenu:
         search_container.pack(side="top", fill="x", padx=20, pady=(15, 5))
         search_container.pack_propagate(False)
         
-        search_bar = ctk.CTkEntry(
+        # Search bar
+        self.search_bar = ctk.CTkEntry(
             search_container,
-            placeholder_text="🔎 Pesquisar Produto",
+            placeholder_text="🔎 Pesquisar Pedido",
             font=self.fonts["input_font"],
             height=40,
             fg_color=self.colors["text_primary"],
             text_color=self.colors["dark_bg"],
             placeholder_text_color=self.colors["text_disabled"]
         )
-        search_bar.place(relx=0, rely=0, relwidth=1, relheight=1)
+        self.search_bar.place(relx=0, rely=0, relwidth=0.95, relheight=1)
         
+        # Filter/Search button
         filter_button = ctk.CTkButton(
             search_container,
             image=self.filter_icon,
@@ -69,14 +71,25 @@ class OrdersMenu:
             fg_color=self.colors["text_primary"],
             hover_color=self.colors["primary_hover"],
             corner_radius=0,
-            command=None
+            command=self.search_orders
         )
         filter_button.place(relx=0.97, rely=0.5, anchor="center")
         
-        self.table_container = ctk.CTkFrame(main_content, fg_color=self.colors["table_bg"])
+        # Bind Enter key to search
+        self.search_bar.bind("<Return>", lambda event: self.search_orders())
+        
+        # Replace CTkFrame with CTkScrollableFrame
+        self.table_container = ctk.CTkScrollableFrame(
+            main_content, 
+            fg_color=self.colors["table_bg"],
+            scrollbar_fg_color=self.colors["table_bg"],
+            scrollbar_button_color=self.colors["primary"],
+            scrollbar_button_hover_color=self.colors["primary_hover"]
+        )
         self.table_container.pack(fill="both", expand=True, padx=20, pady=(20, 10))
         
-        headers = ["N°", "Data", "Itens", "Qnt", "Valor (R$)", "Pagamento", " "]
+        # Headers with updated labels to match backend
+        headers = ["Cód", "Data", "Itens", "Quantidade", "Valor (R$)", "Pagamento"]
         for i, header in enumerate(headers):
             header_label = ctk.CTkLabel(
                 self.table_container,
@@ -91,41 +104,56 @@ class OrdersMenu:
         for i in range(len(headers)):
             self.table_container.grid_columnconfigure(i, weight=1)
         
-        # Clear existing rows if any (important for reloading)
+        # Load orders data
+        self.load_orders()
+    
+    def load_orders(self):
+        # Clear existing rows
         for widget in self.table_container.winfo_children():
             if isinstance(widget, ctk.CTkLabel) and widget.grid_info()["row"] > 0:
                 widget.destroy()
             if isinstance(widget, ctk.CTkButton):
                 widget.destroy()
         
-        # Load orders data
-        self.load_orders()
-    
-    # Método para carregar os pedidos do banco de dados
-    def load_orders(self):
         # Obter os pedidos do banco de dados
         pedidos = pedido.listar_tudo()
-        #pedidos_formatados = [pedidos[0],pedidos[1],f'{pedidos[2]} x{pedidos[3]}',pedidos[4]]
         print(pedidos)
         
         # Adicionar cada pedido como uma linha na tabela
         for row_index, pedido_data in enumerate(pedidos):
             self.add_row(row_index, pedido_data)
     
-    def refresh_orders_table(self):
-        if self.table_container:
-            # Clear existing rows
-            for widget in self.table_container.winfo_children():
-                if isinstance(widget, ctk.CTkLabel) and widget.grid_info()["row"] > 0:
-                    widget.destroy()
-                if isinstance(widget, ctk.CTkButton):
-                    widget.destroy()            
-            
+    def search_orders(self):
+        # Clear existing rows
+        for widget in self.table_container.winfo_children():
+            if isinstance(widget, ctk.CTkLabel) and widget.grid_info()["row"] > 0:
+                widget.destroy()
+            if isinstance(widget, ctk.CTkButton):
+                widget.destroy()
+        
+        # Get search term
+        search_term = self.search_bar.get().strip()
+        
+        # If search term is empty, load all orders
+        if not search_term:
             self.load_orders()
+            return
+        
+        # Search orders using the backend method
+        pedidos = pedido.buscar(search_term)
+        
+        # Add matching orders to the table
+        for row_index, pedido_data in enumerate(pedidos):
+            self.add_row(row_index, pedido_data)
     
-    # Método para adicionar linha de dados à tabela
+    def refresh_orders_table(self):
+        # Reset search bar
+        self.search_bar.delete(0, 'end')
+        
+        # Reload all orders
+        self.load_orders()
+    
     def add_row(self, row_index, data):      
-                
         for col_index, value in enumerate(data):
             text_color = "black" 
             cell = ctk.CTkLabel(
@@ -136,21 +164,3 @@ class OrdersMenu:
                 text_color=text_color
             )
             cell.grid(row=row_index + 1, column=col_index, padx=10, pady=5, sticky="ew")
-            
-        # Adicionar botão de ações na última coluna
-        action_button = ctk.CTkButton(
-            self.table_container,
-            text="Detalhes",
-            font=self.fonts["button_font"],
-            fg_color=self.colors["primary"],
-            hover_color=self.colors["primary_hover"],
-            corner_radius=8,
-            width=100,
-            command=lambda idx=row_index: self.show_order_details(idx)
-        )
-        action_button.grid(row=row_index + 1, column=len(data), padx=10, pady=5)
-    
-    def show_order_details(self, order_index):
-        # Função para exibir detalhes do pedido
-        print(f"Exibindo detalhes do pedido {order_index}")
-        # Implementar a lógica para exibir detalhes do pedido

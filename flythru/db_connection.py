@@ -10,11 +10,7 @@ class Database:
             self.conexao = mysql.connector.connect(
                 host="localhost",
                 user="root",
-<<<<<<< HEAD
-                password="ramestre",               
-=======
-                password="aluno123",               
->>>>>>> 9e013ce218f016873361c9aa0dd531a02587ac3c
+                password="Alan3640.",               
                 database="backfood"
             )
             self.cursor = self.conexao.cursor(buffered=True)  # Cursor com buffer
