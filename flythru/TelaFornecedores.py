@@ -179,20 +179,7 @@ class SupplierMenu:
             font=self.fonts["button_font"],
             command=lambda: self.add_supplier_row(root)  
         )
-        add_row_button.place(relx=0.425, rely=0.2, anchor="s")
-        
-        print_supplier_button = ctk.CTkButton(
-            btn_frame,
-            text="Imprimir",
-            width=120,
-            height=40,
-            fg_color=self.colors["text_primary"],
-            hover_color=self.colors["selected"],
-            text_color=self.colors["dark_bg"],
-            font=self.fonts["button_font"],
-            command=lambda: self.add_supplier_row(root)  
-        )
-        print_supplier_button.place(relx=0.575, rely=0.2, anchor="s")
+        add_row_button.place(relx=0.5, rely=0.2, anchor="s")
         
         self.load_data()
         

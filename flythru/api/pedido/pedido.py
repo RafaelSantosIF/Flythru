@@ -71,3 +71,20 @@ class Pedido:
             for i in range(int(array_quantidade[index])):
                 for index, ingrediente in enumerate(ingredientes_item):
                     estoque.subtrairQuantidade(ingrediente,quantidade_ingredientes[index])
+    
+
+    def buscar(self, termo_busca):
+        if self.db.conexao:
+            query = """
+            SELECT codPedido, order_date, description, quantidade_description, value, payment_method 
+            FROM pedido 
+            WHERE description LIKE %s 
+            OR CAST(codPedido AS CHAR) LIKE %s 
+            OR CAST(value AS CHAR) LIKE %s
+            """
+            termo_param = f"%{termo_busca}%"
+            params = (termo_param, termo_param, termo_param)
+            
+            self.db.cursor.execute(query, params)
+            return self.db.cursor.fetchall()
+        return []

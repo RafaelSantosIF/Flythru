@@ -74,3 +74,52 @@ class Item_Cardapio:
             # Garantir que a conexão temporária seja fechada
             if 'temp_db' in locals() and hasattr(temp_db, 'conexao') and temp_db.conexao:
                 temp_db.conexao.close()
+
+
+    def edit(self, old_name, new_name, new_price, new_ingredients, new_quantities, category):
+        """
+        Edit an existing menu item in the database
+        
+        Parameters:
+        - old_name: Original name of the item
+        - new_name: New name for the item
+        - new_price: New price for the item
+        - new_ingredients: Ingredients string (separated by --)
+        - new_quantities: Quantities string (separated by --)
+        - category: Category of the item
+        """
+        try:
+            # Usando a conexão existente do db
+            if not self.db.conexao:
+                print("Erro: Não há conexão com o banco de dados")
+                return False
+
+            # Verifica se o item existe
+            check_query = "SELECT nome FROM item_cardapio WHERE nome = %s"
+            self.db.cursor.execute(check_query, (old_name,))
+            if not self.db.cursor.fetchone():
+                print(f"Item '{old_name}' não encontrado no banco de dados")
+                return False
+
+            # Update the item
+            update_query = """
+                UPDATE item_cardapio 
+                SET nome = %s, 
+                    preco = %s, 
+                    listaProdutos = %s, 
+                    quantidadeProdutos = %s, 
+                    category = %s
+                WHERE nome = %s
+            """
+            params = (new_name, new_price, new_ingredients, new_quantities, category, old_name)
+
+            if self.db.executar_query(update_query, params):
+                print("Item atualizado com sucesso!")
+                return True
+            else:
+                print("Erro ao atualizar item")
+                return False
+                
+        except Exception as e:
+            print(f"Erro ao editar item no cardápio: {e}")
+            return False
