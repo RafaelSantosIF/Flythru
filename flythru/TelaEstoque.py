@@ -69,7 +69,7 @@ class StorageMenu:
             placeholder_text_color="gray"
         )
         search_bar.place(relx=0, rely=0, relwidth=1, relheight=1)
-    #buscar back
+    
         def perform_search():
             search_term = search_bar.get().strip()
             if search_term:
@@ -96,12 +96,18 @@ class StorageMenu:
         )
         filter_button.place(relx=0.97, rely=0.5, anchor="center")            
 
-        # Table container with appropriate background
-        self.table_container = ctk.CTkFrame(main_content, fg_color=self.colors["table_bg"])
+        # CTkScrollableFrame
+        self.table_container = ctk.CTkScrollableFrame(
+            main_content, 
+            fg_color=self.colors["table_bg"],
+            scrollbar_fg_color=self.colors["table_bg"],
+            scrollbar_button_color=self.colors["primary"],
+            scrollbar_button_hover_color=self.colors["primary_hover"]
+        )
         self.table_container.pack(fill="both", expand=True, padx=20, pady=(20, 10))
 
         # Table headers
-        headers = ["ID", "Produto", "Quantidade (Un)", "Categoria", "Ação"]
+        headers = ["ID", "Produto", "Quantidade", "Categoria", "Ação"]
         for i, header in enumerate(headers):
             header_label = ctk.CTkLabel(
                 self.table_container,

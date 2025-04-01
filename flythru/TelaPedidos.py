@@ -59,7 +59,7 @@ class OrdersMenu:
             text_color=self.colors["dark_bg"],
             placeholder_text_color=self.colors["text_disabled"]
         )
-        self.search_bar.place(relx=0, rely=0, relwidth=0.95, relheight=1)
+        self.search_bar.place(relx=0, rely=0, relwidth=1, relheight=1)
         
         # Filter/Search button
         filter_button = ctk.CTkButton(
@@ -78,7 +78,7 @@ class OrdersMenu:
         # Bind Enter key to search
         self.search_bar.bind("<Return>", lambda event: self.search_orders())
         
-        # Replace CTkFrame with CTkScrollableFrame
+        # CTkScrollableFrame
         self.table_container = ctk.CTkScrollableFrame(
             main_content, 
             fg_color=self.colors["table_bg"],

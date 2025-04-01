@@ -144,8 +144,14 @@ class SupplierMenu:
         )
         filter_button.place(relx=0.97, rely=0.5, anchor="center")
 
-        # Table container 
-        self.table_container = ctk.CTkFrame(main_content, fg_color=self.colors["table_bg"]) 
+        # CTkScrollableFrame
+        self.table_container = ctk.CTkScrollableFrame(
+            main_content, 
+            fg_color=self.colors["table_bg"],
+            scrollbar_fg_color=self.colors["table_bg"],
+            scrollbar_button_color=self.colors["primary"],
+            scrollbar_button_hover_color=self.colors["primary_hover"]
+        )
         self.table_container.pack(fill="both", expand=True, padx=20, pady=(20, 10))
 
         # Table headers
