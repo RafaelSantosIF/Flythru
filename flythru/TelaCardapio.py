@@ -847,18 +847,8 @@ class CarteMenu:
                 print(f"Atualizado estoque: {ingredient_name} de {current_inventory} para {new_quantity}")
 
 
-    # Adicionar um método à classe Estoque para obter quantidade pelo nome
-    # Este método deve ser adicionado ao seu arquivo api/estoque/estoque.py
     def get_quantidade_by_nome(self, nome):
-        """
-        Obtém a quantidade atual de um item pelo seu nome.
-        
-        Parâmetros:
-        nome (str): O nome do item para obter a quantidade
-        
-        Retorna:
-        float: A quantidade atual, ou None se o item não for encontrado
-        """
+       
         try:
             conn = self.connect_db()
             cursor = conn.cursor()
@@ -876,19 +866,9 @@ class CarteMenu:
             if conn:
                 conn.close()
 
-    # Adicionar um método à classe Estoque para atualizar quantidade
-    # Este método deve ser adicionado ao seu arquivo api/estoque/estoque.py
+    
     def update_quantidade(self, nome, nova_quantidade):
-        """
-        Atualiza a quantidade de um item no estoque.
-        
-        Parâmetros:
-        nome (str): O nome do item a ser atualizado
-        nova_quantidade (float): A nova quantidade a ser definida
-        
-        Retorna:
-        bool: True se bem-sucedido, False caso contrário
-        """
+     
         try:
             conn = self.connect_db()
             cursor = conn.cursor()
@@ -905,8 +885,7 @@ class CarteMenu:
                 conn.close()
 
     def create_category_section(self, parent, category, items):
-        """Cria uma seção para uma categoria com layout de grade."""
-        # Section frame
+        
         section_frame = ctk.CTkFrame(parent, fg_color="transparent")
         section_frame.pack(fill="x", pady=10, padx=10)
 
