@@ -219,6 +219,64 @@ class CarteMenu:
         )
         total_amount.pack(anchor="e", padx=20)
 
+        # Payment method selection
+        payment_frame = ctk.CTkFrame(bottom_frame, fg_color="transparent")
+        payment_frame.pack(fill="x", padx=20, pady=(5, 0))
+        
+        payment_label = ctk.CTkLabel(
+            payment_frame,
+            text="Forma de Pagamento:",
+            font=ctk.CTkFont(family="Verdana", size=12),
+            text_color="black"
+        )
+        payment_label.pack(anchor="w")
+        
+        # Payment options
+        payment_options_frame = ctk.CTkFrame(payment_frame, fg_color="transparent")
+        payment_options_frame.pack(fill="x", pady=(0, 5))
+        
+        payment_method_var = ctk.StringVar(value="cartão de Crédito")
+        
+        credit_radio = ctk.CTkRadioButton(
+            payment_options_frame,
+            text="Cartão de Crédito",
+            variable=payment_method_var,
+            value="cartão de Crédito",
+            font=ctk.CTkFont(family="Verdana", size=11),
+            text_color="black"
+        )
+        credit_radio.pack(side="left", padx=(0, 15))
+        
+        debit_radio = ctk.CTkRadioButton(
+            payment_options_frame,
+            text="Cartão de Débito",
+            variable=payment_method_var,
+            value="cartão de Débito",
+            font=ctk.CTkFont(family="Verdana", size=11),
+            text_color="black"
+        )
+        debit_radio.pack(side="left", padx=(0, 15))
+        
+        cash_radio = ctk.CTkRadioButton(
+            payment_options_frame,
+            text="Dinheiro",
+            variable=payment_method_var,
+            value="dinheiro",
+            font=ctk.CTkFont(family="Verdana", size=11),
+            text_color="black"
+        )
+        cash_radio.pack(side="left", padx=(0, 15))
+        
+        pix_radio = ctk.CTkRadioButton(
+            payment_options_frame,
+            text="PIX",
+            variable=payment_method_var,
+            value="PIX",
+            font=ctk.CTkFont(family="Verdana", size=11),
+            text_color="black"
+        )
+        pix_radio.pack(side="left")
+
         # Buttons frame
         buttons_frame = ctk.CTkFrame(bottom_frame, fg_color="transparent")
         buttons_frame.pack(fill="x", padx=20, pady=10)       
@@ -232,7 +290,7 @@ class CarteMenu:
             height=35,
             command=lambda: [
                 # Primeiro salva o pedido
-                pedido.save(order_description, quantidade_description, self.total_price, "cartão de Crédito"),
+                pedido.save(order_description, quantidade_description, self.total_price, payment_method_var.get()),
                 
                 # Atualiza o estoque imediatamente (antes de mostrar a confirmação)
                 self.update_inventory_from_order(),
@@ -243,7 +301,7 @@ class CarteMenu:
                     order_description, 
                     quantidade_description, 
                     self.total_price, 
-                    "cartão de Crédito"
+                    payment_method_var.get()
                 ),
                 
                 # Limpa o pedido atual
@@ -669,62 +727,66 @@ class CarteMenu:
 
     def create_card(self, parent, name, price, img, ingredients, idx, category):
         """Create a menu item card with fixed dimensions"""
-        # Increase card height from 300 to 320px
-        card = ctk.CTkFrame(parent, fg_color="#2E2E2E", corner_radius=10, width=180, height=320)
+        # Compact card with reduced height
+        card = ctk.CTkFrame(parent, fg_color="#2E2E2E", corner_radius=10, width=180, height=280)
         card.grid_propagate(False)  # Prevent the card from resizing based on content
 
-        image = self.load_image(img, (80, 80))
+        # Smaller image with reduced padding
+        image = self.load_image(img, (70, 70))
         if image:
             img_label = ctk.CTkLabel(card, image=image, text="")
-            img_label.pack(pady=(10, 5))
+            img_label.pack(pady=(5, 2))
 
+        # Name with reduced padding
         name_label = ctk.CTkLabel(card, text=name, font=self.fonts["menu_font"], text_color="white")
-        name_label.pack(pady=(5, 0))
+        name_label.pack(pady=(2, 0))
 
+        # Price with reduced padding
         price_label = ctk.CTkLabel(card, text=f"R$ {price:.2f}", font=self.fonts["input_font"], text_color="white")
-        price_label.pack(pady=(0, 5))
+        price_label.pack(pady=(0, 2))
 
-        # Increase the ingredients frame height from 90 to 120px
-        ingredients_frame = ctk.CTkFrame(card, fg_color="transparent", height=120)
-        ingredients_frame.pack(pady=(0, 5), fill="x", padx=5)
+        # Compact ingredients frame
+        ingredients_frame = ctk.CTkFrame(card, fg_color="transparent", height=80)
+        ingredients_frame.pack(pady=(0, 2), fill="x", padx=5)
         ingredients_frame.pack_propagate(False)  # Keep height fixed
 
-        # Increase max visible ingredients if needed
-        max_ingredients = 6  # Changed from 5 to 6
+        # Reduced max visible ingredients
+        max_ingredients = 4
         display_ingredients = ingredients[:max_ingredients]
 
+        # Smaller font for ingredients
         for ing in display_ingredients:
-            # O formato do ingrediente pode ser "Nome(quantidade unidade)"
             ing_label = ctk.CTkLabel(
                 ingredients_frame,
-                text="• " + ing,  # O ingrediente já inclui a quantidade
-                font=ctk.CTkFont(family="Verdana", size=10),
+                text="• " + ing,
+                font=ctk.CTkFont(family="Verdana", size=9),
                 text_color="white",
                 anchor="w",
                 wraplength=150
             )
             ing_label.pack(fill="x", pady=0)
 
+        # Compact quantity frame
         quantity_frame = ctk.CTkFrame(card, fg_color="transparent")
-        quantity_frame.pack(fill="x", padx=10, pady=(5, 0))
+        quantity_frame.pack(fill="x", padx=10, pady=(2, 0))
 
         quantity_var = ctk.StringVar(value="0")
         quantity_entry = ctk.CTkEntry(
             quantity_frame,
             textvariable=quantity_var,
-            width=50,
-            height=25,
+            width=40,
+            height=22,
             fg_color="#3E3E3E",
             border_color="#555555"
         )
         quantity_entry.pack(side="left")
 
-        # Botões + e - para quantidade
+        # Smaller quantity buttons
         minus_btn = ctk.CTkButton(
             quantity_frame,
             text="-",
-            width=25,
-            height=25,
+            width=22,
+            height=22,
             fg_color=self.colors["main_color"],
             hover_color=self.colors["hover_color"],
             command=lambda: quantity_var.set(str(max(0, int(quantity_var.get()) - 1)))
@@ -734,19 +796,19 @@ class CarteMenu:
         plus_btn = ctk.CTkButton(
             quantity_frame,
             text="+",
-            width=25,
-            height=25,
+            width=22,
+            height=22,
             fg_color=self.colors["main_color"],
             hover_color=self.colors["hover_color"],
             command=lambda: quantity_var.set(str(int(quantity_var.get()) + 1))
         )
         plus_btn.pack(side="left", padx=(5, 0))
 
-        # Botões frame
+        # Buttons frame with reduced padding
         buttons_frame = ctk.CTkFrame(card, fg_color="transparent")
-        buttons_frame.pack(fill="x", padx=10, pady=(5, 10))
+        buttons_frame.pack(fill="x", padx=10, pady=(2, 5))
 
-        # Botão ADD
+        # ADD button
         add_button = ctk.CTkButton(
             buttons_frame,
             text="+ ADD",
@@ -754,25 +816,27 @@ class CarteMenu:
             hover_color=self.colors["hover_color"],
             font=self.fonts["button_font"],
             command=lambda n=name, p=price, q=quantity_var: self.add_to_order(n, p, q),
-            height=25,
+            height=22,
             width=100
         )
         add_button.pack(side="left", fill="x", expand=True)
-        # Edit button
+        
+        # Edit button - moved back to bottom
         edit_button = ctk.CTkButton(
             buttons_frame,
-            text="✎",  # Ícone de lápis (editar)
-            fg_color="#4CAF50",  # Verde padrão
-            hover_color="#45a049",  # Verde mais escuro para hover
-            text_color="white",  # Texto branco para melhor contraste
+            text="✎",
+            fg_color="#4CAF50",
+            hover_color="#45a049",
+            text_color="white",
             font=self.fonts["button_font"],
             command=lambda cat=category, i=idx: self.edit_menu_item(cat, i),
-            height=25,
-            width=25,
-            corner_radius=6  # Cantos levemente arredondados
+            height=22,
+            width=22,
+            corner_radius=4
         )
         edit_button.pack(side="right", padx=(5, 0))
-        # Botão DELETE
+        
+        # Delete button - moved back to bottom
         delete_button = ctk.CTkButton(
             buttons_frame,
             text="🗑",
@@ -780,8 +844,8 @@ class CarteMenu:
             hover_color="#ff0000",
             font=self.fonts["button_font"],
             command=lambda cat=category, i=idx: self.delete_menu_item(cat, i),
-            height=25,
-            width=30
+            height=22,
+            width=22
         )
         delete_button.pack(side="right", padx=(5, 0))
 
