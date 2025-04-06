@@ -19,3 +19,26 @@ O **Flythru** é um sistema desktop voltado para estabelecimentos de alimentaç�
 - Backup de dados para garantir segurança e disponibilidade.
 
 O sistema prioriza **usabilidade**, **eficiência** e **segurança**, sendo ideal para estabelecimentos que desejam oferecer um atendimento rápido e automatizado.
+
+---
+
+## 👥 Equipe
+
+- Antônio Alan da Silva Oliveira  
+- Jadienne Costa Silva  
+- João Alberto Almeida de Deus  
+- João Victor Reis Angelim  
+- Jusivan Bezerra Matos  
+- Rafael dos Santos Sousa
+
+---
+
+## 📁 Estrutura do Repositório da documentação:
+
+A pasta `documentacao` contém os principais artefatos produzidos durante o desenvolvimento do projeto:
+
+- **requisitos.md**: Documento com os requisitos funcionais e não funcionais do sistema.
+- **casos_de_uso.md**: Casos de uso com descrição dos atores, fluxos e funcionalidades.
+- **plano_de_teste.md**: Plano de teste com cenários e critérios de validação das funcionalidades.
+
+A estrutura do projeto foi organizada para facilitar a colaboração e o acompanhamento do desenvolvimento.
