@@ -37,7 +37,7 @@ O sistema prioriza **usabilidade**, **eficiência** e **segurança**, sendo idea
 
 A pasta `documentacao` contém os principais artefatos produzidos durante o desenvolvimento do projeto:
 
-- **requisitos.md**: Documento com os requisitos funcionais e não funcionais do sistema.
+- **requisitos_funcionais_e_não_funcionais.md**: Documento com os requisitos funcionais e não funcionais do sistema.
 - **casos_de_uso.md**: Casos de uso com descrição dos atores, fluxos e funcionalidades.
 - **plano_de_teste.md**: Plano de teste com cenários e critérios de validação das funcionalidades.
 
