@@ -731,11 +731,47 @@ class CarteMenu:
         card = ctk.CTkFrame(parent, fg_color="#2E2E2E", corner_radius=10, width=180, height=280)
         card.grid_propagate(False)  # Prevent the card from resizing based on content
 
+        # Add top buttons frame
+        top_buttons_frame = ctk.CTkFrame(card, fg_color="transparent")
+        top_buttons_frame.pack(fill="x", padx=5, pady=(2, 0))
+        
+        # Spacer to push buttons to the right
+        spacer = ctk.CTkLabel(top_buttons_frame, text="", fg_color="transparent")
+        spacer.pack(side="left", fill="x", expand=True)
+        
+        # Edit button - at the top
+        edit_button = ctk.CTkButton(
+            top_buttons_frame,
+            text="✎",
+            fg_color="#4CAF50",
+            hover_color="#45a049",
+            text_color="white",
+            font=self.fonts["button_font"],
+            command=lambda cat=category, i=idx: self.edit_menu_item(cat, i),
+            height=20,
+            width=20,
+            corner_radius=4
+        )
+        edit_button.pack(side="left", padx=(0, 3))
+        
+        # Delete button - at the top
+        delete_button = ctk.CTkButton(
+            top_buttons_frame,
+            text="🗑",
+            fg_color="#ff4444",
+            hover_color="#ff0000",
+            font=self.fonts["button_font"],
+            command=lambda cat=category, i=idx: self.delete_menu_item(cat, i),
+            height=20,
+            width=20
+        )
+        delete_button.pack(side="left")
+
         # Smaller image with reduced padding
         image = self.load_image(img, (70, 70))
         if image:
             img_label = ctk.CTkLabel(card, image=image, text="")
-            img_label.pack(pady=(5, 2))
+            img_label.pack(pady=(0, 2))  # Reduced top padding to accommodate the top buttons
 
         # Name with reduced padding
         name_label = ctk.CTkLabel(card, text=name, font=self.fonts["menu_font"], text_color="white")
@@ -821,34 +857,6 @@ class CarteMenu:
         )
         add_button.pack(side="left", fill="x", expand=True)
         
-        # Edit button - moved back to bottom
-        edit_button = ctk.CTkButton(
-            buttons_frame,
-            text="✎",
-            fg_color="#4CAF50",
-            hover_color="#45a049",
-            text_color="white",
-            font=self.fonts["button_font"],
-            command=lambda cat=category, i=idx: self.edit_menu_item(cat, i),
-            height=22,
-            width=22,
-            corner_radius=4
-        )
-        edit_button.pack(side="right", padx=(5, 0))
-        
-        # Delete button - moved back to bottom
-        delete_button = ctk.CTkButton(
-            buttons_frame,
-            text="🗑",
-            fg_color="#ff4444",
-            hover_color="#ff0000",
-            font=self.fonts["button_font"],
-            command=lambda cat=category, i=idx: self.delete_menu_item(cat, i),
-            height=22,
-            width=22
-        )
-        delete_button.pack(side="right", padx=(5, 0))
-
         return card
 
     def update_inventory_from_order(self):
