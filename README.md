@@ -22,14 +22,39 @@ O sistema prioriza **usabilidade**, **eficiência** e **segurança**, sendo idea
 
 ---
 
-## 👥 Equipe
+## 👥 Desenvolvedores
+<table align="center">
+  <tr align="center">
+    <td>
+      <a href="https://github.com/RafaelSantosIF">
+        <img src="https://avatars.githubusercontent.com/RafaelSantosIF" width=100 />
+        <p>Rafael <br/>Santos</p>
+      </a>
+    </td>
+    <td>
+      <a href="https://github.com/VaanToDeev">
+        <img src="https://avatars.githubusercontent.com/VaanToDeev" width=100 />
+        <p>João Victor <br/>Reis</p>
+      </a>
+    </td>
+    <td>
+      <a href="https://github.com/AllanOliveira2022">
+        <img src="https://avatars.githubusercontent.com/AllanOliveira2022" width=100 />
+        <p>Allan <br/>Oliveira</p>
+      </a>
+    </td>
+    <td>
+      <a href="https://github.com/Jussivan-IF">
+        <img src="https://avatars.githubusercontent.com/Jussivan-IF" width=100 />
+        <p>Jussivan <br/>Bezerra</p>
+      </a>
+    </td>
+  </tr>
+  
+## Requisitos
 
-- Antônio Alan da Silva Oliveira  
 - Jadienne Costa Silva  
 - João Alberto Almeida de Deus  
-- João Victor Reis Angelim  
-- Jusivan Bezerra Matos  
-- Rafael dos Santos Sousa
 
 ---
 
