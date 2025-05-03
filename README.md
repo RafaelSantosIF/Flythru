@@ -1,4 +1,4 @@
-## Flythru
+# Flythru
 
 **Sistema de gerenciamento para atendimento em Drive-Thru**  
 
@@ -22,7 +22,7 @@ O sistema prioriza **usabilidade**, **eficiência** e **segurança**, sendo idea
 
 
   
-# Requisitos
+### Requisitos
 
 - Jadienne Costa Silva  
 - João Alberto Almeida de Deus  
